@@ -255,7 +255,7 @@ public class PhotoSimpleFragment extends BaseFragment implements MasterListView.
                 intent.putExtra("photographer", simple.getPhotographer());
                 intent.putExtra("stylist", simple.getStylist());
                 intent.putExtra("date", simple.getCreateDate());
-                intent.putExtra("name", simple.getContentName());
+                intent.putExtra("name", simple.getName());
 
 
                 ArrayList<SimpleStyles> styles = simple.getShootingStyles();
@@ -511,7 +511,7 @@ public class PhotoSimpleFragment extends BaseFragment implements MasterListView.
             if (dataList.get(position).getShootingStyles() != null && dataList.get(position).getShootingStyles().size() > 0)
                 holder.styleTxt.setText("风格: " + dataList.get(position).getShootingStyles().get(0).getShootingStyleName());
 
-            holder.nameTxt.setText(dataList.get(position).getContentName());
+            holder.nameTxt.setText(dataList.get(position).getName());
 
             //加载摄影师
             if (dataList.get(position).getPhotographer() != null && !TextUtils.isEmpty(dataList.get(position).getPhotographer().getPhotoUrl())) {
@@ -526,10 +526,10 @@ public class PhotoSimpleFragment extends BaseFragment implements MasterListView.
             }
 
             //加载内容
-            if (TextUtils.isEmpty(dataList.get(position).getContentUrl())) {
+            if (TextUtils.isEmpty(dataList.get(position).getCoverUrlApp())) {
                 Picasso.with(getActivity()).load(R.mipmap.ic_launcher).into(holder.contentImg);
             } else {
-                Picasso.with(getActivity()).load(dataList.get(position).getContentUrl() + DimenUtil.getHorizontalListViewStringDimension(DimenUtil.screenWidth)).error(getResources().getDrawable(R.mipmap.ic_launcher)).resize(DimenUtil.screenWidth, DimenUtil.targetHeight).into(holder.contentImg);
+                Picasso.with(getActivity()).load(dataList.get(position).getCoverUrlApp() + DimenUtil.getHorizontalListViewStringDimension(DimenUtil.screenWidth)).error(getResources().getDrawable(R.mipmap.ic_launcher)).resize(DimenUtil.screenWidth, DimenUtil.targetHeight).into(holder.contentImg);
             }
 
             return view;

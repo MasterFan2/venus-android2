@@ -14,16 +14,17 @@ import java.util.ArrayList;
 @Table(name = "Banquet")
 public class Banquet implements Serializable {
 
+    private int id;
+
     @Column(column = "area")
     private String area;
 
-    private ArrayList<String> banquetHallImage;
+    private String appDetailImages;
 
-    @Column(column = "image_url")
-    private String image_url;
+    private String coverUrlApp;
 
-    @Column(column = "leastConsumption")
-    private String leastConsumption;
+    @Column(column = "lowestConsumption")
+    private String lowestConsumption;
 
     @Column(column = "shape")
     private String shape;
@@ -32,8 +33,8 @@ public class Banquet implements Serializable {
     @Column(column = "banquetHallId")
     private String banquetHallId;
 
-    @Column(column = "banquetHallName")
-    private String banquetHallName;
+    @Column(column = "name")
+    private String name;
 
     @Column(column = "capacity")
     private String capacity;
@@ -45,7 +46,21 @@ public class Banquet implements Serializable {
     private String hotelId;
 
     @Column(column = "pillarNumber")
-    private String pillarNumber;
+    private String pillerNum;//是否有柱子
+
+    private int maxTableNum;
+
+    public Banquet() {
+    }
+
+    public String getAppDetailImages() {
+
+        return appDetailImages;
+    }
+
+    public void setAppDetailImages(String appDetailImages) {
+        this.appDetailImages = appDetailImages;
+    }
 
     public String getArea() {
         return area;
@@ -53,38 +68,6 @@ public class Banquet implements Serializable {
 
     public void setArea(String area) {
         this.area = area;
-    }
-
-    public ArrayList<String> getBanquetHallImage() {
-        return banquetHallImage;
-    }
-
-    public void setBanquetHallImage(ArrayList<String> banquetHallImage) {
-        this.banquetHallImage = banquetHallImage;
-    }
-
-    public String getImage_url() {
-        return image_url;
-    }
-
-    public void setImage_url(String image_url) {
-        this.image_url = image_url;
-    }
-
-    public String getLeastConsumption() {
-        return leastConsumption;
-    }
-
-    public void setLeastConsumption(String leastConsumption) {
-        this.leastConsumption = leastConsumption;
-    }
-
-    public String getShape() {
-        return shape;
-    }
-
-    public void setShape(String shape) {
-        this.shape = shape;
     }
 
     public String getBanquetHallId() {
@@ -95,12 +78,12 @@ public class Banquet implements Serializable {
         this.banquetHallId = banquetHallId;
     }
 
-    public String getBanquetHallName() {
-        return banquetHallName;
+    public String getName() {
+        return name;
     }
 
-    public void setBanquetHallName(String banquetHallName) {
-        this.banquetHallName = banquetHallName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getCapacity() {
@@ -109,6 +92,14 @@ public class Banquet implements Serializable {
 
     public void setCapacity(String capacity) {
         this.capacity = capacity;
+    }
+
+    public String getCoverUrlApp() {
+        return coverUrlApp;
+    }
+
+    public void setCoverUrlApp(String coverUrlApp) {
+        this.coverUrlApp = coverUrlApp;
     }
 
     public String getHeight() {
@@ -127,26 +118,60 @@ public class Banquet implements Serializable {
         this.hotelId = hotelId;
     }
 
-    public String getPillarNumber() {
-        return pillarNumber;
+    public int getId() {
+        return id;
     }
 
-    public void setPillarNumber(String pillarNumber) {
-        this.pillarNumber = pillarNumber;
+    public void setId(int id) {
+        this.id = id;
     }
-    public Banquet(){}
-    public Banquet(String area, ArrayList<String> banquetHallImage, String image_url, String leastConsumption, String shape, String banquetHallId, String banquetHallName, String capacity, String height, String hotelId, String pillarNumber) {
 
-        this.area = area;
-        this.banquetHallImage = banquetHallImage;
-        this.image_url = image_url;
-        this.leastConsumption = leastConsumption;
+    public String getLowestConsumption() {
+        return lowestConsumption;
+    }
+
+    public void setLowestConsumption(String lowestConsumption) {
+        this.lowestConsumption = lowestConsumption;
+    }
+
+    public int getMaxTableNum() {
+        return maxTableNum;
+    }
+
+    public void setMaxTableNum(int maxTableNum) {
+        this.maxTableNum = maxTableNum;
+    }
+
+    public String getPillerNum() {
+        return pillerNum;
+    }
+
+    public void setPillerNum(String pillerNum) {
+        this.pillerNum = pillerNum;
+    }
+
+    public String getShape() {
+        return shape;
+    }
+
+    public void setShape(String shape) {
         this.shape = shape;
+    }
+
+    public Banquet(String appDetailImages, String area, String banquetHallId, String name, String capacity, String coverUrlApp, String height, String hotelId, int id, String lowestConsumption, int maxTableNum, String pillerNum, String shape) {
+
+        this.appDetailImages = appDetailImages;
+        this.area = area;
         this.banquetHallId = banquetHallId;
-        this.banquetHallName = banquetHallName;
+        this.name = name;
         this.capacity = capacity;
+        this.coverUrlApp = coverUrlApp;
         this.height = height;
         this.hotelId = hotelId;
-        this.pillarNumber = pillarNumber;
+        this.id = id;
+        this.lowestConsumption = lowestConsumption;
+        this.maxTableNum = maxTableNum;
+        this.pillerNum = pillerNum;
+        this.shape = shape;
     }
 }

@@ -130,7 +130,7 @@ public class BestFilmFragment extends BaseFragment implements MasterListView.OnR
                     if (seasonList == null || seasonList.size() <= 0) {
                         HttpClient.getInstance().planSeasonList(seasonCallback);
                     } else {
-                        HttpClient.getInstance().planListBySeasonId(moduleId, pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId(), bySeasonIdCallback);
+                        HttpClient.getInstance().planListBySeasonId(moduleId, pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId()+"", bySeasonIdCallback);
                     }
                 }
             }
@@ -157,7 +157,7 @@ public class BestFilmFragment extends BaseFragment implements MasterListView.OnR
             @Override
             public void onPageSelected(int position) {
                 seasonPosition = position;
-                HttpClient.getInstance().planListBySeasonId(moduleId, pageIndex, pageSize, seasonList.get(position).getSeasonId(), bySeasonIdCallback);
+                HttpClient.getInstance().planListBySeasonId(moduleId, pageIndex, pageSize, seasonList.get(position).getSeasonId()+"", bySeasonIdCallback);
             }
 
             @Override
@@ -277,7 +277,7 @@ public class BestFilmFragment extends BaseFragment implements MasterListView.OnR
             View view = dataList.get(position);
             ImageView img = (ImageView) view.findViewById(R.id.tv_pic);
             TextView textView = (TextView) view.findViewById(R.id.tv_desc);
-            textView.setText(seasonList.get(position).getSeasonName());
+            textView.setText(seasonList.get(position).getName());
             Picasso.with(getActivity()).load(seasonList.get(position).getCoverUrl()).into(img);
             container.addView(view);
             return view;
@@ -476,7 +476,7 @@ public class BestFilmFragment extends BaseFragment implements MasterListView.OnR
             HttpClient.getInstance().bestFilmList(moduleId, pageIndex, pageSize, cb);
         } else {
             isSeasonNextPage = false;
-            HttpClient.getInstance().planListBySeasonId(moduleId, pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId(), bySeasonIdCallback);
+            HttpClient.getInstance().planListBySeasonId(moduleId, pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId()+"", bySeasonIdCallback);
         }
 
 
@@ -491,7 +491,7 @@ public class BestFilmFragment extends BaseFragment implements MasterListView.OnR
             HttpClient.getInstance().bestFilmList(moduleId, pageIndex, pageSize, cb);
         } else {
             isSeasonNextPage = true;
-            HttpClient.getInstance().planListBySeasonId(moduleId, pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId(), bySeasonIdCallback);
+            HttpClient.getInstance().planListBySeasonId(moduleId, pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId()+"", bySeasonIdCallback);
         }
     }
 }

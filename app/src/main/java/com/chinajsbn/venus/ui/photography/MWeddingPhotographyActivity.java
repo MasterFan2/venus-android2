@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.chinajsbn.venus.R;
 import com.chinajsbn.venus.net.bean.LocalSubModule;
 import com.chinajsbn.venus.net.bean.SubModule;
+import com.chinajsbn.venus.net.bean.menu.Menu;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.BaseFragment;
 import com.chinajsbn.venus.ui.base.MBaseFragment;
@@ -62,27 +63,15 @@ public class MWeddingPhotographyActivity extends AppCompatActivity {
     private final String TXBJ = "27234";//套系报价
     private final String HZJQ = "42305";//婚照技巧
     private final String HSJS = "42304";//婚纱纪实
-    private final String XSYS = "27224";//选摄影师38035
-
-
-//    private final String XZXS = "27225";//选造型师
+    private final String XSYS = "27224";//选摄影师
 
     private Context context;
 
-//    @ViewInject(R.id.nav_listView)
     private ListView menuListView;
 
     private ListMenuAdapter adapter;
-
-//    @ViewInject(R.id.drawer_layout)
     private DrawerLayout drawerLayout;
-
-//    @ViewInject(R.id.titleView)
     private MasterTitleView titleView;
-
-//    private Toolbar toolbar;
-//    @ViewInject(R.id.titleView)
-//    private MasterTitleView titleView;
 
     ////////////////////////cache///////////////////////////
     private DbUtils db;
@@ -99,7 +88,8 @@ public class MWeddingPhotographyActivity extends AppCompatActivity {
 
     private int currentSelect = -1;
 
-    private ArrayList<SubModule> menuData;      //网络数据
+//    private ArrayList<SubModule> menuData;      //网络数据
+    private List<Menu> menuData;
 
     private List<LocalSubModule> localSubModules;//本地数据
 
@@ -160,13 +150,13 @@ public class MWeddingPhotographyActivity extends AppCompatActivity {
         drawerLayout.setDrawerListener(toggle);
 
         //
-        menuData = (ArrayList<SubModule>) getIntent().getSerializableExtra("subModule");
+        menuData = (List<Menu>) getIntent().getSerializableExtra("subModule");
 
         if (NetworkUtil.hasConnection(context)) {//有网络
             if (menuData != null && menuData.size() > 0) {//有数据
                 final int len = menuData.size();
                 for (int i = 0; i < len; i++) {
-                    SubModule subModle = menuData.get(i);
+                    Menu subModle = menuData.get(i);
 
                     if (subModle.getContentId().equals(HSJS)) {       //婚纱纪实MV
                         jsmvFragment = new JSMVFragment();
@@ -178,7 +168,7 @@ public class MWeddingPhotographyActivity extends AppCompatActivity {
                         menuFragments.put(subModle.getModuleName(), stylistFragment);
                         menuPosition.put(subModle.getModuleName(), i);
 
-                    } else if (subModle.getContentId().equals(XSYS)) { //
+                    } else if (subModle.getContentId().equals(XSYS)) { //选摄影师
                         photographyFragment = new TeamFragment();
                         menuFragments.put(subModle.getModuleName(), photographyFragment);
                         menuPosition.put(subModle.getModuleName(), i);
@@ -186,7 +176,7 @@ public class MWeddingPhotographyActivity extends AppCompatActivity {
                     } else if (subModle.getContentId().equals(YPXS)) {//样片欣赏
                         simpleFragment = new MPhotoSimpleFragment();
                         Bundle bundle = new Bundle();
-                        bundle.putString("contentId", subModle.getSubModule().get(0).getContentId());
+                        bundle.putString("contentId", subModle.getContentId());
                         simpleFragment.setArguments(bundle);
 
                         menuFragments.put(subModle.getModuleName(), simpleFragment);
@@ -196,7 +186,7 @@ public class MWeddingPhotographyActivity extends AppCompatActivity {
                         customFragment = new MPhotoCustomerFragment();
 //                        customFragment = new BestFilmFragment();
                         Bundle bundle = new Bundle();
-                        bundle.putString("contentId", subModle.getSubModule().get(0).getContentId());
+                        bundle.putString("contentId", subModle.getContentId());
                         customFragment.setArguments(bundle);
 
                         menuFragments.put(subModle.getModuleName(), customFragment);
@@ -205,7 +195,7 @@ public class MWeddingPhotographyActivity extends AppCompatActivity {
                     } else if (subModle.getContentId().equals(TXBJ)) {//婚纱套系报价
                         suitFragment = new PhotoWedSuitFragment();
                         Bundle bundle = new Bundle();
-                        bundle.putString("contentId", subModle.getSubModule().get(0).getContentId());
+                        bundle.putString("contentId", subModle.getContentId());
                         suitFragment.setArguments(bundle);
                         menuFragments.put(subModle.getModuleName(), suitFragment);
                         menuPosition.put(subModle.getModuleName(), i);
@@ -235,8 +225,6 @@ public class MWeddingPhotographyActivity extends AppCompatActivity {
                         if (fragment == currentShowFragment) {
                             return;
                         }
-
-
                         //
                         titleView.setTitleText(menuData.get(position).getModuleName());
                         fragmentTransaction = getSupportFragmentManager().beginTransaction();

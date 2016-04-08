@@ -10,20 +10,56 @@ import com.lidroid.xutils.db.annotation.Table;
 @Table(name = "MasterFanSeason")
 public class MasterFanSeason {
 
+    @Column(column = "id")
+    private int id;
+
     @Id
     @Column(column = "seasonId")
-    private String seasonId;
+    private int seasonId;
 
     @Column(column = "coverUrl")
     private String coverUrl;
 
-    @Column(column = "mobileUrl")
-    private String mobileUrl;
+    @Column(column = "coverUrlApp")
+    private String coverUrlApp;
 
-    @Column(column = "seasonName")
-    private String seasonName;
+    @Column(column = "name")
+    private String name;
+
+    public String getCoverUrlApp() {
+        return coverUrlApp;
+    }
+
+    public void setCoverUrlApp(String coverUrlApp) {
+        this.coverUrlApp = coverUrlApp;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getSeasonId() {
+        return seasonId;
+    }
+
+    public void setSeasonId(int seasonId) {
+        this.seasonId = seasonId;
+    }
 
     public String getCoverUrl() {
+
         return coverUrl;
     }
 
@@ -31,37 +67,5 @@ public class MasterFanSeason {
         this.coverUrl = coverUrl;
     }
 
-    public String getMobileUrl() {
-        return mobileUrl;
-    }
-
-    public void setMobileUrl(String mobileUrl) {
-        this.mobileUrl = mobileUrl;
-    }
-
-    public String getSeasonId() {
-        return seasonId;
-    }
-
-    public void setSeasonId(String seasonId) {
-        this.seasonId = seasonId;
-    }
-
-    public String getSeasonName() {
-        return seasonName;
-    }
-
-    public void setSeasonName(String seasonName) {
-        this.seasonName = seasonName;
-    }
-
     public MasterFanSeason(){}
-
-    public MasterFanSeason(String coverUrl, String mobileUrl, String seasonId, String seasonName) {
-
-        this.coverUrl = coverUrl;
-        this.mobileUrl = mobileUrl;
-        this.seasonId = seasonId;
-        this.seasonName = seasonName;
-    }
 }

@@ -35,20 +35,20 @@ public class Custom implements Serializable {
     @Column(column = "headStyles")
     private String headStyles;
 
-    @Column(column = "actorNameFemale")
-    private String actorNameFemale;
+    @Column(column = "actorFemaleName")
+    private String actorFemaleName;
 
-    @Column(column = "actorNameMale")
-    private String actorNameMale;
+    @Column(column = "actorMaleName")
+    private String actorMaleName;
 
     @Column(column = "contentId")
     private String contentId;
 
-    @Column(column = "contentName")
-    private String contentName;
+    @Column(column = "name")
+    private String name;
 
-    @Column(column = "contentUrl")
-    private String contentUrl;
+    @Column(column = "coverUrlApp")
+    private String coverUrlApp;
 
     @Column(column = "createDate")
     private String createDate;
@@ -59,11 +59,101 @@ public class Custom implements Serializable {
     @Column(column = "shootingStyleName")
     private String shootingStyleName;
 
+    private String appDetailImages;//详情列表
+
     @Foreign(column = "photographerId", foreign = "personId")
     private SimplePhotographer photographer;
 
     @Column(column = "seasonId")
     private String seasonId;
+
+    public String getActorFemaleName() {
+        return actorFemaleName;
+    }
+
+    public void setActorFemaleName(String actorFemaleName) {
+        this.actorFemaleName = actorFemaleName;
+    }
+
+    public String getActorMaleName() {
+        return actorMaleName;
+    }
+
+    public void setActorMaleName(String actorMaleName) {
+        this.actorMaleName = actorMaleName;
+    }
+
+    public String getAppDetailImages() {
+        return appDetailImages;
+    }
+
+    public void setAppDetailImages(String appDetailImages) {
+        this.appDetailImages = appDetailImages;
+    }
+
+    public String getContentId() {
+        return contentId;
+    }
+
+    public void setContentId(String contentId) {
+        this.contentId = contentId;
+    }
+
+    public String getCoverUrlApp() {
+        return coverUrlApp;
+    }
+
+    public void setCoverUrlApp(String coverUrlApp) {
+        this.coverUrlApp = coverUrlApp;
+    }
+
+    public String getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
+    }
+
+    public String getHeadPhotographyName() {
+        return headPhotographyName;
+    }
+
+    public void setHeadPhotographyName(String headPhotographyName) {
+        this.headPhotographyName = headPhotographyName;
+    }
+
+    public String getHeadPhotographyUrl() {
+        return headPhotographyUrl;
+    }
+
+    public void setHeadPhotographyUrl(String headPhotographyUrl) {
+        this.headPhotographyUrl = headPhotographyUrl;
+    }
+
+    public String getHeadStyles() {
+        return headStyles;
+    }
+
+    public void setHeadStyles(String headStyles) {
+        this.headStyles = headStyles;
+    }
+
+    public String getHeadStylistName() {
+        return headStylistName;
+    }
+
+    public void setHeadStylistName(String headStylistName) {
+        this.headStylistName = headStylistName;
+    }
+
+    public String getHeadStylistUrl() {
+        return headStylistUrl;
+    }
+
+    public void setHeadStylistUrl(String headStylistUrl) {
+        this.headStylistUrl = headStylistUrl;
+    }
 
     public int getId() {
         return id;
@@ -73,6 +163,22 @@ public class Custom implements Serializable {
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public SimplePhotographer getPhotographer() {
+        return photographer;
+    }
+
+    public void setPhotographer(SimplePhotographer photographer) {
+        this.photographer = photographer;
+    }
+
     public String getSeasonId() {
         return seasonId;
     }
@@ -80,11 +186,6 @@ public class Custom implements Serializable {
     public void setSeasonId(String seasonId) {
         this.seasonId = seasonId;
     }
-
-    private ArrayList<SimpleStyles> shootingStyles;
-
-    @Foreign(column = "stylistId", foreign = "personId")
-    private SimplePhotographer stylist;
 
     public String getShootingStyleId() {
         return shootingStyleId;
@@ -102,129 +203,29 @@ public class Custom implements Serializable {
         this.shootingStyleName = shootingStyleName;
     }
 
-    public SimplePhotographer getPhotographer() {
-        return photographer;
-    }
-
-    public void setPhotographer(SimplePhotographer photographer) {
-        this.photographer = photographer;
-    }
-
-    public String getHeadPhotographyUrl() {
-        return headPhotographyUrl;
-    }
-
-    public void setHeadPhotographyUrl(String headPhotographyUrl) {
-        this.headPhotographyUrl = headPhotographyUrl;
-    }
-
-    public String getHeadPhotographyName() {
-        return headPhotographyName;
-    }
-
-    public void setHeadPhotographyName(String headPhotographyName) {
-        this.headPhotographyName = headPhotographyName;
-    }
-
-    public String getHeadStylistUrl() {
-        return headStylistUrl;
-    }
-
-    public void setHeadStylistUrl(String headStylistUrl) {
-        this.headStylistUrl = headStylistUrl;
-    }
-
-    public String getHeadStylistName() {
-        return headStylistName;
-    }
-
-    public void setHeadStylistName(String headStylistName) {
-        this.headStylistName = headStylistName;
-    }
-
-    public String getHeadStyles() {
-        return headStyles;
-    }
-
-    public void setHeadStyles(String headStyles) {
-        this.headStyles = headStyles;
-    }
-
-    public ArrayList<SimpleStyles> getShootingStyles() {
-        return shootingStyles;
-    }
-
-    public void setShootingStyles(ArrayList<SimpleStyles> shootingStyles) {
-        this.shootingStyles = shootingStyles;
-    }
-
-    public SimplePhotographer getStylist() {
-        return stylist;
-    }
-
-    public void setStylist(SimplePhotographer stylist) {
-        this.stylist = stylist;
-    }
-
-    public String getContentId() {
-        return contentId;
-    }
-
-    public void setContentId(String contentId) {
-        this.contentId = contentId;
-    }
-
-    public String getContentName() {
-        return contentName;
-    }
-
-    public void setContentName(String contentName) {
-        this.contentName = contentName;
-    }
-
-    public String getContentUrl() {
-        return contentUrl;
-    }
-
-    public void setContentUrl(String contentUrl) {
-        this.contentUrl = contentUrl;
-    }
-
     public Custom() {
 
     }
 
-    public Custom(String actorNameFemale, String actorNameMale, String contentId, String contentName, String contentUrl, String createDate) {
-        this.actorNameFemale = actorNameFemale;
-        this.actorNameMale = actorNameMale;
+    public Custom(String actorFemaleName, String actorMaleName, String appDetailImages, String contentId, String coverUrlApp, String createDate, String headPhotographyName, String headPhotographyUrl, String headStyles, String headStylistName, String headStylistUrl, int id, String name, SimplePhotographer photographer, String seasonId, String shootingStyleId, String shootingStyleName) {
+
+        this.actorFemaleName = actorFemaleName;
+        this.actorMaleName = actorMaleName;
+        this.appDetailImages = appDetailImages;
         this.contentId = contentId;
-        this.contentName = contentName;
-        this.contentUrl = contentUrl;
+        this.coverUrlApp = coverUrlApp;
         this.createDate = createDate;
-    }
-
-    public String getActorNameFemale() {
-        return actorNameFemale;
-    }
-
-    public void setActorNameFemale(String actorNameFemale) {
-        this.actorNameFemale = actorNameFemale;
-    }
-
-    public String getActorNameMale() {
-        return actorNameMale;
-    }
-
-    public void setActorNameMale(String actorNameMale) {
-        this.actorNameMale = actorNameMale;
-    }
-
-    public String getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(String createDate) {
-        this.createDate = createDate;
+        this.headPhotographyName = headPhotographyName;
+        this.headPhotographyUrl = headPhotographyUrl;
+        this.headStyles = headStyles;
+        this.headStylistName = headStylistName;
+        this.headStylistUrl = headStylistUrl;
+        this.id = id;
+        this.name = name;
+        this.photographer = photographer;
+        this.seasonId = seasonId;
+        this.shootingStyleId = shootingStyleId;
+        this.shootingStyleName = shootingStyleName;
     }
 }
 

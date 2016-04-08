@@ -12,30 +12,30 @@ public class Advert {
 
     @Id
     @Column(column = "contentId")
-    private String contentId;
+    private String advertId;
 
     @Column(column = "contentUrl")
-    private String contentUrl;
+    private String coverUrlApp;
 
     public String getContentId() {
-        return contentId;
+        return advertId;
     }
 
     public void setContentId(String contentId) {
-        this.contentId = contentId;
+        this.advertId = contentId;
     }
 
     public String getContentUrl() {
-        return contentUrl;
+        return coverUrlApp;
     }
 
     public void setContentUrl(String contentUrl) {
-        this.contentUrl = contentUrl;
+        this.coverUrlApp = contentUrl;
     }
     public Advert(){}
     public Advert(String contentId, String contentUrl) {
 
-        this.contentId = contentId;
-        this.contentUrl = contentUrl;
+        this.advertId = contentId;
+        this.coverUrlApp = contentUrl;
     }
 }

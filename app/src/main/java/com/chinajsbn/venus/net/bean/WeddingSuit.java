@@ -17,6 +17,9 @@ import java.io.Serializable;
 @Table(name = "WeddingSuit")
 public class WeddingSuit implements Serializable{
 
+    @Column(column = "id")
+    private int id;
+
     @Column(column = "activityId")
     private int activityId;     //活动Id
 
@@ -32,8 +35,8 @@ public class WeddingSuit implements Serializable{
     @Column(column = "dressModeling")
     private String dressModeling;//礼服造型
 
-    @Column(column = "imageUrl")
-    private String imageUrl;
+    @Column(column = "coverUrlApp")
+    private String coverUrlApp;
 
     @Column(column = "isOptionalCameraman")
     private int isOptionalCameraman;    //是否可自选摄影师：可自选 ；0 不可自选
@@ -50,15 +53,18 @@ public class WeddingSuit implements Serializable{
     @Column(column = "isValueAddService")
     private int isValueAddService;      //是否增值业务：0 否；1 是 默认值：0
 
-    @Column(column = "price")
-    private int price;                  //价钱
+    @Column(column = "salePrice")
+    private int salePrice;                  //价钱
 
     @Id
     @Column(column = "productId")
     private String productId;           //套系ID
 
-    @Column(column = "productName")
-    private String productName;         //套系名称
+    @Column(column = "originalPrice")
+    private int originalPrice; //原价
+
+    @Column(column = "name")
+    private String name;         //套系名称
 
     @Column(column = "provinceId")
     private int provinceId;             //省ID
@@ -90,6 +96,14 @@ public class WeddingSuit implements Serializable{
     @Column(column = "weddingDressSuitId")
     private int weddingDressSuitId;             //婚纱套系Id
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public int getActivityId() {
         return activityId;
     }
@@ -104,6 +118,14 @@ public class WeddingSuit implements Serializable{
 
     public void setCityId(int cityId) {
         this.cityId = cityId;
+    }
+
+    public String getCoverUrlApp() {
+        return coverUrlApp;
+    }
+
+    public void setCoverUrlApp(String coverUrlApp) {
+        this.coverUrlApp = coverUrlApp;
     }
 
     public int getDepositRate() {
@@ -128,14 +150,6 @@ public class WeddingSuit implements Serializable{
 
     public void setDressModeling(String dressModeling) {
         this.dressModeling = dressModeling;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
     }
 
     public int getIsOptionalCameraman() {
@@ -178,12 +192,20 @@ public class WeddingSuit implements Serializable{
         this.isValueAddService = isValueAddService;
     }
 
-    public int getPrice() {
-        return price;
+    public String getName() {
+        return name;
     }
 
-    public void setPrice(int price) {
-        this.price = price;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getOriginalPrice() {
+        return originalPrice;
+    }
+
+    public void setOriginalPrice(int originalPrice) {
+        this.originalPrice = originalPrice;
     }
 
     public String getProductId() {
@@ -192,14 +214,6 @@ public class WeddingSuit implements Serializable{
 
     public void setProductId(String productId) {
         this.productId = productId;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
     }
 
     public int getProvinceId() {
@@ -216,6 +230,14 @@ public class WeddingSuit implements Serializable{
 
     public void setRecordNum(int recordNum) {
         this.recordNum = recordNum;
+    }
+
+    public int getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(int salePrice) {
+        this.salePrice = salePrice;
     }
 
     public String getShootAdress() {
@@ -282,26 +304,29 @@ public class WeddingSuit implements Serializable{
         this.weddingDressSuitId = weddingDressSuitId;
     }
 
-    public WeddingSuit() {}
+    public WeddingSuit() {
 
-    public WeddingSuit(int activityId, int cityId, int depositRate, String description, String dressModeling, String imageUrl, int isOptionalCameraman, int isOptionalStylist, int isSendMV, int isUsed, int isValueAddService, int price, String productId, String productName, int provinceId, int recordNum, String shootAdress, int shootSampless, String shootService, int shootTime, int truingNum, String valueAddServiceFeature, String valueAddServiceSpecialNote, int weddingDressSuitId) {
+    }
 
+    public WeddingSuit(int activityId, int cityId, String coverUrlApp, int depositRate, String description, String dressModeling, int isOptionalCameraman, int isOptionalStylist, int isSendMV, int isUsed, int isValueAddService, String name, int originalPrice, String productId, int provinceId, int recordNum, int salePrice, String shootAdress, int shootSampless, String shootService, int shootTime, int truingNum, String valueAddServiceFeature, String valueAddServiceSpecialNote, int weddingDressSuitId) {
         this.activityId = activityId;
         this.cityId = cityId;
+
+        this.coverUrlApp = coverUrlApp;
         this.depositRate = depositRate;
         this.description = description;
         this.dressModeling = dressModeling;
-        this.imageUrl = imageUrl;
         this.isOptionalCameraman = isOptionalCameraman;
         this.isOptionalStylist = isOptionalStylist;
         this.isSendMV = isSendMV;
         this.isUsed = isUsed;
         this.isValueAddService = isValueAddService;
-        this.price = price;
+        this.name = name;
+        this.originalPrice = originalPrice;
         this.productId = productId;
-        this.productName = productName;
         this.provinceId = provinceId;
         this.recordNum = recordNum;
+        this.salePrice = salePrice;
         this.shootAdress = shootAdress;
         this.shootSampless = shootSampless;
         this.shootService = shootService;

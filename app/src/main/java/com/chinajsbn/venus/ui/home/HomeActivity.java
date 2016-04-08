@@ -21,12 +21,14 @@ import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
 import com.chinajsbn.venus.net.HttpClient;
+import com.chinajsbn.venus.net.HttpClients;
 import com.chinajsbn.venus.net.bean.Advert;
 import com.chinajsbn.venus.net.bean.Base;
-import com.chinajsbn.venus.net.bean.Cache;
 import com.chinajsbn.venus.net.bean.HomeMenu;
 import com.chinajsbn.venus.net.bean.LocalSubModule;
 import com.chinajsbn.venus.net.bean.SubModule;
+import com.chinajsbn.venus.net.bean.menu.Menu;
+import com.chinajsbn.venus.net.bean.menu.MenuGenerator;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.MBaseFragmentActivity;
 import com.chinajsbn.venus.ui.car.CarNavActivity;
@@ -38,10 +40,8 @@ import com.chinajsbn.venus.ui.photography.MWeddingPhotographyActivity;
 import com.chinajsbn.venus.ui.plan.MPlanActivity;
 import com.chinajsbn.venus.ui.supplies.SuppliesNavActivity;
 import com.chinajsbn.venus.utils.DimenUtil;
-import com.chinajsbn.venus.utils.MTDBUtil;
 import com.chinajsbn.venus.utils.NetworkUtil;
 import com.chinajsbn.venus.utils.S;
-import com.chinajsbn.venus.utils.T;
 import com.lidroid.xutils.DbUtils;
 import com.lidroid.xutils.exception.DbException;
 import com.lidroid.xutils.view.annotation.ViewInject;
@@ -87,7 +87,8 @@ public class HomeActivity extends MBaseFragmentActivity implements OnClickListen
     private TextView minTxt;
 
     //menu data
-    private List<SubModule> menuData;
+//    private List<SubModule> menuData;
+    private List<Menu> menuData = null;
 
     private List<LocalSubModule> localList = new ArrayList<>();
     private HomeMenu homeMenu;
@@ -171,31 +172,19 @@ public class HomeActivity extends MBaseFragmentActivity implements OnClickListen
         }
         listView.setAdapter(adapter);
 
+        menuData = MenuGenerator.createMenu();
+        adapter.notifyDataSetChanged();
         // get data from network
         if (NetworkUtil.hasConnection(context)) {//有网，访问网络
-            HttpClient.getInstance().getHomeMenu("APP", cb);
+            HttpClients.getInstance().getHomeAdvert(advertCallback); //获取广告
         } else {  //无网， 读取本地数据
+            //获取广告
             try {
-                //获取菜单
-                List<SubModule> localMenuData = db.findAll(SubModule.class);
-
-                if (localMenuData != null && localMenuData.size() > 0) {
-                    for (SubModule subModule : localMenuData) {
-                        if (subModule.getIadvert() == 1) {
-                            homeAdvertModule = subModule;
-                        } else {
-                            menuData.add(subModule);
-                        }
-                    }
-                    adapter.notifyDataSetChanged();
-
-                    //获取广告
-                    adverts = db.findAll(Advert.class);
-                    if (adverts != null && adverts.size() > 0) {
-                        viewPager.setAdapter(new MPagerAdapter(adverts));
-                        indicator.setViewPager(viewPager);
-                        timer.schedule(task, 1000, 3500);
-                    }
+                adverts = db.findAll(Advert.class);
+                if (adverts != null && adverts.size() > 0) {
+                    viewPager.setAdapter(new MPagerAdapter(adverts));
+                    indicator.setViewPager(viewPager);
+                    timer.schedule(task, 1000, 3500);
                 }
             } catch (DbException e) {
                 e.printStackTrace();
@@ -360,161 +349,6 @@ public class HomeActivity extends MBaseFragmentActivity implements OnClickListen
     }
 
     /**
-     * get main menu call back
-     */
-    Callback<Base<ArrayList<HomeMenu>>> cb = new Callback<Base<ArrayList<HomeMenu>>>() {
-        @Override
-        public void success(Base<ArrayList<HomeMenu>> homeMenus, Response response) {
-
-            if (homeMenus.getData() != null && homeMenus.getData().size() > 0) {
-
-                try {
-                    db.deleteAll(menuData);
-                    db.deleteAll(localList);
-                } catch (DbException e) {
-                    e.printStackTrace();
-                }
-
-                ArrayList<SubModule> temp = homeMenus.getData().get(0).getSubModule();
-
-                for (int i = 0; i < temp.size(); i++) {
-                    SubModule subModuleTemp = temp.get(i);
-                    if (subModuleTemp.getContentId().equals("" + HSSY)) {//婚纱摄影
-                        menuData.add(subModuleTemp);
-                        int size = subModuleTemp.getSubModule() == null ? 0 : subModuleTemp.getSubModule().size();
-                        LocalSubModule localSubModule = null;
-                        for (int j = 0; j < size; j++) {
-                            localSubModule = new LocalSubModule();
-                            localSubModule.setContentId(subModuleTemp.getSubModule().get(j).getContentId());
-                            localSubModule.setModuleName(subModuleTemp.getSubModule().get(j).getModuleName());
-                            localSubModule.setParentId(subModuleTemp.getContentId());
-                            localList.add(localSubModule);
-                        }
-                    } else if (subModuleTemp.getContentId().equals("" + HYYD)) {//婚宴预订
-                        menuData.add(subModuleTemp);
-                        int size = subModuleTemp.getSubModule() == null ? 0 : subModuleTemp.getSubModule().size();
-                        LocalSubModule localSubModule = null;
-                        for (int j = 0; j < size; j++) {
-                            localSubModule = new LocalSubModule();
-                            localSubModule.setContentId(subModuleTemp.getSubModule().get(j).getContentId());
-                            localSubModule.setModuleName(subModuleTemp.getSubModule().get(j).getModuleName());
-                            localSubModule.setParentId(subModuleTemp.getContentId());
-                            localList.add(localSubModule);
-                        }
-                    } else if (subModuleTemp.getContentId().equals("" + HQDZ)) {//婚庆案例
-                        menuData.add(subModuleTemp);
-                        int size = subModuleTemp.getSubModule() == null ? 0 : subModuleTemp.getSubModule().size();
-                        LocalSubModule localSubModule = null;
-                        for (int j = 0; j < size; j++) {
-                            localSubModule = new LocalSubModule();
-                            localSubModule.setContentId(subModuleTemp.getSubModule().get(j).getContentId());
-                            localSubModule.setModuleName(subModuleTemp.getSubModule().get(j).getModuleName());
-                            localSubModule.setParentId(subModuleTemp.getContentId());
-                            localList.add(localSubModule);
-                        }
-                    } else if (subModuleTemp.getContentId().equals("" + HSLF)) {//婚纱礼服
-                        menuData.add(subModuleTemp);
-                        int size = subModuleTemp.getSubModule() == null ? 0 : subModuleTemp.getSubModule().size();
-                        LocalSubModule localSubModule = null;
-                        for (int j = 0; j < size; j++) {
-                            localSubModule = new LocalSubModule();
-                            localSubModule.setContentId(subModuleTemp.getSubModule().get(j).getContentId());
-                            localSubModule.setModuleName(subModuleTemp.getSubModule().get(j).getModuleName());
-                            localSubModule.setParentId(subModuleTemp.getContentId());
-                            localList.add(localSubModule);
-                        }
-                    } else if (subModuleTemp.getContentId().equals("" + HJZS)) {//婚戒钻石
-                        menuData.add(subModuleTemp);
-                    } else if (subModuleTemp.getContentId().equals("" + WDY)) {//微电影
-                        menuData.add(subModuleTemp);
-                        int size = subModuleTemp.getSubModule() == null ? 0 : subModuleTemp.getSubModule().size();
-                        LocalSubModule localSubModule = null;
-                        for (int j = 0; j < size; j++) {
-                            localSubModule = new LocalSubModule();
-                            localSubModule.setContentId(subModuleTemp.getSubModule().get(j).getContentId());
-                            localSubModule.setModuleName(subModuleTemp.getSubModule().get(j).getModuleName());
-                            localSubModule.setParentId(subModuleTemp.getContentId());
-                            localList.add(localSubModule);
-                        }
-                    } else if (subModuleTemp.getContentId().equals("" + HLYP)) {//婚礼用品
-                        menuData.add(subModuleTemp);
-                        int size = subModuleTemp.getSubModule() == null ? 0 : subModuleTemp.getSubModule().size();
-                        LocalSubModule localSubModule = null;
-                        for (int j = 0; j < size; j++) {
-                            localSubModule = new LocalSubModule();
-                            localSubModule.setContentId(subModuleTemp.getSubModule().get(j).getContentId());
-                            localSubModule.setModuleName(subModuleTemp.getSubModule().get(j).getModuleName());
-                            localSubModule.setParentId(subModuleTemp.getContentId());
-                            localList.add(localSubModule);
-                        }
-                    } else if (subModuleTemp.getContentId().equals("" + HCZL)) {//婚车租赁
-                        menuData.add(subModuleTemp);
-                        int size = subModuleTemp.getSubModule() == null ? 0 : subModuleTemp.getSubModule().size();
-                        LocalSubModule localSubModule = null;
-                        for (int j = 0; j < size; j++) {
-                            localSubModule = new LocalSubModule();
-                            localSubModule.setContentId(subModuleTemp.getSubModule().get(j).getContentId());
-                            localSubModule.setModuleName(subModuleTemp.getSubModule().get(j).getModuleName());
-                            localSubModule.setParentId(subModuleTemp.getContentId());
-                            localList.add(localSubModule);
-                        }
-                    } else if (subModuleTemp.getContentId().equals("" + HMAD)) {//首页广告
-                        homeAdvertModule = subModuleTemp.getSubModule().get(0);
-                    }
-                }
-
-
-                try {
-                    db.saveAll(menuData);
-                    if (homeAdvertModule != null) {
-                        homeAdvertModule.setIadvert(1);
-                        db.saveOrUpdate(homeAdvertModule);
-                    }
-                    db.saveAll(localList);
-                } catch (DbException e) {
-                    e.printStackTrace();
-                }
-//                //缓存到本地数据库
-//                if (!MTDBUtil.todayChecked(context, HomeActivity.TAG)) {
-//                    try {
-//                        //1.保存首页菜单
-//                        db.saveOrUpdateAll(menuData);
-//
-//                        if(homeAdvertModule != null) {
-//                            homeAdvertModule.setIadvert(1);
-//                            db.saveOrUpdate(homeAdvertModule);
-//                        }
-//
-//                        //2.保存二级菜单
-//                        db.saveOrUpdateAll(localList);
-//
-//                        //更新缓存的日期为当天
-//                        Cache cache = new Cache(HomeActivity.TAG, MTDBUtil.getToday());
-//                        db.saveOrUpdate(cache);
-//
-//
-//                    } catch (DbException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-
-                adapter.notifyDataSetChanged();
-
-                if (homeAdvertModule != null) {
-                    HttpClient.getInstance().getHomeAdvert(homeAdvertModule.getContentId(), advertCallback);
-                }
-            } else {
-                T.s(context, "服务器维护中...");
-            }
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            System.out.println("Error");
-        }
-    };
-
-    /**
      *
      */
     Callback<Base<ArrayList<Advert>>> advertCallback = new Callback<Base<ArrayList<Advert>>>() {
@@ -535,16 +369,6 @@ public class HomeActivity extends MBaseFragmentActivity implements OnClickListen
                     } catch (DbException e) {
                         e.printStackTrace();
                     }
-
-//                    if (!MTDBUtil.todayChecked(context, HomeActivity.TAG_ADVERT)) {
-//                        try {
-//                            db.saveOrUpdateAll(adverts);
-//                            Cache cache = new Cache(HomeActivity.TAG_ADVERT, MTDBUtil.getToday());
-//                            db.saveOrUpdate(cache);
-//                        } catch (DbException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
                 }
             }
         }
@@ -618,7 +442,7 @@ public class HomeActivity extends MBaseFragmentActivity implements OnClickListen
 
             ImageView img = (ImageView) view.findViewById(R.id.home_menu_img);
 
-            SubModule subModule = menuData.get(i);
+            Menu subModule = menuData.get(i);
 
             //正式服务器
             if (subModule.getContentId().equals("" + HSSY)) {//婚纱摄影

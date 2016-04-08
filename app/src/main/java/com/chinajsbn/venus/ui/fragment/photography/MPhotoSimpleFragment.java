@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.chinajsbn.venus.R;
 import com.chinajsbn.venus.config.Conf;
 import com.chinajsbn.venus.net.HttpClient;
+import com.chinajsbn.venus.net.HttpClients;
 import com.chinajsbn.venus.net.bean.AddrStyle;
 import com.chinajsbn.venus.net.bean.AddrStyleResp;
 import com.chinajsbn.venus.net.bean.Address;
@@ -186,7 +187,7 @@ public class MPhotoSimpleFragment extends BaseFragment implements MasterListView
                     intent.putExtra("photographer", simple.getPhotographer());
                     intent.putExtra("stylist", simple.getStylist());
                     intent.putExtra("date", simple.getCreateDate());
-                    intent.putExtra("name", simple.getContentName());
+                    intent.putExtra("name", simple.getName());
 
                     ArrayList<SimpleStyles> styles = simple.getShootingStyles();
                     String strStyles = "";
@@ -242,21 +243,6 @@ public class MPhotoSimpleFragment extends BaseFragment implements MasterListView
                         getPagesByAddressFromLocal();
                     }
                 }
-
-//                if (position == 0) {
-//                    styleId = "-1";
-//                    addressId = "-1";
-//                    getFirstPages();
-//                } else {
-//                    isNextPage = false;
-//                    styleId = ((StyleAdapter)lv.getAdapter()).getItem(position).getStyleId();
-//                    if (NetworkUtil.hasConnection(getActivity())) {
-//                        dialog.show();
-//                        getPagesByStyle();
-//                    } else {
-//                        getPagesByStyleFromLocal();
-//                    }
-//                }
             }
         });
 
@@ -267,7 +253,7 @@ public class MPhotoSimpleFragment extends BaseFragment implements MasterListView
         getFirstPages();
 
         if (NetworkUtil.hasConnection(getActivity())) {
-            HttpClient.getInstance().getStyleList(styleListCallback);
+            HttpClients.getInstance().styleList(1, 100, styleListCallback);
         }else {
 
             addrStyle = new AddrStyle();
@@ -407,28 +393,28 @@ public class MPhotoSimpleFragment extends BaseFragment implements MasterListView
         }
     };
 
-    private Callback<AddrStyleResp> styleListCallback = new Callback<AddrStyleResp>() {
+    private Callback<Base<ArrayList<Style>>> styleListCallback = new Callback<Base<ArrayList<Style>>>() {
         @Override
-        public void success(AddrStyleResp addrStyleResp, Response response) {
+        public void success(Base<ArrayList<Style>> addrStyleResp, Response response) {
             if(addrStyleResp.getCode() == 200) {
-                addrStyle = addrStyleResp.getData();
-                ArrayList<PhotoStyle> styleList = new ArrayList<>();
-//                styleList.add(new PhotoStyle("-1", "全部风格"));
-                styleList.addAll(addrStyle.getStyle());
-
-
-                ArrayList<Address> addressList = new ArrayList<>();
-//                addressList.add(new Address("-1", "全部风格"));
-                addressList.addAll(addrStyle.getAddress());
-                try {
-                    db.deleteAll(PhotoStyle.class);
-                    db.saveAll(styleList);
-
-                    db.deleteAll(Address.class);
-                    db.saveAll(addressList);
-                } catch (DbException e) {
-                    e.printStackTrace();
-                }
+//                addrStyle = addrStyleResp.getData();
+//                ArrayList<PhotoStyle> styleList = new ArrayList<>();
+////                styleList.add(new PhotoStyle("-1", "全部风格"));
+//                styleList.addAll(addrStyle.getStyle());
+//
+//
+//                ArrayList<Address> addressList = new ArrayList<>();
+////                addressList.add(new Address("-1", "全部风格"));
+//                addressList.addAll(addrStyle.getAddress());
+//                try {
+//                    db.deleteAll(PhotoStyle.class);
+//                    db.saveAll(styleList);
+//
+//                    db.deleteAll(Address.class);
+//                    db.saveAll(addressList);
+//                } catch (DbException e) {
+//                    e.printStackTrace();
+//                }
             }
         }
 
@@ -445,7 +431,7 @@ public class MPhotoSimpleFragment extends BaseFragment implements MasterListView
             listView.startRefresh();
             listView.saveRefreshStrTime();
             if (styleId.equals("-1") && addressId.equals("-1")) { //全部数据
-                HttpClient.getInstance().getSimples(parentId, pageIndex, pageSize, callback);
+                HttpClients.getInstance().sampleList(pageIndex, pageSize, callback);
             } else if(!styleId.equals("-1")) {                   //通过style筛选
                 HttpClient.getInstance().getSimplesByStyleId(styleId, parentId, pageIndex, pageSize, callback);
             }else if(!addressId.equals("-1")) {                   //通过style筛选
@@ -659,7 +645,7 @@ public class MPhotoSimpleFragment extends BaseFragment implements MasterListView
             else
                 holder.styleTxt.setText("风格: " + dataList.get(position).getStyleName());
 
-            holder.nameTxt.setText(dataList.get(position).getContentName());
+            holder.nameTxt.setText(dataList.get(position).getName());
 
             //加载摄影师
             if (dataList.get(position).getPhotographer() != null && !TextUtils.isEmpty(dataList.get(position).getPhotographer().getPhotoUrl())) {
@@ -674,10 +660,10 @@ public class MPhotoSimpleFragment extends BaseFragment implements MasterListView
             }
 
             //加载内容
-            if (TextUtils.isEmpty(dataList.get(position).getContentUrl())) {
+            if (TextUtils.isEmpty(dataList.get(position).getCoverUrlApp())) {
                 Picasso.with(getActivity()).load(R.mipmap.ic_launcher).into(holder.contentImg);
             } else {
-                Picasso.with(getActivity()).load(dataList.get(position).getContentUrl() + DimenUtil.getHorizontalListViewStringDimension(DimenUtil.screenWidth)).error(getResources().getDrawable(R.mipmap.ic_launcher)).resize(DimenUtil.screenWidth, DimenUtil.targetHeight).into(holder.contentImg);
+                Picasso.with(getActivity()).load(dataList.get(position).getCoverUrlApp() + DimenUtil.getHorizontalListViewStringDimension(DimenUtil.screenWidth)).error(getResources().getDrawable(R.mipmap.ic_launcher)).resize(DimenUtil.screenWidth, DimenUtil.targetHeight).into(holder.contentImg);
             }
 
             return view;

@@ -310,8 +310,8 @@ public class PlanSimpleFragment extends BaseFragment implements OnRecyclerItemCl
                     styleId = "-1";
                     getFirstPages();
                 } else {
-                    styleId = ((StyleAdapter)styleListView.getAdapter()).getItem(position).getStyleId();
-                    styleName = ((StyleAdapter)styleListView.getAdapter()).getItem(position).getStyleName();
+//                    styleId = ((StyleAdapter)styleListView.getAdapter()).getItem(position).getId();
+                    styleName = ((StyleAdapter)styleListView.getAdapter()).getItem(position).getName();
                     getPagesByStyle();
                 }
             }
@@ -389,7 +389,7 @@ public class PlanSimpleFragment extends BaseFragment implements OnRecyclerItemCl
 
         public StyleAdapter(List<Style> list) {
             data = new ArrayList<>();
-            Style style = new Style("-1", "全部风格");
+            Style style = new Style(-1, 0, "全部风格");
             data.add(style);
             if (list != null && list.size() > 0) {
                 data.addAll(list);
@@ -422,7 +422,7 @@ public class PlanSimpleFragment extends BaseFragment implements OnRecyclerItemCl
             } else {
                 holder = (ViewHolder) view.getTag();
             }
-            holder.txt.setText(data.get(i).getStyleName());
+            holder.txt.setText(data.get(i).getName());
             return view;
         }
 

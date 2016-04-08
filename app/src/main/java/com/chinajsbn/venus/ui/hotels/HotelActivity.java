@@ -17,12 +17,11 @@ import android.widget.ListView;
 
 import com.chinajsbn.venus.R;
 import com.chinajsbn.venus.net.bean.LocalSubModule;
-import com.chinajsbn.venus.net.bean.SubModule;
+import com.chinajsbn.venus.net.bean.menu.Menu;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.BaseFragment;
 import com.chinajsbn.venus.ui.base.MBaseFragmentActivity;
 import com.chinajsbn.venus.ui.home.HomeActivity;
-import com.chinajsbn.venus.ui.hotels.fragment.HotelFragment;
 import com.chinajsbn.venus.ui.hotels.fragment.MTHotelFragment;
 import com.chinajsbn.venus.ui.other.OtherActivity;
 import com.chinajsbn.venus.utils.NetworkUtil;
@@ -48,7 +47,9 @@ public class HotelActivity extends MBaseFragmentActivity {
 
     ////////////////////////cache///////////////////////////
     private DbUtils db;
-    private List<SubModule> dataList;
+//    private List<SubModule> dataList;
+    private List<Menu> dataList;
+
     private List<LocalSubModule> localSubModules;//本地数据
 
     @ViewInject(R.id.drawer_layout)
@@ -76,7 +77,7 @@ public class HotelActivity extends MBaseFragmentActivity {
         db.configAllowTransaction(true);
 
         if(NetworkUtil.hasConnection(context)){
-            dataList = (List<SubModule>) getIntent().getSerializableExtra("subModule");
+            dataList = (List<Menu>) getIntent().getSerializableExtra("subModule");
             if (dataList == null || dataList.size() <= 0) {
                 T.s(context, "服务器维护中...");
                 return;
@@ -97,12 +98,9 @@ public class HotelActivity extends MBaseFragmentActivity {
 
             //
             for (int i = 0; i < dataList.size(); i++) {
-                SubModule subModule = dataList.get(i);
+                Menu subModule = dataList.get(i);
                 if (subModule.getContentId().equals(JDLB)) {
                     hotelFragment = new MTHotelFragment() ;
-                    Bundle bundle = new Bundle();
-                    bundle.putString("parentId", subModule.getSubModule().get(0).getContentId());
-                    hotelFragment.setArguments(bundle);
                     menuFragments.put(subModule.getContentId(), hotelFragment);
                     menuPosition.put(subModule.getContentId(), i);
                 }

@@ -143,7 +143,7 @@ public class SimpleDetailActivity extends MBaseFragmentActivity implements OnRec
             int size = data.size();
             for (int i = 0; i < size; i++) {
                 Simple simple = data.get(i);
-                String url = simple.getContentUrl();
+                String url = simple.getCoverUrlApp();
                 url = url.substring(url.lastIndexOf("_") + 1, url.lastIndexOf("."));
                 int width = Integer.parseInt(url.split("x")[0]);
                 int height = Integer.parseInt(url.split("x")[1]);
@@ -336,8 +336,8 @@ public class SimpleDetailActivity extends MBaseFragmentActivity implements OnRec
                 }
 
                 //内容
-                Picasso.with(context).load(doubleSimpleCustom.getData2().getContentUrl() + DimenUtil.getVertical50Q()+ DimenUtil.getSuffixUTF8()).into(holder.contentImg2);
-                holder.contentImg2.setTag(doubleSimpleCustom.getData2().getContentUrl());
+                Picasso.with(context).load(doubleSimpleCustom.getData2().getCoverUrlApp() + DimenUtil.getVertical50Q()+ DimenUtil.getSuffixUTF8()).into(holder.contentImg2);
+                holder.contentImg2.setTag(doubleSimpleCustom.getData2().getCoverUrlApp());
                 holder.contentImg2.setOnClickListener(this);
 
             } else {
@@ -354,24 +354,24 @@ public class SimpleDetailActivity extends MBaseFragmentActivity implements OnRec
                 if (doubleSimpleCustom.getData1() != null && doubleSimpleCustom.getData2() != null) {//显示两个
                     holder.contentImg1.setVisibility(View.VISIBLE);
                     holder.contentImg2.setVisibility(View.VISIBLE);
-                    Picasso.with(context).load(doubleSimpleCustom.getData1().getContentUrl() + DimenUtil.getVertical50Q()+ DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.contentImg1);
-                    holder.contentImg1.setTag(doubleSimpleCustom.getData1().getContentUrl());
-                    Picasso.with(context).load(doubleSimpleCustom.getData2().getContentUrl() + DimenUtil.getVertical50Q() + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.contentImg2);
-                    holder.contentImg2.setTag(doubleSimpleCustom.getData2().getContentUrl());
+                    Picasso.with(context).load(doubleSimpleCustom.getData1().getCoverUrlApp() + DimenUtil.getVertical50Q()+ DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.contentImg1);
+                    holder.contentImg1.setTag(doubleSimpleCustom.getData1().getCoverUrlApp());
+                    Picasso.with(context).load(doubleSimpleCustom.getData2().getCoverUrlApp() + DimenUtil.getVertical50Q() + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.contentImg2);
+                    holder.contentImg2.setTag(doubleSimpleCustom.getData2().getCoverUrlApp());
                     holder.contentImg2.setOnClickListener(this);
                     holder.contentImg1.setOnClickListener(this);
                 } else {//显示一个
                     holder.contentImg2.setVisibility(View.GONE);
                     holder.contentImg1.setVisibility(View.VISIBLE);
 
-                    if (DimenUtil.isHorizontal(doubleSimpleCustom.getData1().getContentUrl())) {
-                        Picasso.with(context).load(doubleSimpleCustom.getData1().getContentUrl() + DimenUtil.getHorizontal50Q() + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.contentImg1);
+                    if (DimenUtil.isHorizontal(doubleSimpleCustom.getData1().getCoverUrlApp())) {
+                        Picasso.with(context).load(doubleSimpleCustom.getData1().getCoverUrlApp() + DimenUtil.getHorizontal50Q() + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.contentImg1);
                     } else {//只有一个， 又是竖图。
 //                        Picasso.with(context).load(doubleSimpleCustom.getData1().getContentUrl() + "@" + DimenUtil.screenWidth + "w_" + DimenUtil.screenWidth * 3 + "h_40Q").into(holder.contentImg1);
-                        Picasso.with(context).load(doubleSimpleCustom.getData1().getContentUrl() + "@" + DimenUtil.screenWidth + "w_" + DimenUtil.screenWidth * 3 / 2 + "h_40Q" + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.contentImg1);
+                        Picasso.with(context).load(doubleSimpleCustom.getData1().getCoverUrlApp() + "@" + DimenUtil.screenWidth + "w_" + DimenUtil.screenWidth * 3 / 2 + "h_40Q" + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.contentImg1);
                     }
 
-                    holder.contentImg1.setTag(doubleSimpleCustom.getData1().getContentUrl());
+                    holder.contentImg1.setTag(doubleSimpleCustom.getData1().getCoverUrlApp());
                     holder.contentImg1.setOnClickListener(this);
                 }
             }

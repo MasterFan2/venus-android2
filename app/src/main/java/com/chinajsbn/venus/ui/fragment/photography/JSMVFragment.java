@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
 import com.chinajsbn.venus.net.HttpClient;
+import com.chinajsbn.venus.net.HttpClients;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Film;
 import com.chinajsbn.venus.ui.base.BaseFragment;
@@ -71,8 +72,6 @@ public class JSMVFragment extends BaseFragment implements OnRecyclerItemClickLis
     @Override
     public void initialize() {
 
-        S.o("::::::::JSMVFragment:::::::");
-
         db = DbUtils.create(getActivity());
         db.configAllowTransaction(true);
 
@@ -85,7 +84,6 @@ public class JSMVFragment extends BaseFragment implements OnRecyclerItemClickLis
                 .setGravity(MTDialog.Gravity.BOTTOM)
                 .setOnClickListener(this)
                 .create();
-
 
 //        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -163,7 +161,6 @@ public class JSMVFragment extends BaseFragment implements OnRecyclerItemClickLis
                         db.delete(Film.class, WhereBuilder.b("tag", "=", TAG));
                         for (Film film: dataList){
                             film.setTag(TAG);
-                            film.setImgUrl(film.getCoverImage().getImageUrl());
                         }
                         db.saveAll(dataList);
                     } catch (DbException e) {
@@ -242,7 +239,7 @@ public class JSMVFragment extends BaseFragment implements OnRecyclerItemClickLis
     @Override
     public void show() {
         if(NetworkUtil.hasConnection(getActivity())){
-            HttpClient.getInstance().filmList(order, type, pageIndex , pageSize, cb);
+            HttpClients.getInstance().documentaryList(pageIndex , pageSize, cb);
         }else {
             recyclerView.setPullRefreshEnabled(false);
             try {
@@ -263,7 +260,7 @@ public class JSMVFragment extends BaseFragment implements OnRecyclerItemClickLis
     public void onRecyclerItemClick(View v, int position) {
         if(NetworkUtil.hasConnection(getActivity())){
             Intent intent = new Intent(getActivity(), VideoActivity.class);
-            intent.putExtra("url", dataList.get(position -1).getUrl());
+            intent.putExtra("url", dataList.get(position -1).getCoverUrlApp());
             animStart(intent);
         }else{
             handler.sendEmptyMessageDelayed(10, 10);

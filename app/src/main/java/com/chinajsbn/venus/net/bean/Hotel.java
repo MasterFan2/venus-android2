@@ -14,13 +14,24 @@ import java.util.ArrayList;
 @Table(name = "Hotel")
 public class Hotel {
 
+    @Column(column = "id")
+    private int id;
+
+    private String appDetailImages;
+
     @Column(column = "address")
     private String address;
 
-    @Column(column = "banquetHallCount")
-    private String banquetHallCount;
+    @Column(column = "banquetHalNum")
+    private String banquetHalNum;
 
-    private ArrayList<Banquet> banquetHallList;
+    private ArrayList<Banquet> banquetHall;
+
+    @Column(column = "setMealDetail")
+    private String setMealDetail;//菜品
+
+    @Column(column = "lableDetail")
+    private String lableDetail;//活动
 
     @Column(column = "capacityPerTable")
     private int capacityPerTable;
@@ -31,15 +42,18 @@ public class Hotel {
     @Column(column = "highestConsumption")
     private int highestConsumption;
 
+    @Column(column = "introduction")
+    private String introduction;
+
     @Id
     @Column(column = "hotelId")
     private String hotelId;
 
     @Column(column = "hotelName")
-    private String hotelName;
+    private String name;
 
     @Column(column = "imageUrl")
-    private String imageUrl;
+    private String coverUrlApp;
 
     @Column(column = "isDiscount")
     private String isDiscount;
@@ -59,14 +73,6 @@ public class Hotel {
     @Column(column = "cityId")
     private int cityId;
 
-    public int getCityId() {
-        return cityId;
-    }
-
-    public void setCityId(int cityId) {
-        this.cityId = cityId;
-    }
-
     public String getAddress() {
         return address;
     }
@@ -75,20 +81,28 @@ public class Hotel {
         this.address = address;
     }
 
-    public String getBanquetHallCount() {
-        return banquetHallCount;
+    public String getAppDetailImages() {
+        return appDetailImages;
     }
 
-    public void setBanquetHallCount(String banquetHallCount) {
-        this.banquetHallCount = banquetHallCount;
+    public void setAppDetailImages(String appDetailImages) {
+        this.appDetailImages = appDetailImages;
     }
 
-    public ArrayList<Banquet> getBanquetHallList() {
-        return banquetHallList;
+    public ArrayList<Banquet> getBanquetHall() {
+        return banquetHall;
     }
 
-    public void setBanquetHallList(ArrayList<Banquet> banquetHallList) {
-        this.banquetHallList = banquetHallList;
+    public void setBanquetHall(ArrayList<Banquet> banquetHall) {
+        this.banquetHall = banquetHall;
+    }
+
+    public String getBanquetHalNum() {
+        return banquetHalNum;
+    }
+
+    public void setBanquetHalNum(String banquetHalNum) {
+        this.banquetHalNum = banquetHalNum;
     }
 
     public int getCapacityPerTable() {
@@ -97,6 +111,22 @@ public class Hotel {
 
     public void setCapacityPerTable(int capacityPerTable) {
         this.capacityPerTable = capacityPerTable;
+    }
+
+    public int getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(int cityId) {
+        this.cityId = cityId;
+    }
+
+    public String getCoverUrlApp() {
+        return coverUrlApp;
+    }
+
+    public void setCoverUrlApp(String coverUrlApp) {
+        this.coverUrlApp = coverUrlApp;
     }
 
     public String getFeatureLable() {
@@ -123,20 +153,20 @@ public class Hotel {
         this.hotelId = hotelId;
     }
 
-    public String getHotelName() {
-        return hotelName;
+    public int getId() {
+        return id;
     }
 
-    public void setHotelName(String hotelName) {
-        this.hotelName = hotelName;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getIntroduction() {
+        return introduction;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setIntroduction(String introduction) {
+        this.introduction = introduction;
     }
 
     public String getIsDiscount() {
@@ -155,6 +185,14 @@ public class Hotel {
         this.isGift = isGift;
     }
 
+    public String getLableDetail() {
+        return lableDetail;
+    }
+
+    public void setLableDetail(String lableDetail) {
+        this.lableDetail = lableDetail;
+    }
+
     public String getListCount() {
         return listCount;
     }
@@ -171,6 +209,22 @@ public class Hotel {
         this.lowestConsumption = lowestConsumption;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSetMealDetail() {
+        return setMealDetail;
+    }
+
+    public void setSetMealDetail(String setMealDetail) {
+        this.setMealDetail = setMealDetail;
+    }
+
     public String getTypeName() {
         return typeName;
     }
@@ -179,23 +233,31 @@ public class Hotel {
         this.typeName = typeName;
     }
 
-    public Hotel(){}
+    public Hotel() {
 
-    public Hotel(String address, String banquetHallCount, ArrayList<Banquet> banquetHallList, int capacityPerTable, String featureLable, int highestConsumption, String hotelId, String hotelName, String imageUrl, String isDiscount, String isGift, String listCount, String lowestConsumption, String typeName) {
+    }
+
+    public Hotel(String address, String appDetailImages, ArrayList<Banquet> banquetHall, String banquetHalNum, int capacityPerTable, int cityId, String coverUrlApp, String featureLable, int highestConsumption, String hotelId, int id, String introduction, String isDiscount, String isGift, String lableDetail, String listCount, String lowestConsumption, String name, String setMealDetail, String typeName) {
 
         this.address = address;
-        this.banquetHallCount = banquetHallCount;
-        this.banquetHallList = banquetHallList;
+        this.appDetailImages = appDetailImages;
+        this.banquetHall = banquetHall;
+        this.banquetHalNum = banquetHalNum;
         this.capacityPerTable = capacityPerTable;
+        this.cityId = cityId;
+        this.coverUrlApp = coverUrlApp;
         this.featureLable = featureLable;
         this.highestConsumption = highestConsumption;
         this.hotelId = hotelId;
-        this.hotelName = hotelName;
-        this.imageUrl = imageUrl;
+        this.id = id;
+        this.introduction = introduction;
         this.isDiscount = isDiscount;
         this.isGift = isGift;
+        this.lableDetail = lableDetail;
         this.listCount = listCount;
         this.lowestConsumption = lowestConsumption;
+        this.name = name;
+        this.setMealDetail = setMealDetail;
         this.typeName = typeName;
     }
 }

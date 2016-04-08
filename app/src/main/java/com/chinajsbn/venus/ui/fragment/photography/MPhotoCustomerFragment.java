@@ -22,11 +22,11 @@ import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
 import com.chinajsbn.venus.net.HttpClient;
+import com.chinajsbn.venus.net.HttpClients;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Custom;
 import com.chinajsbn.venus.net.bean.MasterFanSeason;
 import com.chinajsbn.venus.net.bean.MenuLink;
-import com.chinajsbn.venus.net.bean.SimpleStyles;
 import com.chinajsbn.venus.ui.base.BaseFragment;
 import com.chinajsbn.venus.ui.base.FragmentFeature;
 import com.chinajsbn.venus.ui.base.OnRecyclerItemClickListener;
@@ -149,28 +149,20 @@ public class MPhotoCustomerFragment extends BaseFragment implements OnRecyclerIt
         listView.saveRefreshStrTime();
 
         if(tabCustomSeason == 0){
-            HttpClient.getInstance().getCustomList(parentId, pageIndex, pageSize, cb);
+            HttpClients.getInstance().customList(0, pageIndex, pageSize, cb);
         }else if(tabCustomSeason == 1){
-            HttpClient.getInstance().customListBySeasonId(seasonParentId, pageIndex, pageSize, sList.get(seasonPosition).getSeasonId(), cb);
+            HttpClients.getInstance().customList(sList.get(seasonPosition).getSeasonId(), pageIndex, pageSize, cb);
         }
     }
-
-//    private void getPagesByStyle() {
-//        pageIndex = 1;
-//        if (dataList != null && dataList.size() > 0) {
-//            listView.smoothScrollToPosition(0);
-//        }
-//        HttpClient.getInstance().getCustomListByStyleId(styleId, parentId, pageIndex, pageSize, cb);
-//    }
 
     private void getNextPages() {
         isNextPage = true;
         pageIndex++;
         dataType = DataType.NEXT;
         if(tabCustomSeason == 0){
-            HttpClient.getInstance().getCustomList(parentId, pageIndex, pageSize, cb);
+            HttpClients.getInstance().customList(0, pageIndex, pageSize, cb);
         }else if(tabCustomSeason == 1){
-            HttpClient.getInstance().customListBySeasonId(seasonParentId, pageIndex, pageSize, sList.get(seasonPosition).getSeasonId(), cb);
+            HttpClients.getInstance().customList(sList.get(seasonPosition).getSeasonId(), pageIndex, pageSize, cb);
         }
     }
 
@@ -219,12 +211,13 @@ public class MPhotoCustomerFragment extends BaseFragment implements OnRecyclerIt
                         }
                     }
                 } else if (tab.getPosition() == 1) {
+                    S.o("==============" + (sList == null ? 0 : sList.size()));
                     multiViewPager.setVisibility(View.VISIBLE);
 
                     if(NetworkUtil.hasConnection(getActivity())){
                         if (seasonList == null) {
                             if (seasonPosition != -1 && sList != null && sList.size() > 0) {
-                                HttpClient.getInstance().customListBySeasonId(seasonParentId, pageIndex, pageSize, sList.get(seasonPosition).getSeasonId(), cb);
+                                HttpClients.getInstance().customList(sList.get(seasonPosition).getSeasonId(), pageIndex, pageSize, cb);
                             }
                         }else{
                             dataList = seasonList;
@@ -273,7 +266,7 @@ public class MPhotoCustomerFragment extends BaseFragment implements OnRecyclerIt
                 seasonPosition = position;
                 if(NetworkUtil.hasConnection(getActivity())){
                     dialog.show();
-                    HttpClient.getInstance().customListBySeasonId(seasonParentId, pageIndex, pageSize, sList.get(seasonPosition).getSeasonId(), cb);
+                    HttpClients.getInstance().customList(sList.get(seasonPosition).getSeasonId(), pageIndex, pageSize, cb);
                 }else{
                     if(sList != null && sList.size() > 0){
                         try {
@@ -324,20 +317,8 @@ public class MPhotoCustomerFragment extends BaseFragment implements OnRecyclerIt
                     intent.putExtra("contentId", simple.getContentId());
                     intent.putExtra("simpleOrCustom", simpleOrCustom);
                     intent.putExtra("photographer", simple.getPhotographer());
-                    intent.putExtra("stylist", simple.getStylist());
                     intent.putExtra("date", simple.getCreateDate());
-                    intent.putExtra("name", simple.getContentName());
-
-
-                    ArrayList<SimpleStyles> styles = simple.getShootingStyles();
-                    String strStyles = "";
-                    if (styles != null && styles.size() > 0) {
-                        for (int i = 0; i < styles.size(); i++) {
-                            strStyles += styles.get(i).getShootingStyleName() + ",";
-                        }
-                        strStyles = strStyles.substring(0, strStyles.lastIndexOf(","));
-                    }
-                    intent.putExtra("styles", strStyles);
+                    intent.putExtra("name", simple.getName());
 
                     getActivity().startActivity(intent);
                     getActivity().overridePendingTransition(R.anim.roll_up, R.anim.roll);
@@ -357,8 +338,8 @@ public class MPhotoCustomerFragment extends BaseFragment implements OnRecyclerIt
 
         if(NetworkUtil.hasConnection(getActivity())){
             //获取分季
-            HttpClient.getInstance().seasonList(seasonCallback);
-        }else{//not connect
+            HttpClients.getInstance().customSeason(seasonCallback);
+        }else  {//not connect
             try {
                 seasonPosition = 0;
                 sList = db.findAll(MasterFanSeason.class);
@@ -374,8 +355,8 @@ public class MPhotoCustomerFragment extends BaseFragment implements OnRecyclerIt
                         public Fragment getItem(int position) {
                             Fragment fragment = new PageFragment();
                             Bundle bundle = new Bundle();
-                            bundle.putSerializable("url", sList.get(position).getMobileUrl());
-                            bundle.putSerializable("text", sList.get(position).getSeasonName());
+                            bundle.putSerializable("url", sList.get(position).getCoverUrlApp());
+                            bundle.putSerializable("text", sList.get(position).getName());
                             fragment.setArguments(bundle);
                             return fragment;
                         }
@@ -471,8 +452,8 @@ public class MPhotoCustomerFragment extends BaseFragment implements OnRecyclerIt
                         public Fragment getItem(int position) {
                             Fragment fragment = new PageFragment();
                             Bundle bundle = new Bundle();
-                            bundle.putString("url", sList.get(position).getMobileUrl());
-                            bundle.putString("text", sList.get(position).getSeasonName());
+                            bundle.putString("url", sList.get(position).getCoverUrlApp());
+                            bundle.putString("text", sList.get(position).getName());
                             fragment.setArguments(bundle);
                             return fragment;
                         }
@@ -490,9 +471,9 @@ public class MPhotoCustomerFragment extends BaseFragment implements OnRecyclerIt
         }
     };
 
-    private Callback<Base<List<Custom>>> cb = new Callback<Base<List<Custom>>>() {
+    private Callback<Base<ArrayList<Custom>>> cb = new Callback<Base<ArrayList<Custom>>>() {
         @Override
-        public void success(Base<List<Custom>> simpleResp, Response response) {
+        public void success(Base<ArrayList<Custom>> simpleResp, Response response) {
 
             if (dialog != null && dialog.isShowing()) dialog.dismiss();
             listView.stopRefresh();
@@ -506,9 +487,6 @@ public class MPhotoCustomerFragment extends BaseFragment implements OnRecyclerIt
                             db.delete(Custom.class, WhereBuilder.b("seasonId", "=", -1));
                             for (Custom custom : zjList){
                                 custom.setSeasonId("-1");
-                                if(custom.getShootingStyles() != null && custom.getShootingStyles().size() > 0){
-                                    custom.setShootingStyleName(custom.getShootingStyles().get(0).getShootingStyleName());
-                                }
                             }
                             db.saveAll(zjList);
                             dataList = zjList;
@@ -534,10 +512,7 @@ public class MPhotoCustomerFragment extends BaseFragment implements OnRecyclerIt
                         try {
                             db.delete(Custom.class, WhereBuilder.b("seasonId", "=", sList.get(seasonPosition).getSeasonId()));
                             for (Custom custom : seasonList){
-                                custom.setSeasonId(sList.get(seasonPosition).getSeasonId());
-                                if(custom.getShootingStyles() != null && custom.getShootingStyles().size() > 0){
-                                    custom.setShootingStyleName(custom.getShootingStyles().get(0).getShootingStyleName());
-                                }
+                                custom.setSeasonId(sList.get(seasonPosition).getSeasonId()+"");
                             }
                             db.saveAll(seasonList);
 
@@ -551,7 +526,7 @@ public class MPhotoCustomerFragment extends BaseFragment implements OnRecyclerIt
                         seasonList.addAll(simpleResp.getData());
                         try {
                             for (Custom custom : simpleResp.getData()){
-                                custom.setSeasonId(sList.get(seasonPosition).getSeasonId());
+                                custom.setSeasonId(sList.get(seasonPosition).getSeasonId()+"");
                             }
                             db.saveAll(simpleResp.getData());
                         } catch (DbException e) {
@@ -596,20 +571,8 @@ public class MPhotoCustomerFragment extends BaseFragment implements OnRecyclerIt
         intent.putExtra("contentId", simple.getContentId());
         intent.putExtra("simpleOrCustom", simpleOrCustom);
         intent.putExtra("photographer", simple.getPhotographer());
-        intent.putExtra("stylist", simple.getStylist());
         intent.putExtra("date", simple.getCreateDate());
-        intent.putExtra("name", simple.getContentName());
-
-
-        ArrayList<SimpleStyles> styles = simple.getShootingStyles();
-        String strStyles = "";
-        if (styles != null && styles.size() > 0) {
-            for (int i = 0; i < styles.size(); i++) {
-                strStyles += styles.get(i).getShootingStyleName() + ",";
-            }
-            strStyles = strStyles.substring(0, strStyles.lastIndexOf(","));
-        }
-        intent.putExtra("styles", strStyles);
+        intent.putExtra("name", simple.getName());
 
         getActivity().startActivity(intent);
         getActivity().overridePendingTransition(R.anim.roll_up, R.anim.roll);
@@ -651,32 +614,32 @@ public class MPhotoCustomerFragment extends BaseFragment implements OnRecyclerIt
             } else {
                 holder = (ViewHolder) view.getTag();
             }
-            if (custom.getShootingStyles() != null && custom.getShootingStyles().size() > 0)
-                holder.styleTxt.setText("风格:" + custom.getShootingStyles().get(0).getShootingStyleName());
-            else
-                holder.styleTxt.setText("风格:" + custom.getShootingStyleName());
+//            if (custom.getShootingStyles() != null && custom.getShootingStyles().size() > 0)
+//                holder.styleTxt.setText("风格:" + custom.getShootingStyles().get(0).getShootingStyleName());
+//            else
+//                holder.styleTxt.setText("风格:" + custom.getShootingStyleName());
 
             //加载摄影师
-            if (custom.getPhotographer() != null && custom.getStylist() != null) {
-                holder.name2Txt.setVisibility(View.GONE);
-                holder.headImgLayout.setVisibility(View.VISIBLE);
-                holder.nameTxt.setText(custom.getContentName());
-                Picasso.with(getActivity()).load(custom.getPhotographer().getPhotoUrl()).error(getResources().getDrawable(R.mipmap.ic_launcher)).into(holder.photographerImg);
-                holder.phtographerNameTxt.setText(custom.getPhotographer().getPersonName());
-                //加造型师
-                if (custom.getStylist() != null && !TextUtils.isEmpty(custom.getStylist().getPhotoUrl())) {
-                    Picasso.with(getActivity()).load(custom.getStylist().getPhotoUrl()).error(getResources().getDrawable(R.mipmap.ic_launcher)).into(holder.stylistImg);
-                }
-            } else {
-                holder.name2Txt.setVisibility(View.VISIBLE);
-                holder.name2Txt.setText(custom.getContentName());
-                holder.headImgLayout.setVisibility(View.GONE);
-            }
+//            if (custom.getPhotographer() != null && custom.getStylist() != null) {
+//                holder.name2Txt.setVisibility(View.GONE);
+//                holder.headImgLayout.setVisibility(View.VISIBLE);
+//                holder.nameTxt.setText(custom.getContentName());
+//                Picasso.with(getActivity()).load(custom.getPhotographer().getPhotoUrl()).error(getResources().getDrawable(R.mipmap.ic_launcher)).into(holder.photographerImg);
+//                holder.phtographerNameTxt.setText(custom.getPhotographer().getPersonName());
+//                //加造型师
+//                if (custom.getStylist() != null && !TextUtils.isEmpty(custom.getStylist().getPhotoUrl())) {
+//                    Picasso.with(getActivity()).load(custom.getStylist().getPhotoUrl()).error(getResources().getDrawable(R.mipmap.ic_launcher)).into(holder.stylistImg);
+//                }
+//            } else {
+//                holder.name2Txt.setVisibility(View.VISIBLE);
+//                holder.name2Txt.setText(custom.getContentName());
+//                holder.headImgLayout.setVisibility(View.GONE);
+//            }
             //加载内容
-            if (TextUtils.isEmpty(custom.getContentUrl())) {
+            if (TextUtils.isEmpty(custom.getCoverUrlApp())) {
                 Picasso.with(getActivity()).load(R.mipmap.ic_launcher).into(holder.contentImg);
             } else {
-                Picasso.with(getActivity()).load(custom.getContentUrl() + DimenUtil.getHorizontalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).error(getResources().getDrawable(R.mipmap.ic_launcher)).resize(DimenUtil.screenWidth, DimenUtil.targetHeight).into(holder.contentImg);
+                Picasso.with(getActivity()).load(custom.getCoverUrlApp() + DimenUtil.getHorizontalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).error(getResources().getDrawable(R.mipmap.ic_launcher)).resize(DimenUtil.screenWidth, DimenUtil.targetHeight).into(holder.contentImg);
             }
             return view;
         }

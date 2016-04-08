@@ -7,7 +7,6 @@ import android.view.View;
 import com.chinajsbn.venus.R;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.MBaseFragmentActivity;
-import com.chinajsbn.venus.ui.fragment.photography.PhotoCustomerFragment;
 import com.chinajsbn.venus.ui.fragment.photography.PhotoWedSuitFragment;
 import com.chinajsbn.venus.ui.fragment.photography.PhotoSelPhotographerFragment;
 import com.chinajsbn.venus.ui.fragment.photography.PhotoSelStylistFragment;
@@ -81,7 +80,7 @@ public class PhotographyActivity extends MBaseFragmentActivity implements View.O
         if (v == itemSimple) {
             changeFragment(new PhotoSimpleFragment());
         } else if (v == itemCustom) {
-            changeFragment(new PhotoCustomerFragment());
+//            changeFragment(new PhotoCustomerFragment());
         } else if (v == itemPrice) {
             changeFragment(new PhotoWedSuitFragment());
         } else if (v == itemSelectPhotographer) {

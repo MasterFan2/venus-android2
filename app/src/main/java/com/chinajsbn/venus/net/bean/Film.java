@@ -9,6 +9,9 @@ import com.lidroid.xutils.db.annotation.Table;
  */
 @Table(name = "Film")
 public class Film {
+
+    private int id;
+
     @Column(column = "coverImage")
     private CoverImage coverImage;
 
@@ -33,31 +36,15 @@ public class Film {
     @Column(column = "imgUrl")
     private String imgUrl;
 
-    @Column(column = "url")
-    private String url;
+    @Column(column = "coverUrlApp")
+    private String coverUrlApp;
 
     @Id
     @Column(column = "videoId")
     private int videoId;
 
-    public String getImgUrl() {
-        return imgUrl;
-    }
-
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
-    }
-
     @Column(column = "tag")
     private String tag;
-
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
 
     public CoverImage getCoverImage() {
         return coverImage;
@@ -65,6 +52,14 @@ public class Film {
 
     public void setCoverImage(CoverImage coverImage) {
         this.coverImage = coverImage;
+    }
+
+    public String getCoverUrlApp() {
+        return coverUrlApp;
+    }
+
+    public void setCoverUrlApp(String coverUrlApp) {
+        this.coverUrlApp = coverUrlApp;
     }
 
     public String getCreateDate() {
@@ -81,6 +76,22 @@ public class Film {
 
     public void setHits(int hits) {
         this.hits = hits;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 
     public int getIsUsed() {
@@ -115,12 +126,12 @@ public class Film {
         this.seasonId = seasonId;
     }
 
-    public String getUrl() {
-        return url;
+    public String getTag() {
+        return tag;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public int getVideoId() {
@@ -132,18 +143,22 @@ public class Film {
     }
 
     public Film() {
+
     }
 
-    public Film(CoverImage coverImage, String createDate, int hits, int isUsed, String name, String remark, int seasonId, String url, int videoId) {
+    public Film(CoverImage coverImage, String coverUrlApp, String createDate, int hits, int id, String imgUrl, int isUsed, String name, String remark, int seasonId, String tag, int videoId) {
 
         this.coverImage = coverImage;
+        this.coverUrlApp = coverUrlApp;
         this.createDate = createDate;
         this.hits = hits;
+        this.id = id;
+        this.imgUrl = imgUrl;
         this.isUsed = isUsed;
         this.name = name;
         this.remark = remark;
         this.seasonId = seasonId;
-        this.url = url;
+        this.tag = tag;
         this.videoId = videoId;
     }
 }

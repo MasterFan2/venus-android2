@@ -98,7 +98,7 @@ public class SimpleDetailPictureActivity extends MBaseFragmentActivity {
             orderList = (ArrayList<Simple>) getIntent().getSerializableExtra("dataList");
             size = orderList == null ? 0 : orderList.size();
             for (int i = 0; i < size; i++) {
-                if(orderList.get(i).getContentUrl().equals(url)){
+                if(orderList.get(i).getCoverUrlApp().equals(url)){
                     tempPosition = i;
                     break;
                 }
@@ -164,7 +164,7 @@ public class SimpleDetailPictureActivity extends MBaseFragmentActivity {
             String url ;
             if(isPlan)       url = planOrderList.get(position).getContentUrl();
             else if(isDress) url = aDressList.get(position).getImageUrl();
-            else             url = orderList.get(position).getContentUrl();
+            else             url = orderList.get(position).getCoverUrlApp();
 
             if (!TextUtils.isEmpty(url)) {
                 if (DimenUtil.isHorizontal(url)) {

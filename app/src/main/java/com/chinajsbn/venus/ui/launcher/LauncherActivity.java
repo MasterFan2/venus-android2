@@ -39,18 +39,26 @@ public class LauncherActivity extends MBaseFragmentActivity implements OnClickLi
     @Override
     public void initialize() {
 
-        if(NetworkUtil.hasConnection(context)) {
-            HttpClient.getInstance().checkUpgrade(2, PackageUtil.getVersion(context), 1, cb);
-        }else {
-            new Handler() {
-                @Override
-                public void handleMessage(Message msg) {
-                    Intent intent = new Intent(context, HomeActivity.class);
-                    animStart(intent);
-                    finish();
-                }
-            }.sendEmptyMessageDelayed(0, 3500);
-        }
+        new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                Intent intent = new Intent(context, HomeActivity.class);
+                animStart(intent);
+                finish();
+            }
+        }.sendEmptyMessageDelayed(0, 3500);
+//        if(NetworkUtil.hasConnection(context)) {
+//            HttpClient.getInstance().checkUpgrade(2, PackageUtil.getVersion(context), 1, cb);
+//        }else {
+//            new Handler() {
+//                @Override
+//                public void handleMessage(Message msg) {
+//                    Intent intent = new Intent(context, HomeActivity.class);
+//                    animStart(intent);
+//                    finish();
+//                }
+//            }.sendEmptyMessageDelayed(0, 3500);
+//        }
     }
 
     private Callback<VersionResp> cb = new Callback<VersionResp>() {

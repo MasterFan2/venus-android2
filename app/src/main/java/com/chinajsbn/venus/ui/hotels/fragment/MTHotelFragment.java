@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
 import com.chinajsbn.venus.net.HttpClient;
+import com.chinajsbn.venus.net.HttpClients;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Cache;
 import com.chinajsbn.venus.net.bean.FilterBean;
@@ -78,7 +79,6 @@ public class MTHotelFragment extends BaseFragment implements OnClickListener, Ma
     private MyAdapter adapter;
 
     ///////////////////parameters////////////////
-    private String parentId = "";   //酒店moduleID
     private List<FilterBean> tables = new ArrayList<>();//second listView data
     private List<FilterBean> prices = new ArrayList<>();//second ListView data
     private List<FilterBean> areas = new ArrayList<>(); //second ListView data
@@ -189,7 +189,7 @@ public class MTHotelFragment extends BaseFragment implements OnClickListener, Ma
         if (NetworkUtil.hasConnection(getActivity())) {
             param.pageIndex = 1;
             isNextPage = false;
-            HttpClient.getInstance().searchHotels(parentId, param, callback);
+            HttpClients.getInstance().searchHotels(param, callback);
         } else {
             localSearch();
         }
@@ -230,7 +230,7 @@ public class MTHotelFragment extends BaseFragment implements OnClickListener, Ma
         if (NetworkUtil.hasConnection(getActivity())) {
             isNextPage = false;
             param.pageIndex = 1;
-            HttpClient.getInstance().searchHotels(parentId, param, callback);
+            HttpClients.getInstance().searchHotels(param, callback);
         } else {
             localSearch();
         }
@@ -327,7 +327,7 @@ public class MTHotelFragment extends BaseFragment implements OnClickListener, Ma
         if (NetworkUtil.hasConnection(getActivity())) {
             isNextPage = false;
             param.pageIndex = 1;
-            HttpClient.getInstance().searchHotels(parentId, param, callback);
+            HttpClients.getInstance().searchHotels(param, callback);
         } else {
             localSearch();
         }
@@ -379,7 +379,7 @@ public class MTHotelFragment extends BaseFragment implements OnClickListener, Ma
         if (NetworkUtil.hasConnection(getActivity())) {
             isNextPage = false;
             param.pageIndex = 1;
-            HttpClient.getInstance().searchHotels(parentId, param, callback);
+            HttpClients.getInstance().searchHotels(param, callback);
         } else {
             localSearch();
         }
@@ -552,9 +552,8 @@ public class MTHotelFragment extends BaseFragment implements OnClickListener, Ma
                         return;
                     }
                     Intent intent = new Intent(getActivity(), HotelDetailActivity.class);
-                    intent.putExtra("hotelId", parentId);
-                    intent.putExtra("detailId", dataList.get(position - 1).getHotelId());
-                    intent.putExtra("name", dataList.get(position - 1).getHotelName());
+                    intent.putExtra("detailId", dataList.get(position - 1).getId());
+                    intent.putExtra("name", dataList.get(position - 1).getName());
                     animStart(intent);
                 }
             }
@@ -562,15 +561,12 @@ public class MTHotelFragment extends BaseFragment implements OnClickListener, Ma
         adapter = new MyAdapter();
         listView.setAdapter(adapter);
 
-        ///parameters ///
-        parentId = getArguments().getString("parentId");
-
         tabAllTxt.setTextColor(getResources().getColor(R.color.filter_red_txt));//设置全部的选中状态
 
         ///check network
         if (NetworkUtil.hasConnection(getActivity())) {
-            HttpClient.getInstance().searchHotels(parentId, param, callback);
-            HttpClient.getInstance().getHotelAreas(areaCallback);
+            HttpClients.getInstance().searchHotels(param, callback);
+//            HttpClient.getInstance().getHotelAreas(areaCallback);
         } else {
             try {
                 dataList = db.findAll(Hotel.class);
@@ -678,7 +674,7 @@ public class MTHotelFragment extends BaseFragment implements OnClickListener, Ma
         if (NetworkUtil.hasConnection(getActivity())) {
             isNextPage = false;
             param.pageIndex = 1;
-            HttpClient.getInstance().searchHotels(parentId, param, callback);
+            HttpClients.getInstance().searchHotels(param, callback);
         } else {
 
         }
@@ -689,7 +685,7 @@ public class MTHotelFragment extends BaseFragment implements OnClickListener, Ma
         if (NetworkUtil.hasConnection(getActivity())) {
             param.pageIndex = param.pageIndex + 1;
             isNextPage = true;
-            HttpClient.getInstance().searchHotels(parentId, param, callback);
+            HttpClients.getInstance().searchHotels(param, callback);
         } else {
             T.s(getActivity(), "请连网");
         }
@@ -782,7 +778,7 @@ public class MTHotelFragment extends BaseFragment implements OnClickListener, Ma
             //
             final Hotel hotel = dataList.get(position);
 
-            String strName = hotel.getHotelName();
+            String strName = hotel.getName();
             myViewHolder.nameTxt.setText(strName);
 
             if (hotel.getIsDiscount().equals("1")) {
@@ -796,7 +792,7 @@ public class MTHotelFragment extends BaseFragment implements OnClickListener, Ma
                 myViewHolder.icGiftImg.setVisibility(View.GONE);
             }
 
-            String talbe_str_2 = hotel.getBanquetHallCount();
+            String talbe_str_2 = hotel.getBanquetHalNum();
             String talbe_str_3 = talbe_str_2 + "个宴会厅,容纳";
             String talbe_str_4 = talbe_str_3 + hotel.getCapacityPerTable();
             String talbe_str_5 = talbe_str_4 + "桌";
@@ -822,8 +818,8 @@ public class MTHotelFragment extends BaseFragment implements OnClickListener, Ma
             myViewHolder.addrTxt.setText(addressStyle);
             myViewHolder.priceTxt.setText("￥ " + hotel.getLowestConsumption() + " - " + hotel.getHighestConsumption());
 
-            if (!TextUtils.isEmpty(hotel.getImageUrl())) {
-                Picasso.with(getActivity()).load(hotel.getImageUrl() + "@400w_267h").error(R.mipmap.load_error).into(myViewHolder.logoImg);
+            if (!TextUtils.isEmpty(hotel.getCoverUrlApp())) {
+                Picasso.with(getActivity()).load(hotel.getCoverUrlApp() + "@400w_267h").error(R.mipmap.load_error).into(myViewHolder.logoImg);
             }
 
             //

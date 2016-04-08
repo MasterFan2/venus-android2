@@ -59,7 +59,7 @@ public class SuitFlipFragment extends BaseFragment implements OnClickListener {
             Intent intent = new Intent(getActivity(), SuitDetailActivity.class);
             intent.putExtra("suitId", suitID);
             intent.putExtra("detailId", suit.getWeddingDressSuitId());
-            intent.putExtra("url", suit.getImageUrl());
+            intent.putExtra("url", suit.getCoverUrlApp());
             animStart(intent);
         }else{
             handler.sendEmptyMessageDelayed(10, 100);
@@ -98,9 +98,9 @@ public class SuitFlipFragment extends BaseFragment implements OnClickListener {
 
         suit = (WeddingSuit) getArguments().getSerializable("suit");
         suitID = (String) getArguments().getSerializable("suitId");
-        moneyTxt.setText("￥ " + suit.getPrice());
+        moneyTxt.setText("￥ " + suit.getSalePrice());
         orderTxt.setText("定金 ￥" + suit.getDepositRate());
-        suitNameTxt.setText(suit.getProductName());
+        suitNameTxt.setText(suit.getName());
 
         String str = "";
         if(suit.getIsOptionalStylist() == 1){
@@ -119,8 +119,8 @@ public class SuitFlipFragment extends BaseFragment implements OnClickListener {
         }else{
             photographerStylistTxt.setText("(" + str +")");
         }
-        if(!TextUtils.isEmpty(suit.getImageUrl()))
-            Picasso.with(getActivity()).load(suit.getImageUrl()+ "@" + DimenUtil.screenWidth +"w_" + (DimenUtil.screenWidth *2) +"h_60Q").into(contentImg);
+        if(!TextUtils.isEmpty(suit.getCoverUrlApp()))
+            Picasso.with(getActivity()).load(suit.getCoverUrlApp()+ "@" + DimenUtil.screenWidth +"w_" + (DimenUtil.screenWidth *2) +"h_60Q").into(contentImg);
     }
 
     @Override

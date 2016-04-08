@@ -123,7 +123,7 @@ public class FilmFragment extends BaseFragment implements MasterListView.OnRefre
             View view = dataList.get(position);
             ImageView img = (ImageView) view.findViewById(R.id.tv_pic);
             TextView textView = (TextView) view.findViewById(R.id.tv_desc);
-            textView.setText(seasonList.get(position).getSeasonName());
+            textView.setText(seasonList.get(position).getName());
             Picasso.with(getActivity()).load(seasonList.get(position).getCoverUrl()).placeholder(R.drawable.loading).into(img);
             container.addView(view);
             return view;
@@ -162,7 +162,7 @@ public class FilmFragment extends BaseFragment implements MasterListView.OnRefre
                     multiViewPager.setVisibility(View.VISIBLE);
                     if (filterList == null) {
                         if (seasonPosition != -1 && seasonList != null && seasonList.size() > 0) {
-                            HttpClient.getInstance().filmListBySeasonId("hits", "3", pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId(), filmListBySeasonIdCallback);
+                            HttpClient.getInstance().filmListBySeasonId("hits", "3", pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId()+"", filmListBySeasonIdCallback);
                         }
                     } else {
                         dataList = filterList;
@@ -192,7 +192,7 @@ public class FilmFragment extends BaseFragment implements MasterListView.OnRefre
             @Override
             public void onPageSelected(int position) {
                 seasonPosition = position;
-                HttpClient.getInstance().filmListBySeasonId("hits", "3", pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId(), filmListBySeasonIdCallback);
+                HttpClient.getInstance().filmListBySeasonId("hits", "3", pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId()+"", filmListBySeasonIdCallback);
             }
 
             @Override
@@ -209,7 +209,7 @@ public class FilmFragment extends BaseFragment implements MasterListView.OnRefre
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 if(NetworkUtil.hasConnection(getActivity())){
                     Intent intent = new Intent(getActivity(), VideoActivity.class);
-                    intent.putExtra("url", dataList.get(position - 2).getUrl());
+                    intent.putExtra("url", dataList.get(position - 2).getCoverUrlApp());
                     animStart(intent);
                 }else {
                     handler.sendEmptyMessageDelayed(10, 10);
@@ -457,7 +457,7 @@ public class FilmFragment extends BaseFragment implements MasterListView.OnRefre
         } else if (tabCustomSeason == 1) {
             isSeasonNextPage = false;
             if (seasonList != null && seasonList.size() > 0)
-                HttpClient.getInstance().filmListBySeasonId("hits", "3", pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId(), filmListBySeasonIdCallback);
+                HttpClient.getInstance().filmListBySeasonId("hits", "3", pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId()+"", filmListBySeasonIdCallback);
         }
     }
 
@@ -470,7 +470,7 @@ public class FilmFragment extends BaseFragment implements MasterListView.OnRefre
         } else if (tabCustomSeason == 1) {
             isSeasonNextPage = false;
             if (seasonList != null && seasonList.size() > 0)
-                HttpClient.getInstance().filmListBySeasonId("hits", "3", pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId(), filmListBySeasonIdCallback);
+                HttpClient.getInstance().filmListBySeasonId("hits", "3", pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId()+"", filmListBySeasonIdCallback);
         }
     }
 }

@@ -6,15 +6,33 @@ package com.chinajsbn.venus.net.bean;
  */
 public class Base<T> {
     private int code;
-    private int totalCount;
+    private boolean success;
+    private int count;
+    private String message;
     private T data;
 
-    public int getTotalCount() {
-        return totalCount;
+    public int getCount() {
+        return count;
     }
 
-    public void setTotalCount(int totalCount) {
-        this.totalCount = totalCount;
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
     public int getCode() {
@@ -33,9 +51,7 @@ public class Base<T> {
         this.data = data;
     }
 
-    public Base() {
-
-    }
+    public Base() {}
 
     public Base(int code, T data) {
 

@@ -70,8 +70,6 @@ public class BanquetDetailActivity extends MBaseFragmentActivity {
 
     private Banquet banquets = null;
 
-    private ArrayList<BanquetDetail> datas;
-
     private int size = 0;
 
     //标识文字是否    显示/隐藏    true:显示     false:隐藏
@@ -81,13 +79,15 @@ public class BanquetDetailActivity extends MBaseFragmentActivity {
     public void initialize() {
 
         banquets = (Banquet) getIntent().getSerializableExtra("args");
-
         setBanquet(banquets);
+        String strImages = banquets.getAppDetailImages().replace("[", "").replace("]", "").replace("\"", "");
+        String strs[] = strImages.split(",");
 
-        String hotelId = getIntent().getStringExtra("hotelId");
-        String detailId = getIntent().getStringExtra("detailId");
+        size = strs.length;
+        viewPager.setAdapter(new MAdapter(strs));
+        digitTxt.setText(1 + "/" + size);
 
-        HttpClient.getInstance().getBanquetDetail(hotelId, detailId, banquets.getBanquetHallId(), cb);
+
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -97,8 +97,6 @@ public class BanquetDetailActivity extends MBaseFragmentActivity {
 
             @Override
             public void onPageSelected(int position) {
-//                Banquet banquet = banquets.get(position);
-//                setBanquet(position);
                 digitTxt.setText((position + 1) + "/" + size);
             }
 
@@ -109,38 +107,17 @@ public class BanquetDetailActivity extends MBaseFragmentActivity {
         });
     }
 
-    private Callback<Base<ArrayList<BanquetDetail>>> cb = new Callback<Base<ArrayList<BanquetDetail>>>() {
-        @Override
-        public void success(Base<ArrayList<BanquetDetail>> detail, Response response) {
-            if(detail.getCode() == 200){
-                if(detail.getData() != null && detail.getData().size() > 0){
-                    datas = detail.getData();
-                    size = datas.get(0).getDetailImgList().length;
-                    viewPager.setAdapter(new MAdapter(datas.get(0).getDetailImgList()));
-                    digitTxt.setText(1 + "/" + size);
-                }
-            }
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            S.o("获取数据失败， 请稍后再试...");
-        }
-    };
-
     /**
-     *
+     * 设置数据
      */
     private void setBanquet(Banquet banquet){
-        titleView.setTitleText(banquet.getBanquetHallName());
-        tableTxt.setText("桌数:" + banquet.getCapacity()+"桌");
-        pillarTxt.setText("柱子:" + (banquet.getPillarNumber().equals("1") ? "有" : "无"));
+        titleView.setTitleText(banquet.getName());
+        tableTxt.setText("桌数:" + banquet.getMaxTableNum()+"桌");
+        pillarTxt.setText("柱子:" + (banquet.getPillerNum().equals("1") ? "有" : "无"));
         areaTxt.setText("面积:" +banquet.getArea()+"m²");
         shapTxt.setText("形状:" +banquet.getShape());
         heightTxt.setText("层高:" + banquet.getHeight() + "m");
-        priceTxt.setText("消费:" + banquet.getLeastConsumption() + "/桌");
-
-       // digitTxt.setText((position + 1) + "/" + size);
+        priceTxt.setText("消费:" + banquet.getLowestConsumption() + "/桌");
     }
 
     @OnClick(R.id.m_title_left_btn)

@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
 import com.chinajsbn.venus.net.HttpClient;
+import com.chinajsbn.venus.net.HttpClients;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.SubModule;
 import com.chinajsbn.venus.net.bean.WeddingSuit;
@@ -69,9 +70,6 @@ public class PhotoWedSuitFragment extends BaseFragment implements OnClickListene
 //    @ViewInject(R.id.suit_page_container)
 //    private LinearLayout container;
 
-    //传递过来的数据
-    private String parentId;
-
     private int size = 0;
 
     //---------------cache----------------
@@ -82,22 +80,7 @@ public class PhotoWedSuitFragment extends BaseFragment implements OnClickListene
     @Override
     public void onPause() {
         super.onPause();
-//        stackView = null;
     }
-
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        View view = inflater.inflate(R.layout.fragment_photo_price, container, false);
-//       stackView = (FlippableStackView) view.findViewById(R.id.suit_flipStackView);
-//
-//        pagesTxt= (TextView) view.findViewById(R.id.suit_pages_txt);
-//
-//        totalTxt= (TextView) view.findViewById(R.id.suit_pages_total_txt);
-//
-//        initialize();
-//        return view;
-//    }
-
 
     @Override
     public void initialize() {
@@ -139,10 +122,6 @@ public class PhotoWedSuitFragment extends BaseFragment implements OnClickListene
 //        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
 //        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 //        recyclerView.setLayoutManager(layoutManager);
-
-        //获取数据
-        parentId = getArguments().getString("contentId", null);
-//
     }
 
     @Override
@@ -150,7 +129,7 @@ public class PhotoWedSuitFragment extends BaseFragment implements OnClickListene
         S.o("::获取套系数据");
         dialog.show();
         if(NetworkUtil.hasConnection(getActivity())){
-            HttpClient.getInstance().getWeddingSuitList(parentId, 1, 50, cb);
+            HttpClients.getInstance().suitList(1, 50, cb);
         }else {
             try {
                 List<WeddingSuit> suitList = db.findAll(WeddingSuit.class);
@@ -226,14 +205,10 @@ public class PhotoWedSuitFragment extends BaseFragment implements OnClickListene
 
         @Override
         public Fragment getItem(int position) {
-
             Fragment fragment = new SuitFlipFragment();
-
             Bundle args = new Bundle();
             args.putSerializable("suit", dataList.get(position));
-            args.putString("suitId", parentId);
             fragment.setArguments(args);
-
             return fragment;
         }
 

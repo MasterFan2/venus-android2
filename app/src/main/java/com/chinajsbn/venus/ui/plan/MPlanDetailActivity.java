@@ -105,7 +105,7 @@ public class MPlanDetailActivity extends MBaseFragmentActivity {
                     descTxt.setText(Html.fromHtml(detail.getSchemeDesc()));
                     String tempStyle = "";
                     for (Style style : detail.getSchemeStyles()) {
-                        tempStyle += style.getStyleName() + ",";
+                        tempStyle += style.getName() + ",";
                     }
                     tempStyle = tempStyle.substring(0, tempStyle.lastIndexOf(","));
                     styleTxt.setText(tempStyle);

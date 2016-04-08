@@ -5,7 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.view.WindowManager;
 
-import com.chinajsbn.venus.net.HttpClient;
+import com.chinajsbn.venus.net.HttpClients;
 import com.chinajsbn.venus.net.bean.Cache;
 import com.chinajsbn.venus.ui.fragment.photography.MPhotoCustomerFragment;
 import com.chinajsbn.venus.ui.fragment.photography.MPhotoSimpleFragment;
@@ -17,7 +17,6 @@ import com.chinajsbn.venus.ui.fragment.plan.PlanSimpleFragment;
 import com.chinajsbn.venus.ui.fragment.plan.PlannerFragment;
 import com.chinajsbn.venus.ui.home.HomeActivity;
 import com.chinajsbn.venus.ui.hotels.HotelDetailActivity;
-import com.chinajsbn.venus.ui.hotels.HotelsActivity;
 import com.chinajsbn.venus.ui.hotels.fragment.MTHotelFragment;
 import com.chinajsbn.venus.utils.DimenUtil;
 import com.chinajsbn.venus.utils.PreUtil;
@@ -50,7 +49,7 @@ public class VenusApplication extends Application {
         CustomActivityOnCrash.install(this);
 
         //初始化接口
-        HttpClient.getInstance().initialize(this);
+        HttpClients.getInstance().initialize(this);
 
         //
         getScreenDimen();

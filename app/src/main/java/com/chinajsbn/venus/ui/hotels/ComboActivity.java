@@ -5,12 +5,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.bean.Combo;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.MBaseFragmentActivity;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 import com.tool.widget.MasterTitleView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 @ActivityFeature(layout = R.layout.activity_combo)
 public class ComboActivity extends MBaseFragmentActivity {
@@ -21,27 +24,28 @@ public class ComboActivity extends MBaseFragmentActivity {
     @ViewInject(R.id.titleView)
     private MasterTitleView titleView;
 
-    private Combo combo ;
+    private String combo ;
 
     @Override
     public void initialize() {
-        combo = (Combo) getIntent().getSerializableExtra("combo");
+        combo = getIntent().getStringExtra("combo");
+        int size = 0;
+        try {
+            JSONObject obj = new JSONObject(combo);
+            JSONArray arr = obj.getJSONArray("dishesList");
 
-        titleView.setTitleText(combo.getMealPackName());
-        final int size = combo.getMealPackDishList().length;
-//        TextView  temp= new TextView(context);
-//        temp.setTextColor(getResources().getColor(android.R.color.white));
-//        temp.setText(combo.getMealPackName());
-//        temp.setTextSize(20);
-//        container.addView(temp);
-
-        for (int i = 0; i < size ; i++){
-            TextView tv = new TextView(context);
-            tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            tv.setTextColor(getResources().getColor(android.R.color.white));
-            tv.setPadding(10, 10, 10, 10);
-            tv.setText(combo.getMealPackDishList()[i]);
-            container.addView(tv);
+            titleView.setTitleText(obj.getString("name"));
+            size = arr.length();
+            for (int i = 0; i < size ; i++){
+                TextView tv = new TextView(context);
+                tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                tv.setTextColor(getResources().getColor(android.R.color.white));
+                tv.setPadding(10, 10, 10, 10);
+                tv.setText(arr.getJSONObject(i).getString("name"));
+                container.addView(tv);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 

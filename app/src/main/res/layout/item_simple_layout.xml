@@ -45,6 +45,7 @@
                 android:textColor="@color/subtitle_text_color"
                 android:text="风格:欧式"
                 android:layout_marginLeft="20dp"
+                android:visibility="invisible"
                 android:textSize="14sp" />
             <TextView
                 android:id="@+id/item_simple_name_txt"

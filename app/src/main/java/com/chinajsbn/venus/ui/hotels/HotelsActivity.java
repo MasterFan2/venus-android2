@@ -1063,7 +1063,7 @@ public class HotelsActivity extends MBaseFragmentActivity implements OnRecyclerI
                     Intent intent = new Intent(context, HotelDetailActivity.class);
                     intent.putExtra("hotelId", parentId);
                     intent.putExtra("detailId", dataList.get(position).getHotelId());
-                    intent.putExtra("name", dataList.get(position).getHotelName());
+                    intent.putExtra("name", dataList.get(position).getName());
                     animStart(intent);
                 }
             }
@@ -1234,11 +1234,11 @@ public class HotelsActivity extends MBaseFragmentActivity implements OnRecyclerI
             if (hotels.getCode() == 200) {
                 data = hotels.getData();
                 if (totalCount == -1) {
-                    totalCount = hotels.getTotalCount();
+                    totalCount = hotels.getCount();
                 }
 
                 if (data != null && data.size() > 0)
-                    banquets = data.get(0).getBanquetHallList();
+                    banquets = data.get(0).getBanquetHall();
                 //
                 if (isNextPage) {//下一页
                     dataList.addAll(hotels.getData());
@@ -1300,7 +1300,7 @@ public class HotelsActivity extends MBaseFragmentActivity implements OnRecyclerI
             Intent intent = new Intent(this, HotelDetailActivity.class);
             intent.putExtra("hotelId", parentId);
             intent.putExtra("detailId", data.get(position).getHotelId());
-            intent.putExtra("name", data.get(position).getHotelName());
+            intent.putExtra("name", data.get(position).getName());
             animStart(intent);
         }
     }
@@ -1351,7 +1351,7 @@ public class HotelsActivity extends MBaseFragmentActivity implements OnRecyclerI
 
             //
             final Hotel hotel = dataList.get(position);
-            myViewHolder.nameTxt.setText(hotel.getHotelName() + " ");
+            myViewHolder.nameTxt.setText(hotel.getName() + " ");
 
             ImageGetter imgGetter = new ImageGetter() {
                 @Override
@@ -1376,7 +1376,7 @@ public class HotelsActivity extends MBaseFragmentActivity implements OnRecyclerI
             }
 
             String talbe_str_1 = "桌数：";
-            String talbe_str_2 = talbe_str_1 + hotel.getBanquetHallCount();
+            String talbe_str_2 = talbe_str_1 + hotel.getBanquetHalNum();
             String talbe_str_3 = talbe_str_2 + "个宴会厅,容纳";
             String talbe_str_4 = talbe_str_3 + hotel.getCapacityPerTable();
             String talbe_str_5 = talbe_str_4 + "桌";
@@ -1401,8 +1401,8 @@ public class HotelsActivity extends MBaseFragmentActivity implements OnRecyclerI
             myViewHolder.addrTxt.setText(addressStyle);
             myViewHolder.priceTxt.setText("￥ " + hotel.getLowestConsumption() + " - " + hotel.getHighestConsumption());
 
-            if (!TextUtils.isEmpty(hotel.getImageUrl())) {
-                Picasso.with(context).load(hotel.getImageUrl() + "@400w_267h").error(R.mipmap.load_error).into(myViewHolder.logoImg);
+            if (!TextUtils.isEmpty(hotel.getCoverUrlApp())) {
+                Picasso.with(context).load(hotel.getCoverUrlApp() + "@400w_267h").error(R.mipmap.load_error).into(myViewHolder.logoImg);
             }
 
 //            myViewHolder.item.setOnClickListener(new View.OnClickListener() {

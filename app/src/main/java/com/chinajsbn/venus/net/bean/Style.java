@@ -12,35 +12,47 @@ import com.lidroid.xutils.db.annotation.Table;
 public class Style {
 
     @Id
-    @Column(column = "styleId")
-    private String styleId;
+    @Column(column = "Id")
+    private int id;
 
-    @Column(column = "styleName")
-    private String styleName;
+    @Column(column = "caseStyleId")
+    private int caseStyleId;
 
-    public String getStyleId() {
-        return styleId;
+    @Column(column = "name")
+    private String name;
+
+    public int getCaseStyleId() {
+        return caseStyleId;
     }
 
-    public void setStyleId(String styleId) {
-        this.styleId = styleId;
+    public void setCaseStyleId(int caseStyleId) {
+        this.caseStyleId = caseStyleId;
     }
 
-    public String getStyleName() {
-        return styleName;
+    public int getId() {
+        return id;
     }
 
-    public void setStyleName(String styleName) {
-        this.styleName = styleName;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Style() {
 
     }
 
-    public Style(String styleId, String styleName) {
+    public Style(int caseStyleId, int id, String name) {
 
-        this.styleId = styleId;
-        this.styleName = styleName;
+        this.caseStyleId = caseStyleId;
+        this.id = id;
+        this.name = name;
     }
 }

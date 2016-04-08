@@ -267,7 +267,7 @@ public class MicrofilmFragment extends BaseFragment implements OnRecyclerItemCli
     @Override
     public void onRecyclerItemClick(View v, int position) {
         Intent intent = new Intent(getActivity(), VideoActivity.class);
-        intent.putExtra("url", dataList.get(position - 1).getUrl());
+        intent.putExtra("url", dataList.get(position - 1).getCoverUrlApp());
         animStart(intent);
     }
 }

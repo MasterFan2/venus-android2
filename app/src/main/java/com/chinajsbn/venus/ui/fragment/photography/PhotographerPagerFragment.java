@@ -55,8 +55,8 @@ public class PhotographerPagerFragment extends BaseFragment {
         Simple simple = (Simple) getArguments().getSerializable("data");
 
         if (simple != null) {
-            if (!TextUtils.isEmpty(simple.getContentUrl())) {
-                Picasso.with(getActivity()).load(simple.getContentUrl()).into(headImg);
+            if (!TextUtils.isEmpty(simple.getCoverUrlApp())) {
+                Picasso.with(getActivity()).load(simple.getCoverUrlApp()).into(headImg);
             }
             nameTxt.setText(simple.getActorNameFemale() + "&" + simple.getActorNameFemale());
             placeTxt.setText("拍摄地点:" + simple.getCreateDate() + " 点击量:12305");
