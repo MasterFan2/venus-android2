@@ -37,7 +37,6 @@ public class AdvertResp {
     }
 
     public AdvertResp(String contentId, String contentName, String contentUrl) {
-
         this.contentId = contentId;
         this.contentName = contentName;
         this.contentUrl = contentUrl;

@@ -181,11 +181,8 @@ public class MPhotoSimpleFragment extends BaseFragment implements MasterListView
                     Simple simple = adapter.getItem(position);
                     //SimpleDetailResp
                     Intent intent = new Intent(getActivity(), SimpleDetailActivity.class);
-                    intent.putExtra("parentId", parentId);
-                    intent.putExtra("contentId", simple.getContentId());
                     intent.putExtra("simpleOrCustom", simpleOrCustom);
-                    intent.putExtra("photographer", simple.getPhotographer());
-                    intent.putExtra("stylist", simple.getStylist());
+                    intent.putExtra("images", simple.getAppDetailImages());
                     intent.putExtra("date", simple.getCreateDate());
                     intent.putExtra("name", simple.getName());
 

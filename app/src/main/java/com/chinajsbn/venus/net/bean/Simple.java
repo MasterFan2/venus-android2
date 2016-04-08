@@ -56,6 +56,9 @@ public class Simple implements Serializable {
     @Foreign(column = "photographerId", foreign = "personId")
     private SimplePhotographer photographer;
 
+    @Column(column = "appDetailImages")
+    private String appDetailImages;
+
     ////////////////cache/////////////////////
     @Column(column = "styleId")
     private String styleId;
@@ -197,6 +200,13 @@ public class Simple implements Serializable {
         this.name = name;
     }
 
+    public String getAppDetailImages() {
+        return appDetailImages;
+    }
+
+    public void setAppDetailImages(String appDetailImages) {
+        this.appDetailImages = appDetailImages;
+    }
 
     public Simple() {
 

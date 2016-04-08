@@ -12,9 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
-import com.chinajsbn.venus.net.bean.Base;
-import com.chinajsbn.venus.net.bean.DoubleSimpleCustom;
+import com.chinajsbn.venus.net.bean.DoubleSimpleCustomStr;
 import com.chinajsbn.venus.net.bean.MoreTag;
 import com.chinajsbn.venus.net.bean.Simple;
 import com.chinajsbn.venus.net.bean.SimplePhotographer;
@@ -32,12 +30,9 @@ import com.squareup.picasso.Picasso;
 import com.tool.widget.MasterTitleView;
 import com.tool.widget.MyRecyclerView;
 
-import java.net.URLDecoder;
 import java.util.ArrayList;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 样片详情
@@ -66,25 +61,8 @@ public class SimpleDetailActivity extends MBaseFragmentActivity implements OnRec
 
     private DbUtils db;
 
-//
-//    @ViewInject(R.id.simple_detail_photographer_head_img)
-//    private ImageView photographerImg;
-//
-//    @ViewInject(R.id.simple_detail_stylist_head_img)
-//    private ImageView stylistImg;
-//
-//    @ViewInject(R.id.simple_detail_photographer_name_txt)
-//    private TextView photographerNameTxt;
-//
-//    @ViewInject(R.id.simple_detail_stylist_name_txt)
-//    private TextView stylistNameTxt;
-//
-//
-//    @ViewInject(R.id.simple_detail_styles_txt)
-//    private TextView stylesTxt;
-
     private ArrayList<Simple> data;
-    private ArrayList<Simple> orderList = new ArrayList<>();
+    private ArrayList<String> orderList = new ArrayList<>();
 
     //------------------------------------------------------------------
 
@@ -105,157 +83,274 @@ public class SimpleDetailActivity extends MBaseFragmentActivity implements OnRec
         simpleOrCustom = getIntent().getStringExtra("simpleOrCustom");
         if (simpleOrCustom.equals("custom")) {
             titleView.setTitleText("客片详情");
-            HttpClient.getInstance().getDayCustomDetail(parentId, contentId, cb);
+//            HttpClient.getInstance().getDayCustomDetail(parentId, contentId, cb);
         } else if (simpleOrCustom.equals("simple")) {
             titleView.setTitleText("作品详情");
-            HttpClient.getInstance().getSimpleDetail(parentId, contentId, cb);
+//            HttpClient.getInstance().getSimpleDetail(parentId, contentId, cb);
         }
-
-
-        photographer = (SimplePhotographer) getIntent().getSerializableExtra("photographer");
-        stylist = (SimplePhotographer) getIntent().getSerializableExtra("stylist");
-        strStyles = getIntent().getStringExtra("styles");
         name = getIntent().getStringExtra("name");
         date = getIntent().getStringExtra("date");
-
+        String images = getIntent().getStringExtra("images");
+        generateData(images);
     }
+
+    /**
+     * 生成列表数据
+     * @param res
+     */
+    private void generateData(String res) {
+        String ret = res.replace("[", "").replace("]", "").replace("\"", "");
+        String retArr[] = ret.split(",");
+        List<String> dataList = Arrays.asList(retArr);
+
+        ArrayList<String> hList = new ArrayList<>();
+        ArrayList<String> vList = new ArrayList<>();
+        int size = dataList.size();
+        for (int i = 0; i < size; i++) {
+            String url = dataList.get(i);
+            url = url.substring(url.lastIndexOf("_") + 1, url.lastIndexOf("."));
+            int width = Integer.parseInt(url.split("x")[0]);
+            int height = Integer.parseInt(url.split("x")[1]);
+
+            if (width >= height) hList.add(url);
+            else if (width < height) vList.add(url);
+        }
+
+        //2.合并
+        ArrayList<DoubleSimpleCustomStr> finalList = new ArrayList<>();
+        int h_size = hList.size();
+        int v_size = vList.size();
+
+        if(h_size <= 0 && v_size <= 0){
+            T.s(context, "无数据");
+            return;
+        }
+
+        int j = 0;
+
+        if(h_size > v_size || h_size == v_size){//模图比较多
+            for (int i = 0; i < h_size; i++) {
+                //----------------------------
+                if (i == 0) {//第一二行
+                    ///////////////////////第一行//////////////////////
+                    finalList.add(new DoubleSimpleCustomStr(hList.get(i), null));
+
+                    ///////////////////////第二行//////////////////////
+                    if(v_size > 0) {
+                        finalList.add(new DoubleSimpleCustomStr(null, vList.get(j++)));
+                    } else {
+                        i++;
+                        finalList.add(new DoubleSimpleCustomStr(null, hList.get(i)));
+                    }
+                } else {
+                    if (j + 2 < v_size) {//本次充足
+                        finalList.add(new DoubleSimpleCustomStr(hList.get(i), null));
+                        finalList.add(new DoubleSimpleCustomStr(vList.get(j++), vList.get(j++)));
+                    } else if (j + 1 < v_size) {
+                        finalList.add(new DoubleSimpleCustomStr(hList.get(i), null));
+                        finalList.add(new DoubleSimpleCustomStr(vList.get(j++), vList.get(j++)));
+                    } else if (j < v_size) {
+                        finalList.add(new DoubleSimpleCustomStr(hList.get(i), null));
+                        finalList.add(new DoubleSimpleCustomStr(vList.get(j++), null));
+                    } else {
+                        finalList.add(new DoubleSimpleCustomStr(hList.get(i), null));
+                    }
+                }
+            }
+        } else {     //竖图比较多
+
+            if(h_size <= 0){//没有横图， 全是竖图
+                for (int i = 0; i < v_size; i++) {
+                    if (i == 0) {//第一二行
+                        finalList.add(new DoubleSimpleCustomStr(hList.get(i), null));
+                        i++;
+                        finalList.add(new DoubleSimpleCustomStr(null, vList.get(i)));
+                    } else {
+                        finalList.add(new DoubleSimpleCustomStr(vList.get(i), null));
+                    }
+                }
+
+            }else {//多个横图
+                for (int i = 0; i < v_size; i++) {
+                    if (i == 0) {//第一二行
+                        finalList.add(new DoubleSimpleCustomStr(hList.get(j), null));
+                        j++;
+                        finalList.add(new DoubleSimpleCustomStr(null, vList.get(i)));
+                    } else {
+
+                        if(j < h_size) {//判断横图
+                            finalList.add(new DoubleSimpleCustomStr(hList.get(j++), null));
+                            if(i + 1 < v_size){
+                                finalList.add(new DoubleSimpleCustomStr(vList.get(i), vList.get(++i)));
+                            }else {
+                                finalList.add(new DoubleSimpleCustomStr(vList.get(i), null));
+                            }
+                        }else {
+                            if(i+ 1 < v_size){
+                                finalList.add(new DoubleSimpleCustomStr(vList.get(i), vList.get(++i)));
+                            }else {
+                                finalList.add(new DoubleSimpleCustomStr(vList.get(i), null));
+                            }
+                        }
+                    }
+                }
+            }//end else 多个横图
+        }// end else /竖图比较多
+
+        j = 0;
+        recyclerView.setAdapter(new MyAdapter(finalList, SimpleDetailActivity.this));
+
+        final int f_size = finalList.size();
+        for (int i = 0; i < f_size; i++) {
+            DoubleSimpleCustomStr temp = finalList.get(i);
+            if(temp.getData1() != null && temp.getData2() != null){
+                orderList.add(temp.getData1());
+                orderList.add(temp.getData2());
+            }else if(temp.getData1() != null){
+                orderList.add(temp.getData1());
+            }else if(temp.getData2() != null){
+                orderList.add(temp.getData2());
+            }
+        }
+
+    }// end method generateData(String)
 
 
     /**
      * 获取数据回调
      */
-    private Callback<Base<ArrayList<Simple>>> cb = new Callback<Base<ArrayList<Simple>>>() {
-        @Override
-        public void success(final Base<ArrayList<Simple>> simpleDetailResp, Response response) {
-            data = simpleDetailResp.getData();
-
-            if (data != null && data.size() > 0) {
-                f = data.get(0).getActorNameFemale();
-                m = data.get(0).getActorNameMale();
-            }else {
-                T.s(context, "无数据");
-                return;
-            }
-
-            //1。获取到 所有横图和竖图。
-            ArrayList<Simple> hList = new ArrayList<>();
-            ArrayList<Simple> vList = new ArrayList<>();
-            int size = data.size();
-            for (int i = 0; i < size; i++) {
-                Simple simple = data.get(i);
-                String url = simple.getCoverUrlApp();
-                url = url.substring(url.lastIndexOf("_") + 1, url.lastIndexOf("."));
-                int width = Integer.parseInt(url.split("x")[0]);
-                int height = Integer.parseInt(url.split("x")[1]);
-
-                if (width >= height) hList.add(simple);
-                else if (width < height) vList.add(simple);
-            }
-
-            //2。合并
-            ArrayList<DoubleSimpleCustom> finalList = new ArrayList<>();
-            int h_size = hList.size();
-            int v_size = vList.size();
-
-            if(h_size <= 0 && v_size <= 0){
-                T.s(context, "无数据");
-                return;
-            }
-
-            int j = 0;
-
-            if(h_size > v_size || h_size == v_size){//模图比较多
-                for (int i = 0; i < h_size; i++) {
-                    //----------------------------
-                    if (i == 0) {//第一二行
-                        ///////////////////////第一行//////////////////////
-                        finalList.add(new DoubleSimpleCustom(hList.get(i), null));
-
-                        ///////////////////////第二行//////////////////////
-                        if(v_size > 0) {
-                            finalList.add(new DoubleSimpleCustom(null, vList.get(j++)));
-                        } else {
-                            i++;
-                            finalList.add(new DoubleSimpleCustom(null, hList.get(i)));
-                        }
-                    } else {
-                        if (j + 2 < v_size) {//本次充足
-                            finalList.add(new DoubleSimpleCustom(hList.get(i), null));
-                            finalList.add(new DoubleSimpleCustom(vList.get(j++), vList.get(j++)));
-                        } else if (j + 1 < v_size) {
-                            finalList.add(new DoubleSimpleCustom(hList.get(i), null));
-                            finalList.add(new DoubleSimpleCustom(vList.get(j++), vList.get(j++)));
-                        } else if (j < v_size) {
-                            finalList.add(new DoubleSimpleCustom(hList.get(i), null));
-                            finalList.add(new DoubleSimpleCustom(vList.get(j++), null));
-                        } else {
-                            finalList.add(new DoubleSimpleCustom(hList.get(i), null));
-                        }
-                    }
-                }
-            } else {     //竖图比较多
-
-                if(h_size <= 0){//没有横图， 全是竖图
-                    for (int i = 0; i < v_size; i++) {
-                        if (i == 0) {//第一二行
-                            finalList.add(new DoubleSimpleCustom(hList.get(i), null));
-                            i++;
-                            finalList.add(new DoubleSimpleCustom(null, vList.get(i)));
-                        } else {
-                            finalList.add(new DoubleSimpleCustom(vList.get(i), null));
-                        }
-                    }
-
-                }else {//多个横图
-                    for (int i = 0; i < v_size; i++) {
-                        if (i == 0) {//第一二行
-                            finalList.add(new DoubleSimpleCustom(hList.get(j), null));
-                            j++;
-                            finalList.add(new DoubleSimpleCustom(null, vList.get(i)));
-                        } else {
-
-                            if(j < h_size) {//判断横图
-                                finalList.add(new DoubleSimpleCustom(hList.get(j++), null));
-                                if(i + 1 < v_size){
-                                    finalList.add(new DoubleSimpleCustom(vList.get(i), vList.get(++i)));
-                                }else {
-                                    finalList.add(new DoubleSimpleCustom(vList.get(i), null));
-                                }
-                            }else {
-                                if(i+ 1 < v_size){
-                                    finalList.add(new DoubleSimpleCustom(vList.get(i), vList.get(++i)));
-                                }else {
-                                    finalList.add(new DoubleSimpleCustom(vList.get(i), null));
-                                }
-
-                            }
-                        }
-                    }
-                }
-
-            }
-            j = 0;
-            recyclerView.setAdapter(new MyAdapter(finalList, SimpleDetailActivity.this));
-
-            final int f_size = finalList.size();
-            for (int i = 0; i < f_size; i++) {
-                DoubleSimpleCustom temp = finalList.get(i);
-                if(temp.getData1() != null && temp.getData2() != null){
-                    orderList.add(temp.getData1());
-                    orderList.add(temp.getData2());
-                }else if(temp.getData1() != null){
-                    orderList.add(temp.getData1());
-                }else if(temp.getData2() != null){
-                    orderList.add(temp.getData2());
-                }
-            }
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            T.s(context, "获取数据错误,请重试 !");
-        }
-    };
+//    private Callback<Base<ArrayList<Simple>>> cb = new Callback<Base<ArrayList<Simple>>>() {
+//        @Override
+//        public void success(final Base<ArrayList<Simple>> simpleDetailResp, Response response) {
+//            data = simpleDetailResp.getData();
+//
+//            if (data != null && data.size() > 0) {
+//                f = data.get(0).getActorNameFemale();
+//                m = data.get(0).getActorNameMale();
+//            }else {
+//                T.s(context, "无数据");
+//                return;
+//            }
+//
+//            //1。获取到 所有横图和竖图。
+//            ArrayList<Simple> hList = new ArrayList<>();
+//            ArrayList<Simple> vList = new ArrayList<>();
+//            int size = data.size();
+//            for (int i = 0; i < size; i++) {
+//                Simple simple = data.get(i);
+//                String url = simple.getCoverUrlApp();
+//                url = url.substring(url.lastIndexOf("_") + 1, url.lastIndexOf("."));
+//                int width = Integer.parseInt(url.split("x")[0]);
+//                int height = Integer.parseInt(url.split("x")[1]);
+//
+//                if (width >= height) hList.add(simple);
+//                else if (width < height) vList.add(simple);
+//            }
+//
+//            //2。合并
+//            ArrayList<DoubleSimpleCustom> finalList = new ArrayList<>();
+//            int h_size = hList.size();
+//            int v_size = vList.size();
+//
+//            if(h_size <= 0 && v_size <= 0){
+//                T.s(context, "无数据");
+//                return;
+//            }
+//
+//            int j = 0;
+//
+//            if(h_size > v_size || h_size == v_size){//模图比较多
+//                for (int i = 0; i < h_size; i++) {
+//                    //----------------------------
+//                    if (i == 0) {//第一二行
+//                        ///////////////////////第一行//////////////////////
+//                        finalList.add(new DoubleSimpleCustom(hList.get(i), null));
+//
+//                        ///////////////////////第二行//////////////////////
+//                        if(v_size > 0) {
+//                            finalList.add(new DoubleSimpleCustom(null, vList.get(j++)));
+//                        } else {
+//                            i++;
+//                            finalList.add(new DoubleSimpleCustom(null, hList.get(i)));
+//                        }
+//                    } else {
+//                        if (j + 2 < v_size) {//本次充足
+//                            finalList.add(new DoubleSimpleCustom(hList.get(i), null));
+//                            finalList.add(new DoubleSimpleCustom(vList.get(j++), vList.get(j++)));
+//                        } else if (j + 1 < v_size) {
+//                            finalList.add(new DoubleSimpleCustom(hList.get(i), null));
+//                            finalList.add(new DoubleSimpleCustom(vList.get(j++), vList.get(j++)));
+//                        } else if (j < v_size) {
+//                            finalList.add(new DoubleSimpleCustom(hList.get(i), null));
+//                            finalList.add(new DoubleSimpleCustom(vList.get(j++), null));
+//                        } else {
+//                            finalList.add(new DoubleSimpleCustom(hList.get(i), null));
+//                        }
+//                    }
+//                }
+//            } else {     //竖图比较多
+//
+//                if(h_size <= 0){//没有横图， 全是竖图
+//                    for (int i = 0; i < v_size; i++) {
+//                        if (i == 0) {//第一二行
+//                            finalList.add(new DoubleSimpleCustom(hList.get(i), null));
+//                            i++;
+//                            finalList.add(new DoubleSimpleCustom(null, vList.get(i)));
+//                        } else {
+//                            finalList.add(new DoubleSimpleCustom(vList.get(i), null));
+//                        }
+//                    }
+//
+//                }else {//多个横图
+//                    for (int i = 0; i < v_size; i++) {
+//                        if (i == 0) {//第一二行
+//                            finalList.add(new DoubleSimpleCustom(hList.get(j), null));
+//                            j++;
+//                            finalList.add(new DoubleSimpleCustom(null, vList.get(i)));
+//                        } else {
+//
+//                            if(j < h_size) {//判断横图
+//                                finalList.add(new DoubleSimpleCustom(hList.get(j++), null));
+//                                if(i + 1 < v_size){
+//                                    finalList.add(new DoubleSimpleCustom(vList.get(i), vList.get(++i)));
+//                                }else {
+//                                    finalList.add(new DoubleSimpleCustom(vList.get(i), null));
+//                                }
+//                            }else {
+//                                if(i+ 1 < v_size){
+//                                    finalList.add(new DoubleSimpleCustom(vList.get(i), vList.get(++i)));
+//                                }else {
+//                                    finalList.add(new DoubleSimpleCustom(vList.get(i), null));
+//                                }
+//
+//                            }
+//                        }
+//                    }
+//                }
+//
+//            }
+//            j = 0;
+//            recyclerView.setAdapter(new MyAdapter(finalList, SimpleDetailActivity.this));
+//
+//            final int f_size = finalList.size();
+//            for (int i = 0; i < f_size; i++) {
+//                DoubleSimpleCustom temp = finalList.get(i);
+//                if(temp.getData1() != null && temp.getData2() != null){
+//                    orderList.add(temp.getData1());
+//                    orderList.add(temp.getData2());
+//                }else if(temp.getData1() != null){
+//                    orderList.add(temp.getData1());
+//                }else if(temp.getData2() != null){
+//                    orderList.add(temp.getData2());
+//                }
+//            }
+//        }
+//
+//        @Override
+//        public void failure(RetrofitError error) {
+//            T.s(context, "获取数据错误,请重试 !");
+//        }
+//    };
 
     @Override
     public void onRecyclerItemClick(View v, int position) {
@@ -264,10 +359,10 @@ public class SimpleDetailActivity extends MBaseFragmentActivity implements OnRec
 
     class MyAdapter extends MyRecyclerView.Adapter<MyAdapter.MViewHolder> implements View.OnClickListener {
 
-        private ArrayList<DoubleSimpleCustom> dataList;
+        private ArrayList<DoubleSimpleCustomStr> dataList;
         private OnRecyclerItemClickListener onRecyclerItemClickListener;
 
-        public MyAdapter(ArrayList<DoubleSimpleCustom> list, OnRecyclerItemClickListener listener) {
+        public MyAdapter(ArrayList<DoubleSimpleCustomStr> list, OnRecyclerItemClickListener listener) {
             this.dataList = list;
             this.onRecyclerItemClickListener = listener;
         }
@@ -280,7 +375,7 @@ public class SimpleDetailActivity extends MBaseFragmentActivity implements OnRec
 
         @Override
         public void onBindViewHolder(MViewHolder holder, int position) {
-            final DoubleSimpleCustom doubleSimpleCustom = dataList.get(position);
+            final DoubleSimpleCustomStr doubleSimpleCustom = dataList.get(position);
             if (position == 1) {
                 holder.twoLayout.setVisibility(View.GONE);
                 holder.styleLayout.setVisibility(View.VISIBLE);
@@ -336,8 +431,8 @@ public class SimpleDetailActivity extends MBaseFragmentActivity implements OnRec
                 }
 
                 //内容
-                Picasso.with(context).load(doubleSimpleCustom.getData2().getCoverUrlApp() + DimenUtil.getVertical50Q()+ DimenUtil.getSuffixUTF8()).into(holder.contentImg2);
-                holder.contentImg2.setTag(doubleSimpleCustom.getData2().getCoverUrlApp());
+                Picasso.with(context).load(doubleSimpleCustom.getData2() + DimenUtil.getVertical50Q()+ DimenUtil.getSuffixUTF8()).into(holder.contentImg2);
+                holder.contentImg2.setTag(doubleSimpleCustom.getData2());
                 holder.contentImg2.setOnClickListener(this);
 
             } else {
@@ -354,24 +449,24 @@ public class SimpleDetailActivity extends MBaseFragmentActivity implements OnRec
                 if (doubleSimpleCustom.getData1() != null && doubleSimpleCustom.getData2() != null) {//显示两个
                     holder.contentImg1.setVisibility(View.VISIBLE);
                     holder.contentImg2.setVisibility(View.VISIBLE);
-                    Picasso.with(context).load(doubleSimpleCustom.getData1().getCoverUrlApp() + DimenUtil.getVertical50Q()+ DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.contentImg1);
-                    holder.contentImg1.setTag(doubleSimpleCustom.getData1().getCoverUrlApp());
-                    Picasso.with(context).load(doubleSimpleCustom.getData2().getCoverUrlApp() + DimenUtil.getVertical50Q() + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.contentImg2);
-                    holder.contentImg2.setTag(doubleSimpleCustom.getData2().getCoverUrlApp());
+                    Picasso.with(context).load(doubleSimpleCustom.getData1() + DimenUtil.getVertical50Q()+ DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.contentImg1);
+                    holder.contentImg1.setTag(doubleSimpleCustom.getData1());
+                    Picasso.with(context).load(doubleSimpleCustom.getData2() + DimenUtil.getVertical50Q() + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.contentImg2);
+                    holder.contentImg2.setTag(doubleSimpleCustom.getData2());
                     holder.contentImg2.setOnClickListener(this);
                     holder.contentImg1.setOnClickListener(this);
                 } else {//显示一个
                     holder.contentImg2.setVisibility(View.GONE);
                     holder.contentImg1.setVisibility(View.VISIBLE);
 
-                    if (DimenUtil.isHorizontal(doubleSimpleCustom.getData1().getCoverUrlApp())) {
-                        Picasso.with(context).load(doubleSimpleCustom.getData1().getCoverUrlApp() + DimenUtil.getHorizontal50Q() + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.contentImg1);
+                    if (DimenUtil.isHorizontal(doubleSimpleCustom.getData1())) {
+                        Picasso.with(context).load(doubleSimpleCustom.getData1() + DimenUtil.getHorizontal50Q() + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.contentImg1);
                     } else {//只有一个， 又是竖图。
 //                        Picasso.with(context).load(doubleSimpleCustom.getData1().getContentUrl() + "@" + DimenUtil.screenWidth + "w_" + DimenUtil.screenWidth * 3 + "h_40Q").into(holder.contentImg1);
-                        Picasso.with(context).load(doubleSimpleCustom.getData1().getCoverUrlApp() + "@" + DimenUtil.screenWidth + "w_" + DimenUtil.screenWidth * 3 / 2 + "h_40Q" + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.contentImg1);
+                        Picasso.with(context).load(doubleSimpleCustom.getData1() + "@" + DimenUtil.screenWidth + "w_" + DimenUtil.screenWidth * 3 / 2 + "h_40Q" + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.contentImg1);
                     }
 
-                    holder.contentImg1.setTag(doubleSimpleCustom.getData1().getCoverUrlApp());
+                    holder.contentImg1.setTag(doubleSimpleCustom.getData1());
                     holder.contentImg1.setOnClickListener(this);
                 }
             }
