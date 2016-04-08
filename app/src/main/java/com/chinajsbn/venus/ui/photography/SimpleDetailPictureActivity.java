@@ -43,7 +43,7 @@ public class SimpleDetailPictureActivity extends MBaseFragmentActivity {
     @ViewInject(R.id.titleView)
     private MasterTitleView titleView;
 
-    private ArrayList<Simple> orderList;
+    private ArrayList<String> orderList;
 
     //从案例过来的数据
     private ArrayList<ImageItem> orderPlanList;
@@ -60,13 +60,13 @@ public class SimpleDetailPictureActivity extends MBaseFragmentActivity {
     @Override
     public void initialize() {
 
-        isPlan = getIntent().getBooleanExtra("isPlan", false);
-        isDress= getIntent().getBooleanExtra("isDress", false);
+        isPlan = getIntent().getBooleanExtra("isPlan", false);//策划
+        isDress= getIntent().getBooleanExtra("isDress", false);//礼服
 
         String url = getIntent().getStringExtra("url");
         int tempPosition = 0;
 
-        if(isPlan) {
+        if(isPlan) {//策划
             orderPlanList = (ArrayList<ImageItem>) getIntent().getSerializableExtra("dataList");
             size = orderPlanList == null ? 0 : orderPlanList.size();
             for (int i = 0; i < size; i++) {
@@ -94,11 +94,11 @@ public class SimpleDetailPictureActivity extends MBaseFragmentActivity {
                 setDigitPosition(tempPosition);
                 viewPager.setCurrentItem(tempPosition, true);
             }
-        } else {
-            orderList = (ArrayList<Simple>) getIntent().getSerializableExtra("dataList");
+        } else {//样片
+            orderList = (ArrayList<String>) getIntent().getSerializableExtra("dataList");
             size = orderList == null ? 0 : orderList.size();
             for (int i = 0; i < size; i++) {
-                if(orderList.get(i).getCoverUrlApp().equals(url)){
+                if(orderList.get(i).equals(url)){
                     tempPosition = i;
                     break;
                 }
@@ -135,7 +135,7 @@ public class SimpleDetailPictureActivity extends MBaseFragmentActivity {
     }
 
     class MAdapter extends PagerAdapter {
-        ArrayList<Simple> orderList;
+        ArrayList<String> orderList;
         List<ImageItem> planOrderList;
         ArrayList<Dress> aDressList;
 
@@ -143,7 +143,7 @@ public class SimpleDetailPictureActivity extends MBaseFragmentActivity {
             planOrderList = l;
         }
 
-        public MAdapter(ArrayList<Simple> d) {
+        public MAdapter(ArrayList<String> d) {
             this.orderList = d;
         }
 
@@ -164,7 +164,7 @@ public class SimpleDetailPictureActivity extends MBaseFragmentActivity {
             String url ;
             if(isPlan)       url = planOrderList.get(position).getContentUrl();
             else if(isDress) url = aDressList.get(position).getImageUrl();
-            else             url = orderList.get(position).getCoverUrlApp();
+            else             url = orderList.get(position);
 
             if (!TextUtils.isEmpty(url)) {
                 if (DimenUtil.isHorizontal(url)) {

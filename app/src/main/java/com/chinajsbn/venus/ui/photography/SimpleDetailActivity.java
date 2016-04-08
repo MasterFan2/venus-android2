@@ -46,8 +46,6 @@ public class SimpleDetailActivity extends MBaseFragmentActivity implements OnRec
     @ViewInject(R.id.titleView)
     private MasterTitleView titleView;
     //---------------------------------------------------------
-    private SimplePhotographer photographer;
-    private SimplePhotographer stylist;
     private String strStyles = "";
     private String name = "";
     private String date = "";
@@ -77,9 +75,6 @@ public class SimpleDetailActivity extends MBaseFragmentActivity implements OnRec
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        String contentId = getIntent().getStringExtra("contentId");
-        String parentId = getIntent().getStringExtra("parentId");
-
         simpleOrCustom = getIntent().getStringExtra("simpleOrCustom");
         if (simpleOrCustom.equals("custom")) {
             titleView.setTitleText("客片详情");
@@ -90,6 +85,10 @@ public class SimpleDetailActivity extends MBaseFragmentActivity implements OnRec
         }
         name = getIntent().getStringExtra("name");
         date = getIntent().getStringExtra("date");
+
+        f = getIntent().getStringExtra("f");
+        m = getIntent().getStringExtra("m");
+
         String images = getIntent().getStringExtra("images");
         generateData(images);
     }
@@ -99,6 +98,8 @@ public class SimpleDetailActivity extends MBaseFragmentActivity implements OnRec
      * @param res
      */
     private void generateData(String res) {
+        if(TextUtils.isEmpty(res))
+            return;
         String ret = res.replace("[", "").replace("]", "").replace("\"", "");
         String retArr[] = ret.split(",");
         List<String> dataList = Arrays.asList(retArr);
@@ -112,8 +113,8 @@ public class SimpleDetailActivity extends MBaseFragmentActivity implements OnRec
             int width = Integer.parseInt(url.split("x")[0]);
             int height = Integer.parseInt(url.split("x")[1]);
 
-            if (width >= height) hList.add(url);
-            else if (width < height) vList.add(url);
+            if (width >= height) hList.add(dataList.get(i));
+            else if (width < height) vList.add(dataList.get(i));
         }
 
         //2.合并
@@ -406,29 +407,29 @@ public class SimpleDetailActivity extends MBaseFragmentActivity implements OnRec
                 }
 
                 //摄影师造型师头像
-                if (photographer != null && stylist != null) {
-
-                    holder.photographerStylistContainer.setVisibility(View.VISIBLE);
-                    holder.stylistContainer.setVisibility(View.VISIBLE);
-                    if (photographer != null) {
-                        holder.photographerContainer.setVisibility(View.VISIBLE);
-                        holder.photographerTxt.setText(photographer.getPersonName());
-                        Picasso.with(context).load(photographer.getPhotoUrl()).into(holder.photographerImg);
-                    } else {
-                        holder.photographerContainer.setVisibility(View.GONE);
-                    }
-
-                    if (stylist != null) {
-                        holder.stylistContainer.setVisibility(View.VISIBLE);
-                        holder.styleTxt.setText(stylist.getPersonName());
-                        Picasso.with(context).load(stylist.getPhotoUrl()).into(holder.stylistImg);
-                    } else {
-                        holder.stylistContainer.setVisibility(View.GONE);
-                    }
-                } else {
+//                if (photographer != null && stylist != null) {
+//
+//                    holder.photographerStylistContainer.setVisibility(View.VISIBLE);
+//                    holder.stylistContainer.setVisibility(View.VISIBLE);
+//                    if (photographer != null) {
+//                        holder.photographerContainer.setVisibility(View.VISIBLE);
+//                        holder.photographerTxt.setText(photographer.getPersonName());
+//                        Picasso.with(context).load(photographer.getPhotoUrl()).into(holder.photographerImg);
+//                    } else {
+//                        holder.photographerContainer.setVisibility(View.GONE);
+//                    }
+//
+//                    if (stylist != null) {
+//                        holder.stylistContainer.setVisibility(View.VISIBLE);
+//                        holder.styleTxt.setText(stylist.getPersonName());
+//                        Picasso.with(context).load(stylist.getPhotoUrl()).into(holder.stylistImg);
+//                    } else {
+//                        holder.stylistContainer.setVisibility(View.GONE);
+//                    }
+//                } else {
                     holder.photographerStylistContainer.setVisibility(View.GONE);
                     holder.stylistContainer.setVisibility(View.GONE);
-                }
+//                }
 
                 //内容
                 Picasso.with(context).load(doubleSimpleCustom.getData2() + DimenUtil.getVertical50Q()+ DimenUtil.getSuffixUTF8()).into(holder.contentImg2);

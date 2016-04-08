@@ -50,8 +50,8 @@ public class Custom implements Serializable {
     @Column(column = "coverUrlApp")
     private String coverUrlApp;
 
-    @Column(column = "createDate")
-    private String createDate;
+    @Column(column = "createTime")
+    private String createTime;
 
     @Column(column = "shootingStyleId")
     private String shootingStyleId;
@@ -59,6 +59,7 @@ public class Custom implements Serializable {
     @Column(column = "shootingStyleName")
     private String shootingStyleName;
 
+    @Column(column = "appDetailImages")
     private String appDetailImages;//详情列表
 
     @Foreign(column = "photographerId", foreign = "personId")
@@ -105,14 +106,6 @@ public class Custom implements Serializable {
 
     public void setCoverUrlApp(String coverUrlApp) {
         this.coverUrlApp = coverUrlApp;
-    }
-
-    public String getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(String createDate) {
-        this.createDate = createDate;
     }
 
     public String getHeadPhotographyName() {
@@ -203,29 +196,14 @@ public class Custom implements Serializable {
         this.shootingStyleName = shootingStyleName;
     }
 
-    public Custom() {
+    public Custom() {}
 
+    public String getCreateTime() {
+        return createTime;
     }
 
-    public Custom(String actorFemaleName, String actorMaleName, String appDetailImages, String contentId, String coverUrlApp, String createDate, String headPhotographyName, String headPhotographyUrl, String headStyles, String headStylistName, String headStylistUrl, int id, String name, SimplePhotographer photographer, String seasonId, String shootingStyleId, String shootingStyleName) {
-
-        this.actorFemaleName = actorFemaleName;
-        this.actorMaleName = actorMaleName;
-        this.appDetailImages = appDetailImages;
-        this.contentId = contentId;
-        this.coverUrlApp = coverUrlApp;
-        this.createDate = createDate;
-        this.headPhotographyName = headPhotographyName;
-        this.headPhotographyUrl = headPhotographyUrl;
-        this.headStyles = headStyles;
-        this.headStylistName = headStylistName;
-        this.headStylistUrl = headStylistUrl;
-        this.id = id;
-        this.name = name;
-        this.photographer = photographer;
-        this.seasonId = seasonId;
-        this.shootingStyleId = shootingStyleId;
-        this.shootingStyleName = shootingStyleName;
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 }
 

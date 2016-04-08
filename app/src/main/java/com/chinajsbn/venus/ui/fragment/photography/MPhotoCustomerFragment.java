@@ -313,12 +313,13 @@ public class MPhotoCustomerFragment extends BaseFragment implements OnRecyclerIt
 
                     //SimpleDetailResp
                     Intent intent = new Intent(getActivity(), SimpleDetailActivity.class);
-                    intent.putExtra("parentId", parentId);
-                    intent.putExtra("contentId", simple.getContentId());
                     intent.putExtra("simpleOrCustom", simpleOrCustom);
-                    intent.putExtra("photographer", simple.getPhotographer());
-                    intent.putExtra("date", simple.getCreateDate());
+                    intent.putExtra("date", simple.getCreateTime());
                     intent.putExtra("name", simple.getName());
+                    intent.putExtra("images", simple.getAppDetailImages());
+
+                    intent.putExtra("f", simple.getActorFemaleName());
+                    intent.putExtra("m", simple.getActorMaleName());
 
                     getActivity().startActivity(intent);
                     getActivity().overridePendingTransition(R.anim.roll_up, R.anim.roll);
@@ -564,18 +565,16 @@ public class MPhotoCustomerFragment extends BaseFragment implements OnRecyclerIt
 
     @Override
     public void onRecyclerItemClick(View v, int position) {
-        Custom simple = adapter.getItem(position);
+//        Custom simple = adapter.getItem(position);
         //SimpleDetailResp
-        Intent intent = new Intent(getActivity(), SimpleDetailActivity.class);
-        intent.putExtra("parentId", parentId);
-        intent.putExtra("contentId", simple.getContentId());
-        intent.putExtra("simpleOrCustom", simpleOrCustom);
-        intent.putExtra("photographer", simple.getPhotographer());
-        intent.putExtra("date", simple.getCreateDate());
-        intent.putExtra("name", simple.getName());
-
-        getActivity().startActivity(intent);
-        getActivity().overridePendingTransition(R.anim.roll_up, R.anim.roll);
+//        Intent intent = new Intent(getActivity(), SimpleDetailActivity.class);
+//        intent.putExtra("simpleOrCustom", simpleOrCustom);
+//        intent.putExtra("date", simple.getCreateDate());
+//        intent.putExtra("name", simple.getName());
+//        intent.putExtra("images", simple.getAppDetailImages());
+//
+//        getActivity().startActivity(intent);
+//        getActivity().overridePendingTransition(R.anim.roll_up, R.anim.roll);
     }
 
     class MyAdapter extends BaseAdapter {

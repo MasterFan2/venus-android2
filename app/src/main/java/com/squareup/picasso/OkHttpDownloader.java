@@ -36,7 +36,7 @@ public class OkHttpDownloader implements Downloader {
     client.interceptors().add(new Interceptor() {
       @Override
       public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
-        Request request = chain.request().newBuilder().addHeader("Referer", "http://www.jsbn.love").build();
+        Request request = chain.request().newBuilder().addHeader("Referer", "http://app.jsbn.com").build();
         return chain.proceed(request);
       }
     });

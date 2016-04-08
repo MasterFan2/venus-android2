@@ -178,17 +178,14 @@ public class MWeddingPhotographyActivity extends AppCompatActivity {
                         Bundle bundle = new Bundle();
                         bundle.putString("contentId", subModle.getContentId());
                         simpleFragment.setArguments(bundle);
-
                         menuFragments.put(subModle.getModuleName(), simpleFragment);
                         menuPosition.put(subModle.getModuleName(), i);
 
                     } else if (subModle.getContentId().equals(KPXS)) {//客片欣赏
                         customFragment = new MPhotoCustomerFragment();
-//                        customFragment = new BestFilmFragment();
                         Bundle bundle = new Bundle();
                         bundle.putString("contentId", subModle.getContentId());
                         customFragment.setArguments(bundle);
-
                         menuFragments.put(subModle.getModuleName(), customFragment);
                         menuPosition.put(subModle.getModuleName(), i);
 
