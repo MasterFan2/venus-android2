@@ -147,7 +147,6 @@ public class HomeActivity extends MBaseFragmentActivity implements OnClickListen
 
         initializeTimer();
 
-
         //init dailog
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_not_network_layout, null);
         ViewHolder holder = new ViewHolder(view);
@@ -270,81 +269,39 @@ public class HomeActivity extends MBaseFragmentActivity implements OnClickListen
     @OnItemClick(R.id.listView)
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         i -= 1;
-        if(NetworkUtil.hasConnection(context)){
-            String contentId = menuData.get(i).getContentId();
-            Intent intent;
-            if (contentId.equals("" + HSSY)) {      //婚纱摄影
-                intent = new Intent(context, MWeddingPhotographyActivity.class);
-                intent.putExtra("subModule", menuData.get(i).getSubModule());
-                animStart(intent);
-            } else if (contentId.equals("" + HYYD)) {//婚宴预定
-                intent = new Intent(context, HotelActivity.class);
-                intent.putExtra("subModule", menuData.get(i).getSubModule());
-                animStart(intent);
-            } else if (contentId.equals("" + HQDZ)) {//婚庆定制
-                intent = new Intent(context, MPlanActivity.class);
-                intent.putExtra("subModule", menuData.get(i).getSubModule());
-                animStart(intent);
-            } else if (contentId.equals("" + HSLF)) {//婚纱礼服
-                intent = new Intent(context, DressesNavActivity.class);
-                intent.putExtra("subModule", menuData.get(i).getSubModule());
-                animStart(intent);
-            } else if (contentId.equals("" + HJZS)) {//婚戒钻石
-                intent = new Intent(context, DiamondActivity.class);
-                animStart(intent);
-            } else if (contentId.equals("" + WDY)) {//微电影
-                intent = new Intent(context, MicrofilmNavActivity.class);
-                intent.putExtra("subModule", menuData.get(i).getSubModule());
-                animStart(intent);
-            } else if (contentId.equals("" + HLYP)) {//婚礼用品
-                intent = new Intent(context, SuppliesNavActivity.class);
-                intent.putExtra("subModule", menuData.get(i).getSubModule());
-                animStart(intent);
-            } else if (contentId.equals("" + HCZL)) {//婚车租赁
-                intent = new Intent(context, CarNavActivity.class);
-                intent.putExtra("subModule", menuData.get(i).getSubModule());
-                animStart(intent);
-            }
-        }else{
-            try {
-                List<SubModule> localMenuData = db.findAll(SubModule.class);
-                String contentId = localMenuData.get(i).getContentId();
-                Intent intent;
-                if (contentId.equals("" + HSSY)) {      //婚纱摄影
-                    intent = new Intent(context, MWeddingPhotographyActivity.class);
-                    intent.putExtra("subModule", localMenuData.get(i).getSubModule());
-                    animStart(intent);
-                } else if (contentId.equals("" + HYYD)) {//婚宴预定
-                    intent = new Intent(context, HotelActivity.class);
-                    intent.putExtra("subModule", localMenuData.get(i).getSubModule());
-                    animStart(intent);
-                } else if (contentId.equals("" + HQDZ)) {//婚庆定制
-                    intent = new Intent(context, MPlanActivity.class);
-                    intent.putExtra("subModule", localMenuData.get(i).getSubModule());
-                    animStart(intent);
-                } else if (contentId.equals("" + HSLF)) {//婚纱礼服
-                    intent = new Intent(context, DressesNavActivity.class);
-                    intent.putExtra("subModule", localMenuData.get(i).getSubModule());
-                    animStart(intent);
-                } else if (contentId.equals("" + HJZS)) {//婚戒钻石
-                    intent = new Intent(context, DiamondActivity.class);
-                    animStart(intent);
-                } else if (contentId.equals("" + WDY)) {//微电影
-                    intent = new Intent(context, MicrofilmNavActivity.class);
-                    intent.putExtra("subModule", localMenuData.get(i).getSubModule());
-                    animStart(intent);
-                } else if (contentId.equals("" + HLYP)) {//婚礼用品
-                    intent = new Intent(context, SuppliesNavActivity.class);
-                    intent.putExtra("subModule", localMenuData.get(i).getSubModule());
-                    animStart(intent);
-                } else if (contentId.equals("" + HCZL)) {//婚车租赁
-                    intent = new Intent(context, CarNavActivity.class);
-                    intent.putExtra("subModule", localMenuData.get(i).getSubModule());
-                    animStart(intent);
-                }
-            } catch (DbException e) {
-                e.printStackTrace();
-            }
+        String contentId = menuData.get(i).getContentId();
+        Intent intent;
+        if (contentId.equals("" + HSSY)) {      //婚纱摄影
+            intent = new Intent(context, MWeddingPhotographyActivity.class);
+            intent.putExtra("subModule", menuData.get(i).getSubModule());
+            animStart(intent);
+        } else if (contentId.equals("" + HYYD)) {//婚宴预定
+            intent = new Intent(context, HotelActivity.class);
+            intent.putExtra("subModule", menuData.get(i).getSubModule());
+            animStart(intent);
+        } else if (contentId.equals("" + HQDZ)) {//婚庆定制
+            intent = new Intent(context, MPlanActivity.class);
+            intent.putExtra("subModule", menuData.get(i).getSubModule());
+            animStart(intent);
+        } else if (contentId.equals("" + HSLF)) {//婚纱礼服
+            intent = new Intent(context, DressesNavActivity.class);
+            intent.putExtra("subModule", menuData.get(i).getSubModule());
+            animStart(intent);
+        } else if (contentId.equals("" + HJZS)) {//婚戒钻石
+            intent = new Intent(context, DiamondActivity.class);
+            animStart(intent);
+        } else if (contentId.equals("" + WDY)) {//微电影
+            intent = new Intent(context, MicrofilmNavActivity.class);
+            intent.putExtra("subModule", menuData.get(i).getSubModule());
+            animStart(intent);
+        } else if (contentId.equals("" + HLYP)) {//婚礼用品
+            intent = new Intent(context, SuppliesNavActivity.class);
+            intent.putExtra("subModule", menuData.get(i).getSubModule());
+            animStart(intent);
+        } else if (contentId.equals("" + HCZL)) {//婚车租赁
+            intent = new Intent(context, CarNavActivity.class);
+            intent.putExtra("subModule", menuData.get(i).getSubModule());
+            animStart(intent);
         }
     }
 

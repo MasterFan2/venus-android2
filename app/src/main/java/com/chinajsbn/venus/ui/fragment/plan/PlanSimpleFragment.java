@@ -17,7 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
+import com.chinajsbn.venus.net.HttpClients;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Scheme;
 import com.chinajsbn.venus.net.bean.Style;
@@ -66,17 +66,9 @@ public class PlanSimpleFragment extends BaseFragment implements OnRecyclerItemCl
     public static final String TAG = "PlanSimpleFragment_tag_sjal";
     public static final String TAG_STYLE = "PlanSimpleFragment_style";
 
-//    @ViewInject(R.id.recyclerView)
-//    private RecyclerView recyclerView;
-//    private MyAdapter adapter;
-//    private LinearLayoutManager layoutManager;
-
     @ViewInject(R.id.myListView)
     private MyListView listView;
     private MyAdapter adapter;
-
-//    @ViewInject(R.id.swipe_refresh)
-//    private SwipeRefreshLayout refreshLayout;
 
     @ViewInject(R.id.fab)
     private TextView fab;
@@ -95,16 +87,13 @@ public class PlanSimpleFragment extends BaseFragment implements OnRecyclerItemCl
     private MTDialog mtdialog;
 
     public static boolean refreshed = false;
-    public static String styleId = "-1";
+    public static int styleId = -1;
     public static String styleName = "";//cache used
 
     private ArrayList<Scheme> tempDataList;
 
     //传递过来的数据
     private SubModule subModules;
-
-    //模块ID
-    private final String parentId = "27240";
 
     //--------------page-----------------
     private int pageIndex = 1;
@@ -133,14 +122,14 @@ public class PlanSimpleFragment extends BaseFragment implements OnRecyclerItemCl
     public void onResume() {
         super.onResume();
         if (refreshed) {//详情的查看更多相似风格跳转处理
-            HttpClient.getInstance().getPlanSimplesByStyleId(styleId, parentId, 1, 10, cb);
+            HttpClients.getInstance().schemeList(styleId, 1, 10, cb);
             refreshed = false;
         }
     }
 
     @Override
     public void onDestroy() {
-        styleId = "-1";
+        styleId = -1;
         super.onDestroy();
     }
 
@@ -176,10 +165,10 @@ public class PlanSimpleFragment extends BaseFragment implements OnRecyclerItemCl
 
             listView.startRotateProgress();
             listView.setPullRefreshEnable(false);
-            if(styleId.equals("-1")){
-                HttpClient.getInstance().getPlanSimples(parentId, pageIndex, pageSize, cb);
+            if(styleId == -1){
+                HttpClients.getInstance().schemeList(0, pageIndex, pageSize, cb);
             }else{
-                HttpClient.getInstance().getPlanSimplesByStyleId(styleId, parentId, pageIndex, pageSize, cb);
+                HttpClients.getInstance().schemeList(styleId, pageIndex, pageSize, cb);
             }
         } else {
             getPagesFromLocal();
@@ -189,7 +178,7 @@ public class PlanSimpleFragment extends BaseFragment implements OnRecyclerItemCl
     private void getPagesByStyle() {
         pageIndex = 1;
         if (NetworkUtil.hasConnection(getActivity())) {
-            HttpClient.getInstance().getPlanSimplesByStyleId(styleId, parentId, pageIndex, pageSize, cb);
+            HttpClients.getInstance().schemeList(styleId, pageIndex, pageSize, cb);
         } else {
             getPagesByStyleFromLocal();
         }
@@ -210,7 +199,7 @@ public class PlanSimpleFragment extends BaseFragment implements OnRecyclerItemCl
         try {
             List<Scheme> schemeList = null;
 
-            if (styleId.equals("-1"))
+            if (styleId == -1)
                 schemeList = db.findAll(Selector.from(Scheme.class).where("tag", "=", TAG));
             else
                 schemeList = db.findAll(Selector.from(Scheme.class).where("styleName", "=", styleName));
@@ -228,10 +217,10 @@ public class PlanSimpleFragment extends BaseFragment implements OnRecyclerItemCl
     private void getNextPages() {
         isNextPage = true;
         pageIndex++;
-        if(styleId.equals("-1")){
-            HttpClient.getInstance().getPlanSimples(parentId, pageIndex, pageSize, cb);
+        if(styleId == -1){
+            HttpClients.getInstance().schemeList(0, pageIndex, pageSize, cb);
         }else{
-            HttpClient.getInstance().getPlanSimplesByStyleId(styleId, parentId, pageIndex, pageSize, cb);
+            HttpClients.getInstance().schemeList(styleId, pageIndex, pageSize, cb);
         }
     }
 
@@ -262,12 +251,9 @@ public class PlanSimpleFragment extends BaseFragment implements OnRecyclerItemCl
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                //Intent intent = new Intent(getActivity(), PlanDetailActivity.class);
                 if(NetworkUtil.hasConnection(getActivity())){
                     Intent intent = new Intent(getActivity(), MPlanDetailActivity.class);
-                    intent.putExtra("parentId", parentId);
-                    intent.putExtra("detailId", adapter.getItem(position).getWeddingCaseId() + "");
-                    intent.putExtra("name", adapter.getItem(position).getSchemeName());
+                    intent.putExtra("scheme", adapter.getItem(position));
                     animStart(intent);
                 }else{
                     handler.sendEmptyMessageDelayed(10, 100);
@@ -281,7 +267,7 @@ public class PlanSimpleFragment extends BaseFragment implements OnRecyclerItemCl
             dialog.show();
             getFirstPages();
             //Dialog
-            HttpClient.getInstance().getSchemeList(styleListCallback);
+            HttpClients.getInstance().caseStyleList(styleListCallback);
         } else {
             try {
                 List<Scheme> schemeList = db.findAll(Scheme.class);
@@ -307,10 +293,9 @@ public class PlanSimpleFragment extends BaseFragment implements OnRecyclerItemCl
                 listView.smoothScrollToPosition(0);
                 isNextPage = false;
                 if (position == 0) {//XXB
-                    styleId = "-1";
+                    styleId = -1;
                     getFirstPages();
                 } else {
-//                    styleId = ((StyleAdapter)styleListView.getAdapter()).getItem(position).getId();
                     styleName = ((StyleAdapter)styleListView.getAdapter()).getItem(position).getName();
                     getPagesByStyle();
                 }
@@ -440,7 +425,7 @@ public class PlanSimpleFragment extends BaseFragment implements OnRecyclerItemCl
                 try {
                     if (isNextPage) {//下一页
                         adapter.getDataList().addAll(simpleResp.getData());
-                        if(styleId.equals("-1")){//全部， 没有风格的时候缓存
+                        if(styleId == -1){//全部， 没有风格的时候缓存
                             S.o(":::缓存第下一页数据");
                             for (Scheme scheme : simpleResp.getData()){
                                 scheme.setTag(TAG);
@@ -454,7 +439,7 @@ public class PlanSimpleFragment extends BaseFragment implements OnRecyclerItemCl
                         adapter.setDataList(simpleResp.getData());
                         adapter.notifyDataSetChanged();
 
-                        if(styleId.equals("-1")){//全部， 没有风格的时候缓存
+                        if(styleId == -1){//全部， 没有风格的时候缓存
                             S.o(":::缓存第一页数据");
                             db.delete(Scheme.class, WhereBuilder.b("tag", "=", TAG));
                             for (Scheme scheme : simpleResp.getData()){
@@ -540,13 +525,13 @@ public class PlanSimpleFragment extends BaseFragment implements OnRecyclerItemCl
                 holder = (ViewHolder) view.getTag();
             }
 
-            holder.nameTxt.setText(dataList.get(position).getSchemeName());
+            holder.nameTxt.setText(dataList.get(position).getName());
             holder.styleTxt.setText("风格:" + dataList.get(position).getStyleName());
             //加载内容
-            if (TextUtils.isEmpty(dataList.get(position).getWeddingCaseImage())) {
+            if (TextUtils.isEmpty(dataList.get(position).getCoverUrlApp())) {
                 Picasso.with(getActivity()).load(R.mipmap.ic_launcher).into(holder.contentImg);
             } else {
-                Picasso.with(getActivity()).load(dataList.get(position).getWeddingCaseImage() + DimenUtil.getHorizontalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).error(getResources().getDrawable(R.mipmap.ic_launcher)).resize(DimenUtil.screenWidth, DimenUtil.targetHeight).into(holder.contentImg);
+                Picasso.with(getActivity()).load(dataList.get(position).getCoverUrlApp() + DimenUtil.getHorizontalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).error(getResources().getDrawable(R.mipmap.ic_launcher)).resize(DimenUtil.screenWidth, DimenUtil.targetHeight).into(holder.contentImg);
             }
             //
             return view;

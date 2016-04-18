@@ -152,190 +152,277 @@ public class MWeddingPhotographyActivity extends AppCompatActivity {
         //
         menuData = (List<Menu>) getIntent().getSerializableExtra("subModule");
 
-        if (NetworkUtil.hasConnection(context)) {//有网络
-            if (menuData != null && menuData.size() > 0) {//有数据
-                final int len = menuData.size();
-                for (int i = 0; i < len; i++) {
-                    Menu subModle = menuData.get(i);
+        if (menuData != null && menuData.size() > 0) {//有数据
+            final int len = menuData.size();
+            for (int i = 0; i < len; i++) {
+                Menu subModle = menuData.get(i);
 
-                    if (subModle.getContentId().equals(HSJS)) {       //婚纱纪实MV
-                        jsmvFragment = new JSMVFragment();
-                        menuFragments.put(subModle.getModuleName(), jsmvFragment);
-                        menuPosition.put(subModle.getModuleName(), i);
+                if (subModle.getContentId().equals(HSJS)) {       //婚纱纪实MV
+                    jsmvFragment = new JSMVFragment();
+                    menuFragments.put(subModle.getModuleName(), jsmvFragment);
+                    menuPosition.put(subModle.getModuleName(), i);
 
-                    }else if (subModle.getContentId().equals(HZJQ)) {//婚照技巧
-                        stylistFragment = new MTSelStylistFragment();
-                        menuFragments.put(subModle.getModuleName(), stylistFragment);
-                        menuPosition.put(subModle.getModuleName(), i);
+                }else if (subModle.getContentId().equals(HZJQ)) {//婚照技巧
+                    stylistFragment = new MTSelStylistFragment();
+                    menuFragments.put(subModle.getModuleName(), stylistFragment);
+                    menuPosition.put(subModle.getModuleName(), i);
 
-                    } else if (subModle.getContentId().equals(XSYS)) { //选摄影师
-                        photographyFragment = new TeamFragment();
-                        menuFragments.put(subModle.getModuleName(), photographyFragment);
-                        menuPosition.put(subModle.getModuleName(), i);
+                } else if (subModle.getContentId().equals(XSYS)) { //选摄影师
+                    photographyFragment = new TeamFragment();
+                    menuFragments.put(subModle.getModuleName(), photographyFragment);
+                    menuPosition.put(subModle.getModuleName(), i);
 
-                    } else if (subModle.getContentId().equals(YPXS)) {//样片欣赏
-                        simpleFragment = new MPhotoSimpleFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("contentId", subModle.getContentId());
-                        simpleFragment.setArguments(bundle);
-                        menuFragments.put(subModle.getModuleName(), simpleFragment);
-                        menuPosition.put(subModle.getModuleName(), i);
+                } else if (subModle.getContentId().equals(YPXS)) {//样片欣赏
+                    simpleFragment = new MPhotoSimpleFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("contentId", subModle.getContentId());
+                    simpleFragment.setArguments(bundle);
+                    menuFragments.put(subModle.getModuleName(), simpleFragment);
+                    menuPosition.put(subModle.getModuleName(), i);
 
-                    } else if (subModle.getContentId().equals(KPXS)) {//客片欣赏
-                        customFragment = new MPhotoCustomerFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("contentId", subModle.getContentId());
-                        customFragment.setArguments(bundle);
-                        menuFragments.put(subModle.getModuleName(), customFragment);
-                        menuPosition.put(subModle.getModuleName(), i);
+                } else if (subModle.getContentId().equals(KPXS)) {//客片欣赏
+                    customFragment = new MPhotoCustomerFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("contentId", subModle.getContentId());
+                    customFragment.setArguments(bundle);
+                    menuFragments.put(subModle.getModuleName(), customFragment);
+                    menuPosition.put(subModle.getModuleName(), i);
 
-                    } else if (subModle.getContentId().equals(TXBJ)) {//婚纱套系报价
-                        suitFragment = new PhotoWedSuitFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("contentId", subModle.getContentId());
-                        suitFragment.setArguments(bundle);
-                        menuFragments.put(subModle.getModuleName(), suitFragment);
-                        menuPosition.put(subModle.getModuleName(), i);
-                    }
+                } else if (subModle.getContentId().equals(TXBJ)) {//婚纱套系报价
+                    suitFragment = new PhotoWedSuitFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("contentId", subModle.getContentId());
+                    suitFragment.setArguments(bundle);
+                    menuFragments.put(subModle.getModuleName(), suitFragment);
+                    menuPosition.put(subModle.getModuleName(), i);
                 }
-
-                //listView initialize
-                adapter = new ListMenuAdapter();
-                menuListView.setAdapter(adapter);
-                menuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        if (currentSelect == position) {
-                            drawerLayout.closeDrawers();
-                            return;
-                        }
-
-                        if(menuData.get(position).getContentId().equals(HZJQ)) {
-                            Intent intent = new Intent(context, OtherActivity.class);
-                            intent.putExtra("type", 0);
-                            startActivity(intent);
-//                            animStart(intent);
-                            return;
-                        }
-
-                        BaseFragment fragment = menuFragments.get(menuData.get(position).getModuleName());
-                        if (fragment == currentShowFragment) {
-                            return;
-                        }
-                        //
-                        titleView.setTitleText(menuData.get(position).getModuleName());
-                        fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-                        fragmentTransaction.hide(currentShowFragment).show(fragment).commit();
-                        currentShowFragment.hide();
-                        fragment.show();
-
-                        currentShowFragment = fragment;
-                        currentSelect = position;
-                        drawerLayout.closeDrawers();
-                    }
-                });
-            } else {
-                T.s(context, "获取数据失败，请稍后再试!");
-                return;
             }
-        } else {//无网络
-            try {
-                localSubModules = db.findAll(Selector.from(LocalSubModule.class).where("parentId", "=", HomeActivity.HSSY));
-                if (localSubModules != null && localSubModules.size() > 0) {
-                    final int len = localSubModules.size();
-                    for (int i = 0; i < len; i++) {
-                        LocalSubModule localSubModule = localSubModules.get(i);
-                        if (localSubModule.getContentId().equals(HSJS)) {       //婚纱纪实
-                            jsmvFragment = new JSMVFragment();
-                            menuFragments.put(localSubModule.getModuleName(), jsmvFragment);
-                            menuPosition.put(localSubModule.getModuleName(), i);
-                        } else if (localSubModule.getContentId().equals(XSYS)) {//选摄影师
-                            photographyFragment = new MTSelPhotographerFragment();
-                            menuFragments.put(localSubModule.getModuleName(), photographyFragment);
-                            menuPosition.put(localSubModule.getModuleName(), i);
 
-                        } else if (localSubModule.getContentId().equals(YPXS)) {//样片欣赏
-                            simpleFragment = new MPhotoSimpleFragment();
-                            Bundle bundle = new Bundle();
-                            bundle.putString("contentId", localSubModule.getContentId());
-                            simpleFragment.setArguments(bundle);
-
-                            menuFragments.put(localSubModule.getModuleName(), simpleFragment);
-                            menuPosition.put(localSubModule.getModuleName(), i);
-
-                        } else if (localSubModule.getContentId().equals(KPXS)) {//客片欣赏
-                            customFragment = new MPhotoCustomerFragment();
-                            Bundle bundle = new Bundle();
-                            bundle.putString("contentId", localSubModule.getContentId());
-                            customFragment.setArguments(bundle);
-
-                            menuFragments.put(localSubModule.getModuleName(), customFragment);
-                            menuPosition.put(localSubModule.getModuleName(), i);
-
-                        } else if (localSubModule.getContentId().equals(TXBJ)) {//婚纱套系报价
-                            suitFragment = new PhotoWedSuitFragment();
-                            Bundle bundle = new Bundle();
-                            bundle.putString("contentId", localSubModule.getContentId());
-                            suitFragment.setArguments(bundle);
-
-                            menuFragments.put(localSubModule.getModuleName(), suitFragment);
-                            menuPosition.put(localSubModule.getModuleName(), i);
-                        }
+            //listView initialize
+            adapter = new ListMenuAdapter();
+            menuListView.setAdapter(adapter);
+            menuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    if (currentSelect == position) {
+                        drawerLayout.closeDrawers();
+                        return;
                     }
 
-                    //listView initialize
-                    adapter = new ListMenuAdapter(localSubModules);
-                    menuListView.setAdapter(adapter);
-                    menuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            if (currentSelect == position) {
-                                drawerLayout.closeDrawers();
-                                return;
-                            }
-
-                            BaseFragment fragment = menuFragments.get(localSubModules.get(position).getModuleName());
-                            if (fragment == currentShowFragment) {
-                                return;
-                            }
-
-                            if(localSubModules.get(position).getContentId().equals(HZJQ)) {
-                                Intent intent = new Intent(context, OtherActivity.class);
-                                intent.putExtra("type", 0);
-                                startActivity(intent);
+                    if(menuData.get(position).getContentId().equals(HZJQ)) {
+                        Intent intent = new Intent(context, OtherActivity.class);
+                        intent.putExtra("type", 0);
+                        startActivity(intent);
 //                            animStart(intent);
-                                return;
-                            }
-//                            if(position == 5) {
+                        return;
+                    }
+
+                    BaseFragment fragment = menuFragments.get(menuData.get(position).getModuleName());
+                    if (fragment == currentShowFragment) {
+                        return;
+                    }
+                    //
+                    titleView.setTitleText(menuData.get(position).getModuleName());
+                    fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
+                    fragmentTransaction.hide(currentShowFragment).show(fragment).commit();
+                    currentShowFragment.hide();
+                    fragment.show();
+
+                    currentShowFragment = fragment;
+                    currentSelect = position;
+                    drawerLayout.closeDrawers();
+                }
+            });
+        } else {
+            T.s(context, "获取数据失败，请稍后再试!");
+            return;
+        }
+
+//        if (NetworkUtil.hasConnection(context)) {//有网络
+//            if (menuData != null && menuData.size() > 0) {//有数据
+//                final int len = menuData.size();
+//                for (int i = 0; i < len; i++) {
+//                    Menu subModle = menuData.get(i);
+//
+//                    if (subModle.getContentId().equals(HSJS)) {       //婚纱纪实MV
+//                        jsmvFragment = new JSMVFragment();
+//                        menuFragments.put(subModle.getModuleName(), jsmvFragment);
+//                        menuPosition.put(subModle.getModuleName(), i);
+//
+//                    }else if (subModle.getContentId().equals(HZJQ)) {//婚照技巧
+//                        stylistFragment = new MTSelStylistFragment();
+//                        menuFragments.put(subModle.getModuleName(), stylistFragment);
+//                        menuPosition.put(subModle.getModuleName(), i);
+//
+//                    } else if (subModle.getContentId().equals(XSYS)) { //选摄影师
+//                        photographyFragment = new TeamFragment();
+//                        menuFragments.put(subModle.getModuleName(), photographyFragment);
+//                        menuPosition.put(subModle.getModuleName(), i);
+//
+//                    } else if (subModle.getContentId().equals(YPXS)) {//样片欣赏
+//                        simpleFragment = new MPhotoSimpleFragment();
+//                        Bundle bundle = new Bundle();
+//                        bundle.putString("contentId", subModle.getContentId());
+//                        simpleFragment.setArguments(bundle);
+//                        menuFragments.put(subModle.getModuleName(), simpleFragment);
+//                        menuPosition.put(subModle.getModuleName(), i);
+//
+//                    } else if (subModle.getContentId().equals(KPXS)) {//客片欣赏
+//                        customFragment = new MPhotoCustomerFragment();
+//                        Bundle bundle = new Bundle();
+//                        bundle.putString("contentId", subModle.getContentId());
+//                        customFragment.setArguments(bundle);
+//                        menuFragments.put(subModle.getModuleName(), customFragment);
+//                        menuPosition.put(subModle.getModuleName(), i);
+//
+//                    } else if (subModle.getContentId().equals(TXBJ)) {//婚纱套系报价
+//                        suitFragment = new PhotoWedSuitFragment();
+//                        Bundle bundle = new Bundle();
+//                        bundle.putString("contentId", subModle.getContentId());
+//                        suitFragment.setArguments(bundle);
+//                        menuFragments.put(subModle.getModuleName(), suitFragment);
+//                        menuPosition.put(subModle.getModuleName(), i);
+//                    }
+//                }
+//
+//                //listView initialize
+//                adapter = new ListMenuAdapter();
+//                menuListView.setAdapter(adapter);
+//                menuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                        if (currentSelect == position) {
+//                            drawerLayout.closeDrawers();
+//                            return;
+//                        }
+//
+//                        if(menuData.get(position).getContentId().equals(HZJQ)) {
+//                            Intent intent = new Intent(context, OtherActivity.class);
+//                            intent.putExtra("type", 0);
+//                            startActivity(intent);
+////                            animStart(intent);
+//                            return;
+//                        }
+//
+//                        BaseFragment fragment = menuFragments.get(menuData.get(position).getModuleName());
+//                        if (fragment == currentShowFragment) {
+//                            return;
+//                        }
+//                        //
+//                        titleView.setTitleText(menuData.get(position).getModuleName());
+//                        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+//
+//                        fragmentTransaction.hide(currentShowFragment).show(fragment).commit();
+//                        currentShowFragment.hide();
+//                        fragment.show();
+//
+//                        currentShowFragment = fragment;
+//                        currentSelect = position;
+//                        drawerLayout.closeDrawers();
+//                    }
+//                });
+//            } else {
+//                T.s(context, "获取数据失败，请稍后再试!");
+//                return;
+//            }
+//        } else {//无网络
+//            try {
+//                localSubModules = db.findAll(Selector.from(LocalSubModule.class).where("parentId", "=", HomeActivity.HSSY));
+//                if (localSubModules != null && localSubModules.size() > 0) {
+//                    final int len = localSubModules.size();
+//                    for (int i = 0; i < len; i++) {
+//                        LocalSubModule localSubModule = localSubModules.get(i);
+//                        if (localSubModule.getContentId().equals(HSJS)) {       //婚纱纪实
+//                            jsmvFragment = new JSMVFragment();
+//                            menuFragments.put(localSubModule.getModuleName(), jsmvFragment);
+//                            menuPosition.put(localSubModule.getModuleName(), i);
+//                        } else if (localSubModule.getContentId().equals(XSYS)) {//选摄影师
+//                            photographyFragment = new MTSelPhotographerFragment();
+//                            menuFragments.put(localSubModule.getModuleName(), photographyFragment);
+//                            menuPosition.put(localSubModule.getModuleName(), i);
+//
+//                        } else if (localSubModule.getContentId().equals(YPXS)) {//样片欣赏
+//                            simpleFragment = new MPhotoSimpleFragment();
+//                            Bundle bundle = new Bundle();
+//                            bundle.putString("contentId", localSubModule.getContentId());
+//                            simpleFragment.setArguments(bundle);
+//
+//                            menuFragments.put(localSubModule.getModuleName(), simpleFragment);
+//                            menuPosition.put(localSubModule.getModuleName(), i);
+//
+//                        } else if (localSubModule.getContentId().equals(KPXS)) {//客片欣赏
+//                            customFragment = new MPhotoCustomerFragment();
+//                            Bundle bundle = new Bundle();
+//                            bundle.putString("contentId", localSubModule.getContentId());
+//                            customFragment.setArguments(bundle);
+//
+//                            menuFragments.put(localSubModule.getModuleName(), customFragment);
+//                            menuPosition.put(localSubModule.getModuleName(), i);
+//
+//                        } else if (localSubModule.getContentId().equals(TXBJ)) {//婚纱套系报价
+//                            suitFragment = new PhotoWedSuitFragment();
+//                            Bundle bundle = new Bundle();
+//                            bundle.putString("contentId", localSubModule.getContentId());
+//                            suitFragment.setArguments(bundle);
+//
+//                            menuFragments.put(localSubModule.getModuleName(), suitFragment);
+//                            menuPosition.put(localSubModule.getModuleName(), i);
+//                        }
+//                    }
+//
+//                    //listView initialize
+//                    adapter = new ListMenuAdapter(localSubModules);
+//                    menuListView.setAdapter(adapter);
+//                    menuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                        @Override
+//                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                            if (currentSelect == position) {
+//                                drawerLayout.closeDrawers();
+//                                return;
+//                            }
+//
+//                            BaseFragment fragment = menuFragments.get(localSubModules.get(position).getModuleName());
+//                            if (fragment == currentShowFragment) {
+//                                return;
+//                            }
+//
+//                            if(localSubModules.get(position).getContentId().equals(HZJQ)) {
 //                                Intent intent = new Intent(context, OtherActivity.class);
 //                                intent.putExtra("type", 0);
 //                                startActivity(intent);
 ////                            animStart(intent);
 //                                return;
 //                            }
-
-                            //
-                            titleView.setTitleText(localSubModules.get(position).getModuleName());
-                            fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-                            fragmentTransaction.hide(currentShowFragment).show(fragment).commit();
-                            currentShowFragment.hide();
-                            fragment.show();
-
-                            currentShowFragment = fragment;
-                            currentSelect = position;
-                            drawerLayout.closeDrawers();
-                        }
-                    });
-                } else {
-                    T.s(context, "请连接网络再试");
-                    return;
-                }
-            } catch (DbException e) {
-                e.printStackTrace();
-            }
-        }// init end
+////                            if(position == 5) {
+////                                Intent intent = new Intent(context, OtherActivity.class);
+////                                intent.putExtra("type", 0);
+////                                startActivity(intent);
+//////                            animStart(intent);
+////                                return;
+////                            }
+//
+//                            //
+//                            titleView.setTitleText(localSubModules.get(position).getModuleName());
+//                            fragmentTransaction = getSupportFragmentManager().beginTransaction();
+//
+//                            fragmentTransaction.hide(currentShowFragment).show(fragment).commit();
+//                            currentShowFragment.hide();
+//                            fragment.show();
+//
+//                            currentShowFragment = fragment;
+//                            currentSelect = position;
+//                            drawerLayout.closeDrawers();
+//                        }
+//                    });
+//                } else {
+//                    T.s(context, "请连接网络再试");
+//                    return;
+//                }
+//            } catch (DbException e) {
+//                e.printStackTrace();
+//            }
+//        }// init end
 
         //fragment initialize
         fragmentManager = getSupportFragmentManager();
@@ -364,13 +451,15 @@ public class MWeddingPhotographyActivity extends AppCompatActivity {
             fragmentTransaction.hide(v);
         }
 
-        if (NetworkUtil.hasConnection(context)) {
-            currentShowFragment = menuFragments.get(menuData.get(0).getModuleName());
-            fragmentTransaction.show(currentShowFragment).commit();
-        } else {
-            currentShowFragment = menuFragments.get(localSubModules.get(0).getModuleName());
-            fragmentTransaction.show(currentShowFragment).commit();
-        }
+        currentShowFragment = menuFragments.get(menuData.get(0).getModuleName());
+        fragmentTransaction.show(currentShowFragment).commit();
+//        if (NetworkUtil.hasConnection(context)) {
+//            currentShowFragment = menuFragments.get(menuData.get(0).getModuleName());
+//            fragmentTransaction.show(currentShowFragment).commit();
+//        } else {
+//            currentShowFragment = menuFragments.get(localSubModules.get(0).getModuleName());
+//            fragmentTransaction.show(currentShowFragment).commit();
+//        }
     }
 
     class ListMenuAdapter extends BaseAdapter {

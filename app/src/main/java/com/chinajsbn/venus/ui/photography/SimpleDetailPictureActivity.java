@@ -46,7 +46,7 @@ public class SimpleDetailPictureActivity extends MBaseFragmentActivity {
     private ArrayList<String> orderList;
 
     //从案例过来的数据
-    private ArrayList<ImageItem> orderPlanList;
+    private ArrayList<String> orderPlanList;
     private boolean isPlan = false;
 
     //从婚纱礼服过来的数据
@@ -67,10 +67,10 @@ public class SimpleDetailPictureActivity extends MBaseFragmentActivity {
         int tempPosition = 0;
 
         if(isPlan) {//策划
-            orderPlanList = (ArrayList<ImageItem>) getIntent().getSerializableExtra("dataList");
+            orderPlanList = (ArrayList<String>) getIntent().getSerializableExtra("dataList");
             size = orderPlanList == null ? 0 : orderPlanList.size();
             for (int i = 0; i < size; i++) {
-                if(orderPlanList.get(i).getContentUrl().equals(url)){
+                if(orderPlanList.get(i).equals(url)){
                     tempPosition = i;
                     break;
                 }
@@ -104,7 +104,7 @@ public class SimpleDetailPictureActivity extends MBaseFragmentActivity {
                 }
             }
             if(size > 0){
-                viewPager.setAdapter(new MAdapter(orderList));
+                viewPager.setAdapter(new MAdapter(orderList, 0));
                 setDigitPosition(tempPosition);
                 viewPager.setCurrentItem(tempPosition, true);
             }
@@ -135,15 +135,15 @@ public class SimpleDetailPictureActivity extends MBaseFragmentActivity {
     }
 
     class MAdapter extends PagerAdapter {
-        ArrayList<String> orderList;
-        List<ImageItem> planOrderList;
+        List<String> orderList;
+        ArrayList<String> planOrderList;
         ArrayList<Dress> aDressList;
 
-        public MAdapter(List<ImageItem> l){
+        public MAdapter(ArrayList<String> l){
             planOrderList = l;
         }
 
-        public MAdapter(ArrayList<String> d) {
+        public MAdapter(List<String> d, int a) {
             this.orderList = d;
         }
 
@@ -160,9 +160,9 @@ public class SimpleDetailPictureActivity extends MBaseFragmentActivity {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            TouchImageView img = (TouchImageView) LayoutInflater.from(context).inflate(R.layout.item_single_img_layout_centercrop, null);
+            TouchImageView img = (TouchImageView) LayoutInflater.from(context).inflate(R.layout.item_single_img_layout_centercrop, container, false);
             String url ;
-            if(isPlan)       url = planOrderList.get(position).getContentUrl();
+            if(isPlan)       url = planOrderList.get(position);
             else if(isDress) url = aDressList.get(position).getImageUrl();
             else             url = orderList.get(position);
 

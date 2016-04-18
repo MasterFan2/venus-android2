@@ -12,15 +12,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
-import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.DoubleImageItem;
-import com.chinajsbn.venus.net.bean.DoubleSimpleCustom;
-import com.chinajsbn.venus.net.bean.ImageItem;
-import com.chinajsbn.venus.net.bean.PlanDetail;
+import com.chinajsbn.venus.net.bean.DoubleSimpleCustomStr;
 import com.chinajsbn.venus.net.bean.Scheme;
-import com.chinajsbn.venus.net.bean.Simple;
-import com.chinajsbn.venus.net.bean.Style;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.MBaseFragmentActivity;
 import com.chinajsbn.venus.ui.base.OnRecyclerItemClickListener;
@@ -30,14 +24,11 @@ import com.chinajsbn.venus.utils.T;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 import com.squareup.picasso.Picasso;
+import com.tool.widget.MasterTitleView;
 import com.tool.widget.mt_listview.MyListView;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 /**
  * 案例详情
@@ -48,6 +39,10 @@ public class MPlanDetailActivity extends MBaseFragmentActivity {
 
     @ViewInject(R.id.myListView)
     private MyListView listView;
+
+    @ViewInject(R.id.titleView)
+    private MasterTitleView titleView;
+
     private MyAdapter adapter;
 
     private String parentId;
@@ -64,7 +59,7 @@ public class MPlanDetailActivity extends MBaseFragmentActivity {
     private TextView scenePriceTxt;
     private TextView f4preTxt, f4PriceTxt;
 
-    private ArrayList<ImageItem> orderList = new ArrayList<>();
+    private ArrayList<String> orderList = new ArrayList<>();
 
     @Override
     public void initialize() {
@@ -89,176 +84,139 @@ public class MPlanDetailActivity extends MBaseFragmentActivity {
         listView.setPullLoadEnable(false);
         listView.setPullRefreshEnable(false);
 
-        parentId = getIntent().getStringExtra("parentId");
-        detailId = getIntent().getStringExtra("detailId");
-        HttpClient.getInstance().getPlanNewDetail(parentId, detailId, cb);
-    }
+        Scheme detail = (Scheme) getIntent().getSerializableExtra("scheme");
 
-    private Callback<Base<ArrayList<PlanDetail>>> cb = new Callback<Base<ArrayList<PlanDetail>>>() {
-        @Override
-        public void success(Base<ArrayList<PlanDetail>> resp, Response response) {
-            if (resp.getCode() == 200) {
+        titleView.setTitleText(detail.getName());
 
-                //1.设置header
-                if (resp.getData() != null && resp.getData().size() > 0) {
-                    PlanDetail detail = resp.getData().get(0);
-                    descTxt.setText(Html.fromHtml(detail.getSchemeDesc()));
-                    String tempStyle = "";
-                    for (Style style : detail.getSchemeStyles()) {
-                        tempStyle += style.getName() + ",";
+        if (detail != null) {
+            descTxt.setText(Html.fromHtml(detail.getDescription()));
+            styleTxt.setText(detail.getCaseStyleName());
+            themeTxt.setText(detail.getTheme());
+            colourTxt.setText(detail.getColor());
+            hotelTxt.setText("于" + detail.getWeddingDate() + "在" + detail.getHotelName() + detail.getBanquetHallName());
+            hotelTxt.setVisibility(View.GONE);
+            newPriceTxt.setText(detail.getTotalCost() + "");
+            oldPriceTxt.setText(detail.getTotalCost() + "");
+
+            //中间删除线
+            oldPriceTxt.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG); //中间横线
+            oldPriceTxt.getPaint().setAntiAlias(true);// 抗锯齿
+
+            scenePriceTxt.setText(detail.getSenceCost() + "");
+            f4PriceTxt.setText("￥" + detail.getHdpcCost() + "");
+
+            //1：主持人  2:化妆师  3：摄影师  4：摄像师    5：双机摄影    6：双机摄像
+            if(!TextUtils.isEmpty(detail.getPersonDescription())){
+                f4preTxt.setText("婚礼人(" + detail.getPersonDescription().replace(" ", ",")+"):");
+            }
+
+            //2.获取到 所有横图和竖图。
+            String temp = detail.getAppDetailImages();
+            temp = temp.replace("[", "").replace("]", "").replace("\"", "");
+            String[] strArr = temp.split(",");
+            int size = strArr.length;
+            ArrayList<String> hList = new ArrayList<>();
+            ArrayList<String> vList = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                String url = strArr[i];
+                url = url.substring(url.lastIndexOf("_") + 1, url.lastIndexOf("."));
+                int width = Integer.parseInt(url.split("x")[0]);
+                int height = Integer.parseInt(url.split("x")[1]);
+
+                if (width >= height) hList.add(strArr[i]);
+                else if (width < height) vList.add(strArr[i]);
+                else hList.add(strArr[i]);
+            }
+
+            //3.合并
+            ArrayList<DoubleSimpleCustomStr> finalList = new ArrayList<>();
+            int h_size = hList.size();
+            int v_size = vList.size();
+
+            if (h_size <= 0 && v_size <= 0) {
+                T.s(context, "无数据");
+                return;
+            }
+            int j = 0;
+            if (h_size > v_size) {//模图比较多
+                for (int i = 0; i < h_size; i++) {
+                    //----------------------------
+                    if (j + 1 < v_size) {
+                        finalList.add(new DoubleSimpleCustomStr(hList.get(i), null));
+                        finalList.add(new DoubleSimpleCustomStr(vList.get(j++), vList.get(j++)));
+                    } else if (j < v_size) {
+                        finalList.add(new DoubleSimpleCustomStr(hList.get(i), null));
+                        finalList.add(new DoubleSimpleCustomStr(vList.get(j++), null));
+                    } else {
+                        finalList.add(new DoubleSimpleCustomStr(hList.get(i), null));
                     }
-                    tempStyle = tempStyle.substring(0, tempStyle.lastIndexOf(","));
-                    styleTxt.setText(tempStyle);
-                    themeTxt.setText(detail.getSchemeName());
-                    colourTxt.setText(detail.getSchemeColor());
-                    hotelTxt.setText("于" + detail.getWeddingDate() + "在" + detail.getHotelName() + detail.getBanquetHallName());
-                    hotelTxt.setVisibility(View.GONE);
-                    newPriceTxt.setText(detail.getTotalPrice() + "");
-                    oldPriceTxt.setText(detail.getOriginalPrice() + "");
+                }
+            } else {     //竖图比较多
 
-                    //中间删除线
-                    oldPriceTxt.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG); //中间横线
-                    oldPriceTxt.getPaint().setAntiAlias(true);// 抗锯齿
-
-                    scenePriceTxt.setText(detail.getSceneCost() + "");
-                    f4PriceTxt.setText("￥" + detail.getHdpcCost() + "");
-
-                    //1：主持人  2:化妆师  3：摄影师  4：摄像师    5：双机摄影    6：双机摄像
-                    f4preTxt.setText("婚礼人(" + detail.getStandardWedding().replace(",", "/").replace("1", "主持人").replace("2", "化妆师").replace("3", "摄影师").replace("4", "摄像师").replace("5", "双机摄影").replace("6", "双机摄像")+"):");
-
-                    //2.获取到 所有横图和竖图。
-                    int size = detail.getImageList().size();
-                    ArrayList<ImageItem> hList = new ArrayList<>();
-                    ArrayList<ImageItem> vList = new ArrayList<>();
-                    for (int i = 0; i < size; i++) {
-                        ImageItem item = detail.getImageList().get(i);
-                        String url = item.getContentUrl();
-                        url = url.substring(url.lastIndexOf("_") + 1, url.lastIndexOf("."));
-                        int width = Integer.parseInt(url.split("x")[0]);
-                        int height = Integer.parseInt(url.split("x")[1]);
-
-                        if (width >= height) hList.add(item);
-                        else if (width < height) vList.add(item);
-                        else hList.add(item);
+                if (h_size <= 0) {//没有横图， 全是竖图
+                    for (int i = 0; i < v_size; i++) {
+                        if (i == 0) {//第一二行
+                            finalList.add(new DoubleSimpleCustomStr(hList.get(i), null));
+                            i++;
+                            finalList.add(new DoubleSimpleCustomStr(null, vList.get(i)));
+                        } else {
+                            finalList.add(new DoubleSimpleCustomStr(vList.get(i), null));
+                        }
                     }
 
-                    //3.合并
-                    ArrayList<DoubleImageItem> finalList = new ArrayList<>();
-                    int h_size = hList.size();
-                    int v_size = vList.size();
-
-                    if (h_size <= 0 && v_size <= 0) {
-                        T.s(context, "无数据");
-                        return;
-                    }
-                    int j = 0;
-                    if (h_size > v_size) {//模图比较多
-                        for (int i = 0; i < h_size; i++) {
-                            //----------------------------
-//                            if (i == 0) {//第一二行
-//                                finalList.add(new DoubleImageItem(hList.get(i), null));
-//                                if(v_size > 0) {
-//                                    finalList.add(new DoubleImageItem(null, vList.get(j++)));
-//                                } else {
-//                                    i++;
-//                                    finalList.add(new DoubleImageItem(null, hList.get(i)));
-//                                }
-//                            } else {
-//                            if (j + 2 < v_size) {//本次充足
-//                                finalList.add(new DoubleImageItem(hList.get(i), null));
-//                                finalList.add(new DoubleImageItem(vList.get(j++), vList.get(j++)));
-//                            } else
-                            if (j + 1 < v_size) {
-                                finalList.add(new DoubleImageItem(hList.get(i), null));
-                                finalList.add(new DoubleImageItem(vList.get(j++), vList.get(j++)));
-                            } else if (j < v_size) {
-                                finalList.add(new DoubleImageItem(hList.get(i), null));
-                                finalList.add(new DoubleImageItem(vList.get(j++), null));
+                } else {//多个横图
+                    for (int i = 0; i < v_size; i++) {
+                        if (j < h_size) {//判断横图
+                            finalList.add(new DoubleSimpleCustomStr(hList.get(j++), null));
+                            if (i + 1 < v_size) {
+                                finalList.add(new DoubleSimpleCustomStr(vList.get(i), vList.get(++i)));
                             } else {
-                                finalList.add(new DoubleImageItem(hList.get(i), null));
+                                finalList.add(new DoubleSimpleCustomStr(vList.get(i), null));
                             }
-//                            }
-                        }
-                    } else {     //竖图比较多
-
-                        if (h_size <= 0) {//没有横图， 全是竖图
-                            for (int i = 0; i < v_size; i++) {
-                                if (i == 0) {//第一二行
-                                    finalList.add(new DoubleImageItem(hList.get(i), null));
-                                    i++;
-                                    finalList.add(new DoubleImageItem(null, vList.get(i)));
-                                } else {
-                                    finalList.add(new DoubleImageItem(vList.get(i), null));
-                                }
-                            }
-
-                        } else {//多个横图
-                            for (int i = 0; i < v_size; i++) {
-//                                if (i == 0) {//第一二行
-//                                    finalList.add(new DoubleImageItem(hList.get(j), null));
-//                                    j++;
-//                                    finalList.add(new DoubleImageItem(null, vList.get(i)));
-//                                } else {
-                                if (j < h_size) {//判断横图
-                                    finalList.add(new DoubleImageItem(hList.get(j++), null));
-                                    if (i + 1 < v_size) {
-                                        finalList.add(new DoubleImageItem(vList.get(i), vList.get(++i)));
-                                    } else {
-                                        finalList.add(new DoubleImageItem(vList.get(i), null));
-                                    }
-                                } else {
-                                    if (i + 1 < v_size) {
-                                        finalList.add(new DoubleImageItem(vList.get(i), vList.get(++i)));
-                                    } else {
-                                        finalList.add(new DoubleImageItem(vList.get(i), null));
-                                    }
-                                }
-//                                }
+                        } else {
+                            if (i + 1 < v_size) {
+                                finalList.add(new DoubleSimpleCustomStr(vList.get(i), vList.get(++i)));
+                            } else {
+                                finalList.add(new DoubleSimpleCustomStr(vList.get(i), null));
                             }
                         }
                     }
-                    j = 0;
-
-
-                    final int f_size = finalList.size();
-                    for (int i = 0; i < f_size; i++) {
-                        DoubleImageItem temp = finalList.get(i);
-                        if(temp.getData1() != null && temp.getData2() != null){
-                            orderList.add(temp.getData1());
-                            orderList.add(temp.getData2());
-                        }else if(temp.getData1() != null){
-                            orderList.add(temp.getData1());
-                        }else if(temp.getData2() != null){
-                            orderList.add(temp.getData2());
-                        }
-                    }
-
-                    adapter.setDataList(finalList);
-                    adapter.notifyDataSetChanged();
-
                 }
             }
-        }
+            j = 0;
 
-        @Override
-        public void failure(RetrofitError error) {
-            serverError();
+            final int f_size = finalList.size();
+            for (int i = 0; i < f_size; i++) {
+                DoubleSimpleCustomStr tempD = finalList.get(i);
+                if(tempD.getData1() != null && tempD.getData2() != null){
+                    orderList.add(tempD.getData1());
+                    orderList.add(tempD.getData2());
+                }else if(tempD.getData1() != null){
+                    orderList.add(tempD.getData1());
+                }else if(tempD.getData2() != null){
+                    orderList.add(tempD.getData2());
+                }
+            }
+
+            adapter.setDataList(finalList);
+            adapter.notifyDataSetChanged();
+
         }
-    };
+    }
 
     class MyAdapter extends BaseAdapter implements View.OnClickListener  {
 
-        private List<DoubleImageItem> dataList;
+        private List<DoubleSimpleCustomStr> dataList;
 
-        public MyAdapter(ArrayList<DoubleImageItem> list) {
+        public MyAdapter(ArrayList<DoubleSimpleCustomStr> list) {
             this.dataList = list;
         }
 
-        public List<DoubleImageItem> getDataList() {
+        public List<DoubleSimpleCustomStr> getDataList() {
             return dataList;
         }
 
-        public void setDataList(List<DoubleImageItem> dataList) {
+        public void setDataList(List<DoubleSimpleCustomStr> dataList) {
             this.dataList = dataList;
         }
 
@@ -271,7 +229,7 @@ public class MPlanDetailActivity extends MBaseFragmentActivity {
         }
 
         @Override
-        public DoubleImageItem getItem(int i) {
+        public DoubleSimpleCustomStr getItem(int i) {
             return dataList.get(i - 1);
         }
 
@@ -282,7 +240,7 @@ public class MPlanDetailActivity extends MBaseFragmentActivity {
 
         @Override
         public View getView(int position, View view, ViewGroup viewGroup) {
-            DoubleImageItem imageItem = dataList.get(position);
+            DoubleSimpleCustomStr imageItem = dataList.get(position);
             ViewHolder holder = null;
             if (view == null) {
                 view = LayoutInflater.from(context).inflate(R.layout.item_plandetail_layout, viewGroup, false);
@@ -296,23 +254,22 @@ public class MPlanDetailActivity extends MBaseFragmentActivity {
             if(imageItem.getData1() != null && imageItem.getData2() != null){
                 holder.img1.setVisibility(View.VISIBLE);
                 holder.img2.setVisibility(View.VISIBLE);
-                Picasso.with(context).load(imageItem.getData1().getContentUrl() + DimenUtil.getVertical50Q() + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.img1);
-                holder.img1.setTag(imageItem.getData1().getContentUrl());
-                Picasso.with(context).load(imageItem.getData2().getContentUrl() + DimenUtil.getVertical50Q() + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.img2);
-                holder.img2.setTag(imageItem.getData2().getContentUrl());
+                Picasso.with(context).load(imageItem.getData1() + DimenUtil.getVertical50Q() + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.img1);
+                holder.img1.setTag(imageItem.getData1());
+                Picasso.with(context).load(imageItem.getData2() + DimenUtil.getVertical50Q() + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.img2);
+                holder.img2.setTag(imageItem.getData2());
                 holder.img2.setOnClickListener(this);
                 holder.img1.setOnClickListener(this);
             }else {//只有一个
                 holder.img1.setVisibility(View.VISIBLE);
                 holder.img2.setVisibility(View.GONE);
 
-                if (DimenUtil.isHorizontal(imageItem.getData1().getContentUrl())) {
-                    Picasso.with(context).load(imageItem.getData1().getContentUrl() + DimenUtil.getHorizontal50Q() + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.img1);
+                if (DimenUtil.isHorizontal(imageItem.getData1())) {
+                    Picasso.with(context).load(imageItem.getData1() + DimenUtil.getHorizontal50Q() + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.img1);
                 } else {//只有一个， 又是竖图。
-//                        Picasso.with(context).load(doubleSimpleCustom.getData1().getContentUrl() + "@" + DimenUtil.screenWidth + "w_" + DimenUtil.screenWidth * 3 + "h_40Q").into(holder.contentImg1);
-                    Picasso.with(context).load(imageItem.getData1().getContentUrl() + "@" + DimenUtil.screenWidth + "w_" + DimenUtil.screenWidth * 3 / 2 + "h_40Q" + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.img1);
+                    Picasso.with(context).load(imageItem.getData1() + "@" + DimenUtil.screenWidth + "w_" + DimenUtil.screenWidth * 3 / 2 + "h_40Q" + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.img1);
                 }
-                holder.img1.setTag(imageItem.getData1().getContentUrl());
+                holder.img1.setTag(imageItem.getData1());
                 holder.img1.setOnClickListener(this);
             }
 

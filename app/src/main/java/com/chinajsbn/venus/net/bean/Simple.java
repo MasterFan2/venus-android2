@@ -40,10 +40,10 @@ public class Simple implements Serializable {
     @Column(column = "actorNameMale")
     private String actorNameMale;
 
-    @Id
     @Column(column = "contentId")
     private String contentId;
 
+    @Id
     @Column(column = "contentName")
     private String name;
 

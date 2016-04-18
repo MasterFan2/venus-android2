@@ -39,6 +39,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 【used】
+ */
 @ActivityFeature(layout = R.layout.activity_hotel)
 public class HotelActivity extends MBaseFragmentActivity {
 
@@ -76,208 +79,210 @@ public class HotelActivity extends MBaseFragmentActivity {
         db = DbUtils.create(context);
         db.configAllowTransaction(true);
 
-        if(NetworkUtil.hasConnection(context)){
-            dataList = (List<Menu>) getIntent().getSerializableExtra("subModule");
-            if (dataList == null || dataList.size() <= 0) {
-                T.s(context, "服务器维护中...");
-                return;
-            }
-            adapter = new ListMenuAdapter();
-            menuListView.setAdapter(adapter);
+        dataList = (List<Menu>) getIntent().getSerializableExtra("subModule");
+        if (dataList == null || dataList.size() <= 0) {
+            T.s(context, "服务器维护中...");
+            return;
+        }
+        adapter = new ListMenuAdapter();
+        menuListView.setAdapter(adapter);
 
-            findViewById(R.id.m_title_right_btn).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
-                        drawerLayout.closeDrawers();
-                    } else {
-                        drawerLayout.openDrawer(GravityCompat.END);
-                    }
-                }
-            });
-
-            //
-            for (int i = 0; i < dataList.size(); i++) {
-                Menu subModule = dataList.get(i);
-                if (subModule.getContentId().equals(JDLB)) {
-                    hotelFragment = new MTHotelFragment() ;
-                    menuFragments.put(subModule.getContentId(), hotelFragment);
-                    menuPosition.put(subModule.getContentId(), i);
-                }
-            }
-
-            //
-            menuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    if (currentSelect == position) {
-                        drawerLayout.closeDrawers();
-                        return;
-                    }
-
-                    if(position == 1){
-                        Intent intent = new Intent(context, OtherActivity.class);
-                        intent.putExtra("type", 1);
-                        animStart(intent);
-                        return;
-                    }
-
-                    BaseFragment fragment = menuFragments.get(dataList.get(position).getContentId());
-                    if (fragment == currentShowFragment) {
-                        S.o(":: fragment == currentShowFragment");
-                        return;
-                    }
-                    if (fragment == null) {
-                        S.o("::error fragment is null.");
-                        return;
-                    }
-                    //
-                    titleView.setTitleText(dataList.get(position).getModuleName());
-                    fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-
-                    fragmentTransaction.hide(currentShowFragment).show(fragment).commit();
-                    fragment.show();
-                    currentShowFragment = fragment;
-                    currentSelect = position;
+        findViewById(R.id.m_title_right_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
                     drawerLayout.closeDrawers();
+                } else {
+                    drawerLayout.openDrawer(GravityCompat.END);
                 }
-            });
-
-            //
-            //fragment initialize
-            fragmentManager = getSupportFragmentManager();
-            fragmentTransaction = fragmentManager.beginTransaction();
-
-            if (menuFragments == null || menuFragments.size() <= 0) {
-                T.s(context, "系统维护中 ...");
-                return;
             }
+        });
 
-            Iterator iter = menuFragments.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry entry = (Map.Entry) iter.next();
-                String k = (String) entry.getKey();
-                Fragment v = (Fragment) entry.getValue();
-                fragmentTransaction.add(R.id.photography_container, v);
-            }
-
-            //
-            currentSelect = 0;
-
-            Iterator iterator = menuFragments.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry entry = (Map.Entry) iterator.next();
-                Fragment v = (Fragment) entry.getValue();
-                fragmentTransaction.hide(v);
-            }
-            currentShowFragment = menuFragments.get(dataList.get(currentSelect).getContentId());//临时写死的position,后面项多了后修改
-            fragmentTransaction.show(currentShowFragment).commit();
-        }else{
-            try {
-                localSubModules = db.findAll(Selector.from(LocalSubModule.class).where("parentId", "=", HomeActivity.HYYD));
-                if (localSubModules == null || localSubModules.size() <= 0) {
-                    T.s(context, "请连网...");
-                    return;
-                }
-                adapter = new ListMenuAdapter();
-                menuListView.setAdapter(adapter);
-
-                findViewById(R.id.m_title_right_btn).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
-                            drawerLayout.closeDrawers();
-                        } else {
-                            drawerLayout.openDrawer(GravityCompat.END);
-                        }
-                    }
-                });
-
-                //
-                for (int i = 0; i < localSubModules.size(); i++) {
-                    LocalSubModule subModule = localSubModules.get(i);
-                    if (subModule.getContentId().equals(JDLB)) {
-                        hotelFragment = new MTHotelFragment() ;
-                        Bundle bundle = new Bundle();
-                        bundle.putString("parentId", JDLB);
-                        hotelFragment.setArguments(bundle);
-                        menuFragments.put(subModule.getContentId(), hotelFragment);
-                        menuPosition.put(subModule.getContentId(), i);
-                    }
-                }
-
-                //
-                menuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        if (currentSelect == position) {
-                            drawerLayout.closeDrawers();
-                            return;
-                        }
-
-                        if(position == 1){
-                            Intent intent = new Intent(context, OtherActivity.class);
-                            intent.putExtra("type", 1);
-                            animStart(intent);
-                            return;
-                        }
-
-                        BaseFragment fragment = menuFragments.get(localSubModules.get(position).getContentId());
-                        if (fragment == currentShowFragment) {
-                            S.o(":: fragment == currentShowFragment");
-                            return;
-                        }
-                        if (fragment == null) {
-                            S.o("::error fragment is null.");
-                            return;
-                        }
-                        //
-                        titleView.setTitleText(localSubModules.get(position).getModuleName());
-                        fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-
-                        fragmentTransaction.hide(currentShowFragment).show(fragment).commit();
-                        fragment.show();
-                        currentShowFragment = fragment;
-                        currentSelect = position;
-                        drawerLayout.closeDrawers();
-                    }
-                });
-
-                //
-                //fragment initialize
-                fragmentManager = getSupportFragmentManager();
-                fragmentTransaction = fragmentManager.beginTransaction();
-
-                if (menuFragments == null || menuFragments.size() <= 0) {
-                    T.s(context, "系统维护中 ...");
-                    return;
-                }
-
-                Iterator iter = menuFragments.entrySet().iterator();
-                while (iter.hasNext()) {
-                    Map.Entry entry = (Map.Entry) iter.next();
-                    String k = (String) entry.getKey();
-                    Fragment v = (Fragment) entry.getValue();
-                    fragmentTransaction.add(R.id.photography_container, v);
-                }
-
-                //
-                currentSelect = 0;
-
-                Iterator iterator = menuFragments.entrySet().iterator();
-                while (iterator.hasNext()) {
-                    Map.Entry entry = (Map.Entry) iterator.next();
-                    Fragment v = (Fragment) entry.getValue();
-                    fragmentTransaction.hide(v);
-                }
-                currentShowFragment = menuFragments.get(localSubModules.get(currentSelect).getContentId());//临时写死的position,后面项多了后修改
-                fragmentTransaction.show(currentShowFragment).commit();
-            } catch (DbException e) {
-                e.printStackTrace();
+        //
+        for (int i = 0; i < dataList.size(); i++) {
+            Menu subModule = dataList.get(i);
+            if (subModule.getContentId().equals(JDLB)) {
+                hotelFragment = new MTHotelFragment() ;
+                menuFragments.put(subModule.getContentId(), hotelFragment);
+                menuPosition.put(subModule.getContentId(), i);
             }
         }
+
+        //
+        menuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (currentSelect == position) {
+                    drawerLayout.closeDrawers();
+                    return;
+                }
+
+                if(position == 1){
+                    Intent intent = new Intent(context, OtherActivity.class);
+                    intent.putExtra("type", 1);
+                    animStart(intent);
+                    return;
+                }
+
+                BaseFragment fragment = menuFragments.get(dataList.get(position).getContentId());
+                if (fragment == currentShowFragment) {
+                    S.o(":: fragment == currentShowFragment");
+                    return;
+                }
+                if (fragment == null) {
+                    S.o("::error fragment is null.");
+                    return;
+                }
+                //
+                titleView.setTitleText(dataList.get(position).getModuleName());
+                fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
+
+                fragmentTransaction.hide(currentShowFragment).show(fragment).commit();
+                fragment.show();
+                currentShowFragment = fragment;
+                currentSelect = position;
+                drawerLayout.closeDrawers();
+            }
+        });
+
+        //
+        //fragment initialize
+        fragmentManager = getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+
+        if (menuFragments == null || menuFragments.size() <= 0) {
+            T.s(context, "系统维护中 ...");
+            return;
+        }
+
+        Iterator iter = menuFragments.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            String k = (String) entry.getKey();
+            Fragment v = (Fragment) entry.getValue();
+            fragmentTransaction.add(R.id.photography_container, v);
+        }
+
+        //
+        currentSelect = 0;
+
+        Iterator iterator = menuFragments.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            Fragment v = (Fragment) entry.getValue();
+            fragmentTransaction.hide(v);
+        }
+        currentShowFragment = menuFragments.get(dataList.get(currentSelect).getContentId());//临时写死的position,后面项多了后修改
+        fragmentTransaction.show(currentShowFragment).commit();
+
+//        if(NetworkUtil.hasConnection(context)){
+//
+//        }else{
+//            try {
+//                localSubModules = db.findAll(Selector.from(LocalSubModule.class).where("parentId", "=", HomeActivity.HYYD));
+//                if (localSubModules == null || localSubModules.size() <= 0) {
+//                    T.s(context, "请连网...");
+//                    return;
+//                }
+//                adapter = new ListMenuAdapter();
+//                menuListView.setAdapter(adapter);
+//
+//                findViewById(R.id.m_title_right_btn).setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
+//                            drawerLayout.closeDrawers();
+//                        } else {
+//                            drawerLayout.openDrawer(GravityCompat.END);
+//                        }
+//                    }
+//                });
+//
+//                //
+//                for (int i = 0; i < localSubModules.size(); i++) {
+//                    LocalSubModule subModule = localSubModules.get(i);
+//                    if (subModule.getContentId().equals(JDLB)) {
+//                        hotelFragment = new MTHotelFragment() ;
+//                        Bundle bundle = new Bundle();
+//                        bundle.putString("parentId", JDLB);
+//                        hotelFragment.setArguments(bundle);
+//                        menuFragments.put(subModule.getContentId(), hotelFragment);
+//                        menuPosition.put(subModule.getContentId(), i);
+//                    }
+//                }
+//
+//                //
+//                menuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                        if (currentSelect == position) {
+//                            drawerLayout.closeDrawers();
+//                            return;
+//                        }
+//
+//                        if(position == 1){
+//                            Intent intent = new Intent(context, OtherActivity.class);
+//                            intent.putExtra("type", 1);
+//                            animStart(intent);
+//                            return;
+//                        }
+//
+//                        BaseFragment fragment = menuFragments.get(localSubModules.get(position).getContentId());
+//                        if (fragment == currentShowFragment) {
+//                            S.o(":: fragment == currentShowFragment");
+//                            return;
+//                        }
+//                        if (fragment == null) {
+//                            S.o("::error fragment is null.");
+//                            return;
+//                        }
+//                        //
+//                        titleView.setTitleText(localSubModules.get(position).getModuleName());
+//                        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+//
+//
+//                        fragmentTransaction.hide(currentShowFragment).show(fragment).commit();
+//                        fragment.show();
+//                        currentShowFragment = fragment;
+//                        currentSelect = position;
+//                        drawerLayout.closeDrawers();
+//                    }
+//                });
+//
+//                //
+//                //fragment initialize
+//                fragmentManager = getSupportFragmentManager();
+//                fragmentTransaction = fragmentManager.beginTransaction();
+//
+//                if (menuFragments == null || menuFragments.size() <= 0) {
+//                    T.s(context, "系统维护中 ...");
+//                    return;
+//                }
+//
+//                Iterator iter = menuFragments.entrySet().iterator();
+//                while (iter.hasNext()) {
+//                    Map.Entry entry = (Map.Entry) iter.next();
+//                    String k = (String) entry.getKey();
+//                    Fragment v = (Fragment) entry.getValue();
+//                    fragmentTransaction.add(R.id.photography_container, v);
+//                }
+//
+//                //
+//                currentSelect = 0;
+//
+//                Iterator iterator = menuFragments.entrySet().iterator();
+//                while (iterator.hasNext()) {
+//                    Map.Entry entry = (Map.Entry) iterator.next();
+//                    Fragment v = (Fragment) entry.getValue();
+//                    fragmentTransaction.hide(v);
+//                }
+//                currentShowFragment = menuFragments.get(localSubModules.get(currentSelect).getContentId());//临时写死的position,后面项多了后修改
+//                fragmentTransaction.show(currentShowFragment).commit();
+//            } catch (DbException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
     }
 

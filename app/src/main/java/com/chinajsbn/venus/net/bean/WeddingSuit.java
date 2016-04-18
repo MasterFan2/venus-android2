@@ -81,6 +81,9 @@ public class WeddingSuit implements Serializable{
     @Column(column = "shootService")
     private String shootService;        //拍摄服务描述
 
+    @Column(column = "appDetailImages")
+    private String appDetailImages;
+
     @Column(column = "shootTime")
     private int shootTime;              //拍摄时间/天
 
@@ -304,9 +307,15 @@ public class WeddingSuit implements Serializable{
         this.weddingDressSuitId = weddingDressSuitId;
     }
 
-    public WeddingSuit() {
-
+    public String getAppDetailImages() {
+        return appDetailImages;
     }
+
+    public void setAppDetailImages(String appDetailImages) {
+        this.appDetailImages = appDetailImages;
+    }
+
+    public WeddingSuit() { }
 
     public WeddingSuit(int activityId, int cityId, String coverUrlApp, int depositRate, String description, String dressModeling, int isOptionalCameraman, int isOptionalStylist, int isSendMV, int isUsed, int isValueAddService, String name, int originalPrice, String productId, int provinceId, int recordNum, int salePrice, String shootAdress, int shootSampless, String shootService, int shootTime, int truingNum, String valueAddServiceFeature, String valueAddServiceSpecialNote, int weddingDressSuitId) {
         this.activityId = activityId;

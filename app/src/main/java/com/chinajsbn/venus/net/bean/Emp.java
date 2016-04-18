@@ -5,8 +5,11 @@ import com.lidroid.xutils.db.annotation.Foreign;
 import com.lidroid.xutils.db.annotation.Table;
 
 /**
- * Created by 13510 on 2015/10/22.
+ * Created by MasterFan on 2015/10/22 15:27.
+ *
+ * description:
  */
+@SuppressWarnings("ALL")
 @Table(name = "Emp")
 public class Emp extends BaseBean{
 

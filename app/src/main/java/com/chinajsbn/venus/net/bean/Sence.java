@@ -8,8 +8,8 @@ import com.lidroid.xutils.db.annotation.Table;
  * Created by MasterFan on 2015/7/2.
  * description:
  */
-@Table(name = "Style")
-public class Style {
+@Table(name = "Sence")
+public class Sence {
 
     @Id
     @Column(column = "Id")
@@ -45,16 +45,16 @@ public class Style {
         this.name = name;
     }
 
-    public Style() {
+    public Sence() {
 
     }
 
-    public Style(int id, String name) {
+    public Sence(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public Style(int caseStyleId, int id, String name) {
+    public Sence(int caseStyleId, int id, String name) {
         this.caseStyleId = caseStyleId;
         this.id = id;
         this.name = name;

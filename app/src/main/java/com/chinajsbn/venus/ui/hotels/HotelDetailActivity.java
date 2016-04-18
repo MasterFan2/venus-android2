@@ -274,76 +274,6 @@ public class HotelDetailActivity extends MBaseFragmentActivity implements View.O
         }
     };
 
-    /**
-     * call back
-     */
-//    private Callback<Base<ArrayList<HotelDetail>>> cb = new Callback<Base<ArrayList<HotelDetail>>>() {
-//
-//        @Override
-//        public void success(Base<ArrayList<HotelDetail>> hotelDetail, Response response) {
-//
-//            viewPager.setAdapter(new MAdapter(hotelDetail.getData().get(0)));
-//            indicator.setViewPager(viewPager);
-//            detail = hotelDetail.getData().get(0);
-//            banquets = detail.getBanquetHallList();
-//
-//
-//            String guid = "规格类型：" + detail.getTypeName();
-//            SpannableStringBuilder guidStyle = new SpannableStringBuilder(guid);
-//            guidStyle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.pink)), 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            guidStyle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.subtitle_text_color)), 5, guid.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            typeTxt.setText(guidStyle);
-//
-//            String priceStr = "价        格：" + detail.getLowestConsumption() + " - " + detail.getHighestConsumption() + "元/桌";
-//            SpannableStringBuilder priceStyle = new SpannableStringBuilder(priceStr);
-//            priceStyle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.pink)), 0, 10, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            priceStyle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.subtitle_text_color)), 11, priceStr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            priceTxt.setText(priceStyle);
-//
-//            String tableStr = "容  桌  数：" + detail.getCapacityPerTable() + "桌";
-//            SpannableStringBuilder tableStyle = new SpannableStringBuilder(tableStr);
-//            tableStyle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.pink)), 0, 8, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            tableStyle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.subtitle_text_color)), 8, tableStr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            capacityTxt.setText(tableStyle);
-//
-//            String addrStr = "地        址：" + detail.getAddress();
-//            SpannableStringBuilder addrStyle = new SpannableStringBuilder(addrStr);
-//            addrStyle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.pink)), 0, 11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            addrStyle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.subtitle_text_color)), 11, addrStr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            addrTxt.setText(addrStyle);
-//
-//            String descStr = "酒店详情：" + detail.getDetailedIntroduction();
-//            SpannableStringBuilder descStyle = new SpannableStringBuilder(descStr);
-//            descStyle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.pink)), 0, 5, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            descStyle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.subtitle_text_color)), 5, descStr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            introductionTxt.setText(descStyle);
-//
-//            String banquetStr = "场厅数量：" + detail.getBanquetHallList().size() + "个专用宴会厅";
-//            SpannableStringBuilder banquetStyle = new SpannableStringBuilder(banquetStr);
-//            banquetStyle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.pink)), 0, 5, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            banquetStyle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.subtitle_text_color)), 5, banquetStr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//            banquetTxt.setText(banquetStyle);
-//
-//            //是否有菜品
-//            listView.setAdapter(new ComboAdapter(detail.getHotelMealPackList()));
-//
-//            //宴会厅
-//            gridView.setAdapter(new MyGridViewAdapter(detail.getBanquetHallList()));
-//
-//            if(detail.getHotelLabelList() != null && detail.getHotelLabelList().size() > 0){
-//                //活动
-//                activelistView.setAdapter(new ActiveAdapter(detail.getHotelLabelList()));
-//            }else{
-//                activeLayout.setVisibility(View.GONE);
-//            }
-//        }
-//
-//        @Override
-//        public void failure(RetrofitError error) {
-//            T.s(context, "获取数据错误");
-//        }
-//    };
-
     class MyGridViewAdapter extends BaseAdapter {
 
         private ArrayList<Banquet> banquetHallList;
@@ -384,7 +314,7 @@ public class HotelDetailActivity extends MBaseFragmentActivity implements View.O
                 Picasso.with(context).load(banquet.getCoverUrlApp() + "@" + (DimenUtil.screenWidth / 2 - 42) + "w_" + (DimenUtil.screenWidth * 2 / 3 - 42) + "h_60q").into(holder.contentImg);
             }
             holder.nameTxt.setText(banquet.getName());
-            holder.tablesTxt.setText("桌数:" + banquet.getCapacity() + "桌");
+            holder.tablesTxt.setText("桌数:" + banquet.getMaxTableNum() + "桌");
             holder.priceTxt.setText("低消:" + banquet.getLowestConsumption() + "元/桌");
 
             holder.pillarTxt.setText("柱子:" + (banquet.getPillerNum().equals("1") ? "有" : "无"));

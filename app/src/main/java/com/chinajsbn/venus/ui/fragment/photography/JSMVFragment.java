@@ -201,10 +201,8 @@ public class JSMVFragment extends BaseFragment implements OnRecyclerItemClickLis
         @Override
         public void onBindViewHolder(FilmHolder holder, int position) {
             Film film = dataList .get(position);
-            if(film.getCoverImage() != null && !TextUtils.isEmpty(film.getCoverImage().getImageUrl()))
-                Picasso.with(getActivity()).load(film.getCoverImage().getImageUrl()+"@900h_600h").placeholder(R.drawable.loading).into(holder.coverImg);
-            else
-                Picasso.with(getActivity()).load(film.getImgUrl()+"@900h_600h").placeholder(R.drawable.loading).into(holder.coverImg);
+            if(!TextUtils.isEmpty(film.getCoverUrlApp()))
+                Picasso.with(getActivity()).load(film.getCoverUrlApp()+"@900h_600h").placeholder(R.drawable.loading).into(holder.coverImg);
             holder.nameTxt.setText(film.getName());
             holder.hintTxt.setText("浏览量:" + film.getHits());
         }
@@ -260,7 +258,7 @@ public class JSMVFragment extends BaseFragment implements OnRecyclerItemClickLis
     public void onRecyclerItemClick(View v, int position) {
         if(NetworkUtil.hasConnection(getActivity())){
             Intent intent = new Intent(getActivity(), VideoActivity.class);
-            intent.putExtra("url", dataList.get(position -1).getCoverUrlApp());
+            intent.putExtra("url", dataList.get(position -1).getVideoUrl());
             animStart(intent);
         }else{
             handler.sendEmptyMessageDelayed(10, 10);

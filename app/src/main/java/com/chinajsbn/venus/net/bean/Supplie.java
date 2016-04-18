@@ -4,17 +4,31 @@ import com.lidroid.xutils.db.annotation.Column;
 import com.lidroid.xutils.db.annotation.Id;
 import com.lidroid.xutils.db.annotation.Table;
 
+import java.io.Serializable;
+
 /**
  * Created by 13510 on 2015/12/15.
  */
 @Table(name = "Supplie")
-public class Supplie {
+public class Supplie implements Serializable{
+
+    @Column(column = "content")
+    private String content;
+
+    @Column(column = "coverUrlApp")
+    private String coverUrlApp;
+
+    @Column(column = "parameter")
+    private String parameter;
+
+    @Column(column = "appDetailImages")
+    private String appDetailImages;
 
     @Column(column = "sellingPrice")
-    private String sellingPrice;
+    private float sellingPrice;
 
     @Column(column = "marketPrice")
-    private String marketPrice;
+    private float marketPrice;
 
     @Column(column = "title")
     private String title;
@@ -46,6 +60,38 @@ public class Supplie {
     @Id
     @Column(column = "weddingSuppliesId")
     private int weddingSuppliesId;
+
+    public String getAppDetailImages() {
+        return appDetailImages;
+    }
+
+    public void setAppDetailImages(String appDetailImages) {
+        this.appDetailImages = appDetailImages;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getCoverUrlApp() {
+        return coverUrlApp;
+    }
+
+    public void setCoverUrlApp(String coverUrlApp) {
+        this.coverUrlApp = coverUrlApp;
+    }
+
+    public String getParameter() {
+        return parameter;
+    }
+
+    public void setParameter(String parameter) {
+        this.parameter = parameter;
+    }
 
     public int getBrandId() {
         return brandId;
@@ -79,13 +125,6 @@ public class Supplie {
         this.isUsed = isUsed;
     }
 
-    public String getMarketPrice() {
-        return marketPrice;
-    }
-
-    public void setMarketPrice(String marketPrice) {
-        this.marketPrice = marketPrice;
-    }
 
     public String getNumber() {
         return number;
@@ -95,11 +134,19 @@ public class Supplie {
         this.number = number;
     }
 
-    public String getSellingPrice() {
+    public float getMarketPrice() {
+        return marketPrice;
+    }
+
+    public void setMarketPrice(float marketPrice) {
+        this.marketPrice = marketPrice;
+    }
+
+    public float getSellingPrice() {
         return sellingPrice;
     }
 
-    public void setSellingPrice(String sellingPrice) {
+    public void setSellingPrice(float sellingPrice) {
         this.sellingPrice = sellingPrice;
     }
 
@@ -144,20 +191,4 @@ public class Supplie {
     }
 
     public Supplie(){}
-
-    public Supplie(int brandId, String coverUrl, String description, int isUsed, String marketPrice, String number, String sellingPrice, String suppliesNumber, String title, int weddingSuppliesId, int weddingSuppliesTypeId, int weight) {
-
-        this.brandId = brandId;
-        this.coverUrl = coverUrl;
-        this.description = description;
-        this.isUsed = isUsed;
-        this.marketPrice = marketPrice;
-        this.number = number;
-        this.sellingPrice = sellingPrice;
-        this.suppliesNumber = suppliesNumber;
-        this.title = title;
-        this.weddingSuppliesId = weddingSuppliesId;
-        this.weddingSuppliesTypeId = weddingSuppliesTypeId;
-        this.weight = weight;
-    }
 }

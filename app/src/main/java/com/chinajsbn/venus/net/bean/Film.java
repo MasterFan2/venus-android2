@@ -39,12 +39,23 @@ public class Film {
     @Column(column = "coverUrlApp")
     private String coverUrlApp;
 
+    @Column(column = "videoUrl")
+    private String videoUrl;
+
     @Id
     @Column(column = "videoId")
     private int videoId;
 
     @Column(column = "tag")
     private String tag;
+
+    public String getVideoUrl() {
+        return videoUrl;
+    }
+
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
+    }
 
     public CoverImage getCoverImage() {
         return coverImage;
@@ -142,9 +153,7 @@ public class Film {
         this.videoId = videoId;
     }
 
-    public Film() {
-
-    }
+    public Film() {}
 
     public Film(CoverImage coverImage, String coverUrlApp, String createDate, int hits, int id, String imgUrl, int isUsed, String name, String remark, int seasonId, String tag, int videoId) {
 

@@ -63,7 +63,6 @@ public class WorksDetailActivity extends MBaseFragmentActivity {
     private int size = 0;
 
     //////////////////////////////////////
-    private boolean isPlanner;
     private  String[] dataList;
 
     ////////////////////cache//////////////////
@@ -75,36 +74,40 @@ public class WorksDetailActivity extends MBaseFragmentActivity {
         db = DbUtils.create(context);
         db.configAllowTransaction(true);
 
-        isPlanner = getIntent().getBooleanExtra("isPlanner", false);
+        String tempStr = getIntent().getStringExtra("list");
+        tempStr = tempStr.replace("[", "").replace("]", "").replace("\"", "");
+        dataList = tempStr.split(",");
+        size = dataList.length;
+        setDigitPosition(0);
 
-        if(isPlanner){
-            if(!NetworkUtil.hasConnection(context)){
-                T.s(context, "您处于离线模式, 请连网");
-                return;
-            }
-            dataList = getIntent().getStringArrayExtra("list");
-            viewPager.setAdapter(new MAdapter(dataList, 0));
-            size = dataList.length;
-            setDigitPosition(0);
-        }else {
-            personId = getIntent().getStringExtra("personId");
-            worksId = getIntent().getStringExtra("worksId");
-
-            if(NetworkUtil.hasConnection(context)){
-                HttpClient.getInstance().getPhotographerWorks(personId, worksId, cb);
-            }else {
-                try {
-                    worksList = db.findAll(Selector.from(WorksDetailImage.class).where("uniqueTag", "=", personId+"@" + worksId));
-
-                    viewPager.setAdapter(new MAdapter(worksList));
-                    size = worksList.size();
-                    setDigitPosition(0);
-                } catch (DbException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
+//        if(isPlanner){
+//            if(!NetworkUtil.hasConnection(context)){
+//                T.s(context, "您处于离线模式, 请连网");
+//                return;
+//            }
+//            dataList = getIntent().getStringArrayExtra("list");
+//            viewPager.setAdapter(new MAdapter(dataList, 0));
+//            size = dataList.length;
+//            setDigitPosition(0);
+//        }else {
+//            personId = getIntent().getStringExtra("personId");
+//            worksId = getIntent().getStringExtra("worksId");
+//
+//            if(NetworkUtil.hasConnection(context)){
+//                HttpClient.getInstance().getPhotographerWorks(personId, worksId, cb);
+//            }else {
+//                try {
+//                    worksList = db.findAll(Selector.from(WorksDetailImage.class).where("uniqueTag", "=", personId+"@" + worksId));
+//
+//                    viewPager.setAdapter(new MAdapter(worksList));
+//                    size = worksList.size();
+//                    setDigitPosition(0);
+//                } catch (DbException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//        }
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -121,6 +124,8 @@ public class WorksDetailActivity extends MBaseFragmentActivity {
 
             }
         });
+
+        viewPager.setAdapter(new MAdapter());
 
     }
 
@@ -154,7 +159,7 @@ public class WorksDetailActivity extends MBaseFragmentActivity {
                         e.printStackTrace();
                     }
 
-                    viewPager.setAdapter(new MAdapter(worksList));
+                    viewPager.setAdapter(new MAdapter());
                     size = worksList.size();
                     setDigitPosition(0);
                 }
@@ -171,49 +176,20 @@ public class WorksDetailActivity extends MBaseFragmentActivity {
     };
 
     class MAdapter extends PagerAdapter {
-        private List<WorksDetailImage> datas;
-        private  String[] plannerList;
 
-        public MAdapter(String[] p, int type) {
-            this.plannerList = p;
+        public MAdapter() {
         }
 
-        public MAdapter(List<WorksDetailImage> d) {
-            this.datas = d;
-        }
 
         @Override
         public int getCount() {
-            if(isPlanner) return plannerList == null ? 0 : plannerList.length;
-            else          return datas == null ? 0 : datas.size();
+            return dataList == null ? 0 : dataList.length;
         }
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             TouchImageView img = (TouchImageView) LayoutInflater.from(context).inflate(R.layout.item_single_img_layout_centercrop, null);
-            String url ;
-            if(isPlanner) url = plannerList[position];
-            else          url = datas.get(position).getImageUrl();
-//            String dUrl = "";
-//            if(DimenUtil.isHorizontal(url)){
-//                dUrl = url + DimenUtil.getHorizontalListViewStringDimension80Q();
-//            }else {
-//                dUrl = url + DimenUtil.getVerticalListViewStringDimension80Q();
-//            }
-//            String target = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.android/venus/works/" + StringUtils.getFileNameByUrl(url);
-//            S.o("dUrl::" + dUrl);
-            //下载图片
-//            httpUtils.download(dUrl, target, params, new RequestCallBack<File>() {
-//                @Override
-//                public void onSuccess(ResponseInfo<File> responseInfo) {
-//                    S.o("::success");
-//                }
-//
-//                @Override
-//                public void onFailure(HttpException e, String s) {
-//                    S.o("::error");
-//                }
-//            });
+            String url = dataList[position];
 
             if (!TextUtils.isEmpty(url)) {
                 if(DimenUtil.isHorizontal(url)){

@@ -15,13 +15,8 @@ public class F4 {
 
     private int id;
 
-    private List<Emcee> cameraman;//摄像师
-
     @Column(column = "description")
     private String description;
-
-    private List<Dresser> dresser;
-    private List<Emcee> hoster;
 
     @Column(column = "personGender")
     private String personGender;
@@ -32,10 +27,14 @@ public class F4 {
     @Column(column = "personName")
     private String personName;
 
+    @Column(column = "nickName")
+    private String nickName;
+
     @Column(column = "photoUrl")
     private String photoUrl;
 
-    private List<Dresser> photographer;
+    private List<Works> workList;
+
     private int points;
 
     @Column(column = "serviceInfo")
@@ -47,12 +46,12 @@ public class F4 {
     @Column(column = "tag")
     private String tag ;// for cache
 
-    public String getTag() {
-        return tag;
+    public String getDescription() {
+        return description;
     }
 
-    public void setTag(String tag) {
-        this.tag = tag;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public int getId() {
@@ -63,36 +62,12 @@ public class F4 {
         this.id = id;
     }
 
-    public List<Emcee> getCameraman() {
-        return cameraman;
+    public String getNickName() {
+        return nickName;
     }
 
-    public void setCameraman(List<Emcee> cameraman) {
-        this.cameraman = cameraman;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public List<Dresser> getDresser() {
-        return dresser;
-    }
-
-    public void setDresser(List<Dresser> dresser) {
-        this.dresser = dresser;
-    }
-
-    public List<Emcee> getHoster() {
-        return hoster;
-    }
-
-    public void setHoster(List<Emcee> hoster) {
-        this.hoster = hoster;
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
     public String getPersonGender() {
@@ -127,14 +102,6 @@ public class F4 {
         this.photoUrl = photoUrl;
     }
 
-    public List<Dresser> getPhotographer() {
-        return photographer;
-    }
-
-    public void setPhotographer(List<Dresser> photographer) {
-        this.photographer = photographer;
-    }
-
     public int getPoints() {
         return points;
     }
@@ -159,21 +126,21 @@ public class F4 {
         this.skillPrice = skillPrice;
     }
 
-    public F4() {}
-
-    public F4(ArrayList<Emcee> cameraman, String description, ArrayList<Dresser> dresser, ArrayList<Emcee> hoster, String personGender, int personId, String personName, String photoUrl, ArrayList<Dresser> photographer, int points, String serviceInfo, int skillPrice) {
-
-        this.cameraman = cameraman;
-        this.description = description;
-        this.dresser = dresser;
-        this.hoster = hoster;
-        this.personGender = personGender;
-        this.personId = personId;
-        this.personName = personName;
-        this.photoUrl = photoUrl;
-        this.photographer = photographer;
-        this.points = points;
-        this.serviceInfo = serviceInfo;
-        this.skillPrice = skillPrice;
+    public String getTag() {
+        return tag;
     }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public List<Works> getWorkList() {
+        return workList;
+    }
+
+    public void setWorkList(List<Works> workList) {
+        this.workList = workList;
+    }
+
+    public F4() {}
 }

@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.chinajsbn.venus.R;
 import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.bean.Base;
-import com.chinajsbn.venus.net.bean.CarDetail;
+import com.chinajsbn.venus.net.bean.Supplie;
 import com.chinajsbn.venus.net.bean.SupplieDetail;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.MBaseFragmentActivity;
@@ -66,11 +66,7 @@ public class SupplieDetailActivity extends MBaseFragmentActivity {
     @ViewInject(R.id.viewPager_layout)
     private View pagerLayout;
 
-    private String moduleId;
-    private int detailId;
-
-    private String oldPrice;
-    private String newPrice;
+    private Supplie supplie;
 
     @Override
     public void initialize() {
@@ -78,17 +74,36 @@ public class SupplieDetailActivity extends MBaseFragmentActivity {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(DimenUtil.screenWidth, DimenUtil.screenWidth);
         pagerLayout.setLayoutParams(params);
 
-        moduleId = getIntent().getStringExtra("moduleId");
-        detailId = getIntent().getIntExtra("detailId", -1);
-
-        oldPrice =  getIntent().getStringExtra("oldPrice");
-        newPrice = getIntent().getStringExtra("newPrice");
+        supplie = (Supplie) getIntent().getSerializableExtra("supply");
 
         titleView.setTitleText("用品详情");
 
-        initWebView();
+        if (supplie != null) {
+            initWebView(supplie);
+            newPriceTxt.setText("￥" + supplie.getSellingPrice());
+            oldPriceTxt.setText("￥" + supplie.getMarketPrice());
+            titleTxt.setText(supplie.getTitle());
+            descTxt.setText(supplie.getDescription());
 
-        HttpClient.getInstance().supplieDetail(moduleId, detailId + "", callback);
+            String strParams = supplie.getParameter();
+            if(strParams.contains("#")){
+                strParams = strParams.split("#")[0].replace("|", "\n").replace(" ", "");
+            }else{
+                strParams = strParams.replace("|", "\n");
+            }
+            parameterTxt.setText(strParams);
+
+            if(supplie.getAppDetailImages() != null){
+                String tempStr = supplie.getAppDetailImages();
+                tempStr = tempStr.replace("[", "").replace("]", "").replace("\"", "");
+                viewPager.setAdapter(new MyViewPagerAdapter(tempStr.split(",")));
+                indicator.setViewPager(viewPager);
+            }else{
+                pagerLayout.setVisibility(View.GONE);
+            }
+
+            webView.loadData(supplie.getContent().replace("<img ", "<img width='100%' "), "text/html;charset=UTF-8", null);
+        }
     }
 
     @OnClick(R.id.m_title_left_btn)
@@ -96,9 +111,9 @@ public class SupplieDetailActivity extends MBaseFragmentActivity {
         animFinish();
     }
 
-    private void initWebView(){
+    private void initWebView(Supplie supplie){
 
-        if(oldPrice.toString().equals(newPrice.toString())){
+        if(supplie.getSellingPrice() == supplie.getMarketPrice()){
             oldPriceTxt.setVisibility(View.GONE);
         }
 
@@ -130,41 +145,6 @@ public class SupplieDetailActivity extends MBaseFragmentActivity {
             return true;
         }
     }
-
-    private Callback<Base<SupplieDetail>> callback = new Callback<Base<SupplieDetail>>() {
-        @Override
-        public void success(Base<SupplieDetail> resp, Response response) {
-            if (resp.getCode() == 200 && resp.getData() != null) {
-
-                newPriceTxt.setText("￥" + newPrice);
-                oldPriceTxt.setText("￥" + oldPrice);
-                titleTxt.setText(resp.getData().getTitle());
-                descTxt.setText(resp.getData().getDescription());
-
-                String strParams = resp.getData().getParameter();
-                if(strParams.contains("#")){
-                    strParams = strParams.split("#")[0].replace("|", "\n").replace(" ", "");
-                }else{
-                    strParams = strParams.replace("|", "\n");
-                }
-                parameterTxt.setText(strParams);
-
-                if(resp.getData().getDetailPics() != null && resp.getData().getDetailPics().length > 0){
-                    viewPager.setAdapter(new MyViewPagerAdapter(resp.getData().getDetailPics()));
-                    indicator.setViewPager(viewPager);
-                }else{
-                    pagerLayout.setVisibility(View.GONE);
-                }
-
-                webView.loadData(resp.getData().getDetail().replace("<img ", "<img width='100%' "), "text/html;charset=UTF-8", null);
-            }
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            S.o("ERR:::");
-        }
-    };
 
     class MyViewPagerAdapter extends PagerAdapter {
         private String[] imgList;

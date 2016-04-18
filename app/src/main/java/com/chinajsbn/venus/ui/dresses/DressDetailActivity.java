@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
+import com.chinajsbn.venus.net.HttpClients;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Dress;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
@@ -51,7 +51,7 @@ public class DressDetailActivity extends MBaseFragmentActivity implements  OnRec
         recyclerView.setAdapter(adapter);
 
         if(brandId != 0){
-            HttpClient.getInstance().dressListByBrandId(brandId, cb);
+            HttpClients.getInstance().dressList(brandId, 1, 100, cb);
         }
     }
 
@@ -101,7 +101,7 @@ public class DressDetailActivity extends MBaseFragmentActivity implements  OnRec
             if(!TextUtils.isEmpty(dress.getImageUrl())){
                 Picasso.with(context).load(dress.getImageUrl()+ DimenUtil.getVertical50Q() + DimenUtil.getSuffixUTF8()).placeholder(R.drawable.loading).into(holder.contentImg);
             }
-            holder.nameTxt.setText(dress.getWeddingDressName());
+            holder.nameTxt.setText(dress.getName());
         }
 
         @Override

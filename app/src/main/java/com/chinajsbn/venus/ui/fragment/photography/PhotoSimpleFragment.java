@@ -235,8 +235,6 @@ public class PhotoSimpleFragment extends BaseFragment implements MasterListView.
     @Override
     public void initialize() {
 
-        S.o("::PhotoSimpleFragment initialize >>");
-//        refreshLayout.setOnRefreshListener(this);
         listView.setPullRefreshEnable(false);
         listView.setPullLoadEnable(false);
         listView.setOnRefreshListener(PhotoSimpleFragment.this, 0);

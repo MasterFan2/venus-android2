@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
 import com.chinajsbn.venus.net.HttpClient;
+import com.chinajsbn.venus.net.HttpClients;
+import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Other;
 import com.chinajsbn.venus.net.bean.OtherResp;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
@@ -31,6 +33,7 @@ import com.squareup.picasso.Picasso;
 import com.tool.widget.mt_listview.MasterListView;
 import com.tool.widget.mt_listview.MyListView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.Callback;
@@ -89,12 +92,30 @@ public class OtherActivity extends MBaseFragmentActivity implements MasterListVi
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 moduleTypeId = tab.getPosition();
-                if(moduleTypeId == 5 || moduleTypeId == 6){
-                    moduleTypeId += 1;
-                }
-                moduleTypeId += 1;
                 if(NetworkUtil.hasConnection(context)){
-                    HttpClient.getInstance().other(moduleTypeId, pageIndex, pageSize, cb);
+                    switch (moduleTypeId){
+                        case 0:
+                            HttpClients.getInstance().photographerRoomList(1, 100, cb);
+                            break;
+                        case 1:
+                            HttpClients.getInstance().hotelRoomList(1, 100, cb);
+                            break;
+                        case 2:
+                            HttpClients.getInstance().schemeRoomList(1, 100, cb);
+                            break;
+                        case 3:
+                            HttpClients.getInstance().dressRoomList(1, 100, cb);
+                            break;
+                        case 4:
+                            HttpClients.getInstance().movieRoomList(1, 100, cb);
+                            break;
+                        case 5:
+                            HttpClients.getInstance().suppliesRoomList(1, 100, cb);
+                            break;
+                        case 6:
+                            HttpClients.getInstance().carRoomList(1, 100, cb);
+                            break;
+                    }
                 }else{
                     try {
                         dataList = db.findAll(Selector.from(Other.class).where("moduleTypeId", "=", moduleTypeId));
@@ -116,18 +137,32 @@ public class OtherActivity extends MBaseFragmentActivity implements MasterListVi
             }
         });
 
-        if(moduleTypeId != 0){//设置默认选中的tab
-            if(moduleTypeId == 7 || moduleTypeId == 6){
-                tabLayout.setScrollPosition(moduleTypeId -1, 0, true);
-            }else{
-                tabLayout.setScrollPosition(moduleTypeId, 0, true);
-            }
-        }
-
-        moduleTypeId = moduleTypeId + 1;
+        tabLayout.setScrollPosition(moduleTypeId, 0, true);
 
         if(NetworkUtil.hasConnection(context)){
-            HttpClient.getInstance().other(moduleTypeId, pageIndex, pageSize, cb);
+            switch (moduleTypeId){
+                case 0:
+                    HttpClients.getInstance().photographerRoomList(1, 100, cb);
+                    break;
+                case 1:
+                    HttpClients.getInstance().hotelRoomList(1, 100, cb);
+                    break;
+                case 2:
+                    HttpClients.getInstance().schemeRoomList(1, 100, cb);
+                    break;
+                case 3:
+                    HttpClients.getInstance().dressRoomList(1, 100, cb);
+                    break;
+                case 4:
+                    HttpClients.getInstance().movieRoomList(1, 100, cb);
+                    break;
+                case 5:
+                    HttpClients.getInstance().suppliesRoomList(1, 100, cb);
+                    break;
+                case 6:
+                    HttpClients.getInstance().carRoomList(1, 100, cb);
+                    break;
+            }
         }else{
             listView.setPullRefreshEnable(false);
             try {
@@ -140,12 +175,12 @@ public class OtherActivity extends MBaseFragmentActivity implements MasterListVi
 
     }
 
-    private Callback<OtherResp> cb = new Callback<OtherResp>() {
+    private Callback<Base<ArrayList<Other>>> cb = new Callback<Base<ArrayList<Other>>>() {
         @Override
-        public void success(OtherResp resp, Response response) {
+        public void success(Base<ArrayList<Other>> resp, Response response) {
             listView.stopRefresh();
             if (resp.getCode() == 200) {
-                dataList = resp.getData().getData();
+                dataList = resp.getData();
                 try {
                     db.delete(Other.class, WhereBuilder.b("moduleTypeId", "=", moduleTypeId));
                     db.saveAll(dataList);
@@ -198,8 +233,8 @@ public class OtherActivity extends MBaseFragmentActivity implements MasterListVi
             holder.titleTxt.setText(other.getTitle());
             holder.contenTxt.setText(Html.fromHtml(other.getDescription()));
             holder.dateTxt.setText(other.getPublishTime());
-            if (!TextUtils.isEmpty(other.getCoverImg())) {
-                Picasso.with(context).load(other.getCoverImg()).placeholder(R.drawable.loading).resize(DimenUtil.screenWidth, DimenUtil.targetHeight).into(holder.img);
+            if (!TextUtils.isEmpty(other.getCoverUrlApp())) {
+                Picasso.with(context).load(other.getCoverUrlApp()).placeholder(R.drawable.loading).resize(DimenUtil.screenWidth, DimenUtil.targetHeight).into(holder.img);
             }
 
             //
@@ -237,7 +272,29 @@ public class OtherActivity extends MBaseFragmentActivity implements MasterListVi
     public void onRefresh(int id) {
         pageIndex = 1;
         listView.startRefresh();
-        HttpClient.getInstance().other(moduleTypeId, pageIndex, pageSize, cb);
+        switch (moduleTypeId){
+            case 0:
+                HttpClients.getInstance().photographerRoomList(1, 100, cb);
+                break;
+            case 1:
+                HttpClients.getInstance().hotelRoomList(1, 100, cb);
+                break;
+            case 2:
+                HttpClients.getInstance().schemeRoomList(1, 100, cb);
+                break;
+            case 3:
+                HttpClients.getInstance().dressRoomList(1, 100, cb);
+                break;
+            case 4:
+                HttpClients.getInstance().movieRoomList(1, 100, cb);
+                break;
+            case 5:
+                HttpClients.getInstance().suppliesRoomList(1, 100, cb);
+                break;
+            case 6:
+                HttpClients.getInstance().carRoomList(1, 100, cb);
+                break;
+        }
     }
 
     @Override

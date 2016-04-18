@@ -4,11 +4,13 @@ import com.lidroid.xutils.db.annotation.Column;
 import com.lidroid.xutils.db.annotation.Id;
 import com.lidroid.xutils.db.annotation.Table;
 
+import java.io.Serializable;
+
 /**
  * Created by 13510 on 2015/12/14.
  */
 @Table(name = "Car")
-public class Car {
+public class Car implements Serializable {
 
     @Id
     @Column(column = "weddingCarRentalId")
@@ -25,6 +27,15 @@ public class Car {
 
     @Column(column = "carModelsId")
     private int carModelsId;
+
+    @Column(column = "content")
+    private String content;
+
+    @Column(column = "coverUrlApp")
+    private String coverUrlApp;
+
+    @Column(column = "appDetailImages")
+    private String appDetailImages;
 
     @Column(column = "marketRentalPrice")
     private int marketRentalPrice;
@@ -49,6 +60,30 @@ public class Car {
 
     @Column(column = "carBrandId")
     private int carBrandId;
+
+    public String getAppDetailImages() {
+        return appDetailImages;
+    }
+
+    public void setAppDetailImages(String appDetailImages) {
+        this.appDetailImages = appDetailImages;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getCoverUrlApp() {
+        return coverUrlApp;
+    }
+
+    public void setCoverUrlApp(String coverUrlApp) {
+        this.coverUrlApp = coverUrlApp;
+    }
 
     public int getCarBrandId() {
         return carBrandId;

@@ -17,11 +17,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
+import com.chinajsbn.venus.net.HttpClients;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Dresser;
 import com.chinajsbn.venus.net.bean.Emcee;
 import com.chinajsbn.venus.net.bean.F4;
+import com.chinajsbn.venus.net.bean.Works;
 import com.chinajsbn.venus.ui.base.BaseFragment;
 import com.chinajsbn.venus.ui.base.FragmentFeature;
 import com.chinajsbn.venus.ui.base.OnRecyclerItemClickListener;
@@ -45,7 +46,6 @@ import com.tool.widget.dialog.ViewHolder;
 import com.tool.widget.recyclerviewdiviver.HorizontalDividerItemDecoration;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import retrofit.Callback;
@@ -102,6 +102,12 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
 
         db = DbUtils.create(getActivity());
 
+        try {
+            db.dropTable(F4.class);
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_not_network_layout, null);
         ViewHolder holder = new ViewHolder(view);
         mtdialog = new MTDialog.Builder(getActivity())
@@ -132,7 +138,7 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
                     if (emceeList.size() <= 0) {
                         if (NetworkUtil.hasConnection(getActivity())) {
                             dialog.show();
-                            HttpClient.getInstance().getEmceeList(pageIndex, pageSize, callback);
+                            HttpClients.getInstance().f4HostList(pageIndex, pageSize, callback);
                         } else {
                             try {
                                 List<F4> emcList = db.findAll(Selector.from(F4.class).where("tag", "=", TAG_EMCEE));
@@ -144,7 +150,6 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
 
                                 for (F4 f4 : emcList) {
                                     List<Emcee> list = db.findAll(Selector.from(Emcee.class).where("tag", "=", f4.getPersonName()));
-                                    f4.setHoster(list);
                                     S.o("::::::::::" + f4.getPersonName());
                                 }
                                 emceeList = emcList;
@@ -162,7 +167,7 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
                     if (dresserList.size() <= 0) {
                         if (NetworkUtil.hasConnection(getActivity())) {
                             dialog.show();
-                            HttpClient.getInstance().getDresserList(pageIndex, pageSize, callback);
+                            HttpClients.getInstance().f4DresserList(pageIndex, pageSize, callback);
                         } else {
                             try {
                                 List<F4> emcList = db.findAll(Selector.from(F4.class).where("tag", "=", TAG_DRESSER));
@@ -173,8 +178,8 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
                                 }
 
                                 for (F4 f4 : emcList) {
-                                    List<Dresser> list = db.findAll(Selector.from(Dresser.class).where("parentName", "=", f4.getPersonName()));
-                                    f4.setDresser(list);
+                                    List<Works> list = db.findAll(Selector.from(Dresser.class).where("parentName", "=", f4.getNickName()));
+                                    f4.setWorkList(list);
                                 }
                                 dresserList = emcList;
                                 adapter.notifyDataSetChanged();
@@ -190,7 +195,7 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
                     if (photographerList.size() <= 0) {
                         if (NetworkUtil.hasConnection(getActivity())) {
                             dialog.show();
-                            HttpClient.getInstance().getPhotographerList(pageIndex, pageSize, callback);
+                            HttpClients.getInstance().f4PhotographerList(pageIndex, pageSize, callback);
                         } else {
                             try {
                                 List<F4> emcList = db.findAll(Selector.from(F4.class).where("tag", "=", TAG_PHOTOGRAPHER));
@@ -201,8 +206,8 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
                                 }
 
                                 for (F4 f4 : emcList) {
-                                    List<Dresser> list = db.findAll(Selector.from(Dresser.class).where("parentName", "=", f4.getPersonName()));
-                                    f4.setPhotographer(list);
+                                    List<Works> list = db.findAll(Selector.from(Dresser.class).where("parentName", "=", f4.getNickName()));
+                                    f4.setWorkList(list);
                                 }
                                 photographerList = emcList;
                                 adapter.notifyDataSetChanged();
@@ -219,7 +224,7 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
                     if (cameramanList.size() <= 0) {
                         if (NetworkUtil.hasConnection(getActivity())) {//有网络连接
                             dialog.show();
-                            HttpClient.getInstance().getCameramanList(pageIndex, pageSize, callback);
+                            HttpClients.getInstance().f4CameramanList(pageIndex, pageSize, callback);
                         } else {     //无网络连接
                             try {
                                 List<F4> emcList = db.findAll(Selector.from(F4.class).where("tag", "=", TAG_CAMERAMAN));
@@ -230,8 +235,8 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
                                 }
 
                                 for (F4 f4 : emcList) {
-                                    List<Emcee> list = db.findAll(Selector.from(Emcee.class).where("tag", "=", f4.getPersonName()));
-                                    f4.setCameraman(list);
+                                    List<Works> list = db.findAll(Selector.from(Emcee.class).where("tag", "=", f4.getNickName()));
+                                    f4.setWorkList(list);
                                 }
                                 cameramanList = emcList;
                                 adapter.notifyDataSetChanged();
@@ -293,7 +298,7 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
             if (emceeList.size() <= 0) {
                 if (NetworkUtil.hasConnection(getActivity())) {
                     dialog.show();
-                    HttpClient.getInstance().getEmceeList(pageIndex, pageSize, callback);
+                    HttpClients.getInstance().f4HostList(pageIndex, pageSize, callback);
                 } else {
 //                    try {
 //                        List<F4> emcList = db.findAll(Selector.from(F4.class).where("tag", "=", TAG_EMCEE));
@@ -323,7 +328,7 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
             if (dresserList.size() <= 0) {
                 if (NetworkUtil.hasConnection(getActivity())) {
                     dialog.show();
-                    HttpClient.getInstance().getDresserList(pageIndex, pageSize, callback);
+                    HttpClients.getInstance().f4DresserList(pageIndex, pageSize, callback);
                 } else {
 //                    try {
 //                        List<F4> emcList = db.findAll(Selector.from(F4.class).where("tag", "=", TAG_DRESSER));
@@ -351,7 +356,7 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
             if (photographerList.size() <= 0) {
                 if (NetworkUtil.hasConnection(getActivity())) {
                     dialog.show();
-                    HttpClient.getInstance().getPhotographerList(pageIndex, pageSize, callback);
+                    HttpClients.getInstance().f4PhotographerList(pageIndex, pageSize, callback);
                 } else {
 //                    try {
 //                        List<F4> emcList = db.findAll(Selector.from(F4.class).where("tag", "=", TAG_PHOTOGRAPHER));
@@ -380,7 +385,7 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
             if (cameramanList.size() <= 0) {
                 if (NetworkUtil.hasConnection(getActivity())) {//有网络连接
                     dialog.show();
-                    HttpClient.getInstance().getCameramanList(pageIndex, pageSize, callback);
+                    HttpClients.getInstance().f4CameramanList(pageIndex, pageSize, callback);
                 } else {     //无网络连接
 //                    try {
 //                        List<F4> emcList = db.findAll(Selector.from(F4.class).where("tag", "=", TAG_CAMERAMAN));
@@ -432,24 +437,27 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
                 try {
                     if (currentTabSelected == 0) {
                         emceeList = base.getData();
-                        //1
+                        //1.删除对应的作品
                         for (F4 f4 : emceeList) {
                             db.delete(Emcee.class, WhereBuilder.b("tag", "=", f4.getPersonName()));
                         }
 
-                        //2
+                        //2.删除之前主持人的数据
                         db.delete(F4.class, WhereBuilder.b("tag", "=", TAG_EMCEE));
 
-                        //3
+                        //3.设置主持人的tag
+                        //  设置作品tag为主持人姓名，方便保存
                         for (F4 f4 : emceeList) {
                             f4.setTag(TAG_EMCEE);
-                            for (Emcee e : f4.getHoster()) {
-                                e.setTag(f4.getPersonName());
+                            if (f4.getWorkList() != null && f4.getWorkList().size() > 0) {
+                                for (Works works : f4.getWorkList()) {
+                                    works.setTag(f4.getNickName());
+                                }
+                                db.saveAll(f4.getWorkList());//保存作品
                             }
-                            db.saveAll(f4.getHoster());
                         }
 
-                        //4
+                        //4.保存主持人
                         db.saveAll(emceeList);
                     } else if (currentTabSelected == 1) {
                         dresserList = base.getData();
@@ -463,10 +471,12 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
                         //3 缓存画妆师的作品
                         for (F4 f4 : dresserList) {
                             f4.setTag(TAG_DRESSER);
-                            for (Dresser d : f4.getDresser()) {
-                                d.setParentName(f4.getPersonName());
+                            if (f4.getWorkList() != null && f4.getWorkList().size() > 0) {
+                                for (Works works : f4.getWorkList()) {
+                                    works.setTag(f4.getNickName());
+                                }
+                                db.saveAll(f4.getWorkList());
                             }
-                            db.saveAll(f4.getDresser());
                         }
                         //4 缓存画妆师
                         db.saveAll(dresserList);
@@ -482,10 +492,10 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
                         //3
                         for (F4 f4 : photographerList) {
                             f4.setTag(TAG_PHOTOGRAPHER);
-                            for (Dresser d : f4.getPhotographer()) {
-                                d.setParentName(f4.getPersonName());
+                            for (Works works : f4.getWorkList()) {
+                                works.setTag(f4.getNickName());
                             }
-                            db.saveAll(f4.getPhotographer());
+                            db.saveAll(f4.getWorkList());
                         }
                         //4
                         db.saveAll(photographerList);
@@ -501,10 +511,10 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
                         //3
                         for (F4 f4 : cameramanList) {
                             f4.setTag(TAG_CAMERAMAN);
-                            for (Emcee e : f4.getCameraman()) {
-                                e.setTag(f4.getPersonName());
+                            for (Works works : f4.getWorkList()) {
+                                works.setTag(f4.getNickName());
                             }
-                            db.saveAll(f4.getCameraman());
+                            db.saveAll(f4.getWorkList());
                         }
 
                         //4
@@ -515,12 +525,12 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
                             db.delete(F4.class, WhereBuilder.b("tag", "=", TAG_EMCEE));
                             for (F4 f4 : emceeList) {
                                 f4.setTag(TAG_EMCEE);
-                                for (Emcee e : f4.getHoster()) {
-                                    e.setTag(f4.getPersonName());
+                                for (Works works : f4.getWorkList()) {
+                                    works.setTag(f4.getNickName());
                                 }
-                                db.saveOrUpdateAll(f4.getHoster());
+                                db.saveAll(f4.getWorkList());
                             }
-                            db.saveOrUpdateAll(emceeList);
+                            db.saveAll(emceeList);
                         }
                     }
                     adapter.notifyDataSetChanged();
@@ -543,7 +553,7 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
 
             if (NetworkUtil.hasConnection(getActivity())) {
                 dialog.show();
-                HttpClient.getInstance().getEmceeList(pageIndex, pageSize, callback);
+                HttpClients.getInstance().f4HostList(pageIndex, pageSize, callback);
             } else {//无网络
                 try {
                     List<F4> emcList = db.findAll(Selector.from(F4.class).where("tag", "=", TAG_EMCEE));
@@ -553,8 +563,8 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
                         return;
                     }
                     for (F4 f4 : emcList) {
-                        List<Emcee> list = db.findAll(Selector.from(Emcee.class).where("tag", "=", f4.getPersonName()));
-                        f4.setHoster(list);
+                        List<Works> list = db.findAll(Selector.from(Works.class).where("tag", "=", f4.getNickName()));
+                        f4.setWorkList(list);
                     }
                     emceeList = emcList;
                     adapter.notifyDataSetChanged();
@@ -607,23 +617,23 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
             int size = 0;
             if (currentTabSelected == 0) {
                 f4 = emceeList.get(position);
-                size = f4.getHoster().size();
+                size = f4.getWorkList().size();
             } else if (currentTabSelected == 1) {
                 f4 = dresserList.get(position);
-                size = f4.getDresser().size();
+                size = f4.getWorkList().size();
             } else if (currentTabSelected == 2) {
                 f4 = photographerList.get(position);
-                size = f4.getPhotographer().size();
+                size = f4.getWorkList().size();
             } else if (currentTabSelected == 3) {
                 f4 = cameramanList.get(position);
-                size = f4.getCameraman().size();
+                size = f4.getWorkList().size();
             } else {
                 f4 = emceeList.get(position);
-                size = f4.getHoster().size();
+                size = f4.getWorkList().size();
             }
 
 
-            emceeHolder.nameTxt.setText(f4.getPersonName());//名字
+            emceeHolder.nameTxt.setText(f4.getNickName());//名字
             emceeHolder.descTxt.setText(f4.getDescription());//简介
 
 
@@ -637,20 +647,30 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
                 emceeHolder.bottomLayout.setVisibility(View.GONE);
                 emceeHolder.contentImage1.setVisibility(View.VISIBLE);
                 emceeHolder.contentImage2.setVisibility(View.INVISIBLE);
+
+                Picasso.with(getActivity()).load(f4.getWorkList().get(0).getCoverUrlApp() + DensityUtil.getF4ImageSuffix(getActivity()) + "80Q").placeholder(R.mipmap.load_error).into(emceeHolder.contentImage1);
+                emceeHolder.playImg1.setVisibility(View.VISIBLE);
+
                 if (currentTabSelected == 0) {
-                    Picasso.with(getActivity()).load(f4.getHoster().get(0).getImageUrl() + DensityUtil.getF4ImageSuffix(getActivity()) + "80Q").placeholder(R.mipmap.load_error).into(emceeHolder.contentImage1);
                     emceeHolder.playImg1.setVisibility(View.VISIBLE);
-                } else if (currentTabSelected == 1) {
-                    Picasso.with(getActivity()).load(f4.getDresser().get(0).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage1);
+                    emceeHolder.playImg2.setVisibility(View.GONE);
+                    emceeHolder.playImg3.setVisibility(View.GONE);
+                    emceeHolder.playImg4.setVisibility(View.GONE);
+                }else if (currentTabSelected == 1) {
                     emceeHolder.playImg1.setVisibility(View.GONE);
-                } else if (currentTabSelected == 2) {
-                    Picasso.with(getActivity()).load(f4.getPhotographer().get(0).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage1);
+                    emceeHolder.playImg2.setVisibility(View.GONE);
+                    emceeHolder.playImg3.setVisibility(View.GONE);
+                    emceeHolder.playImg4.setVisibility(View.GONE);
+                }else if (currentTabSelected == 2) {
                     emceeHolder.playImg1.setVisibility(View.GONE);
-                } else if (currentTabSelected == 3) {
+                    emceeHolder.playImg2.setVisibility(View.GONE);
+                    emceeHolder.playImg3.setVisibility(View.GONE);
+                    emceeHolder.playImg4.setVisibility(View.GONE);
+                }else if (currentTabSelected == 3) {
                     emceeHolder.playImg1.setVisibility(View.VISIBLE);
-                    Picasso.with(getActivity()).load(f4.getCameraman().get(0).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage1);
-                } else {
-                    Picasso.with(getActivity()).load(f4.getHoster().get(0).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage1);
+                    emceeHolder.playImg2.setVisibility(View.GONE);
+                    emceeHolder.playImg3.setVisibility(View.GONE);
+                    emceeHolder.playImg4.setVisibility(View.GONE);
                 }
             } else if (size == 2) {
                 emceeHolder.topLayout.setVisibility(View.VISIBLE);
@@ -658,36 +678,31 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
 
                 emceeHolder.contentImage1.setVisibility(View.VISIBLE);
                 emceeHolder.contentImage2.setVisibility(View.VISIBLE);
+
+                Picasso.with(getActivity()).load(f4.getWorkList().get(0).getCoverUrlApp() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage1);
+                Picasso.with(getActivity()).load(f4.getWorkList().get(1).getCoverUrlApp() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage2);
+
                 if (currentTabSelected == 0) {
-                    Picasso.with(getActivity()).load(f4.getHoster().get(0).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage1);
-                    Picasso.with(getActivity()).load(f4.getHoster().get(1).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage2);
                     emceeHolder.playImg1.setVisibility(View.VISIBLE);
                     emceeHolder.playImg2.setVisibility(View.VISIBLE);
-                } else if (currentTabSelected == 1) {
-
-                    Picasso.with(getActivity()).load(f4.getDresser().get(0).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).into(emceeHolder.contentImage1);
-                    Picasso.with(getActivity()).load(f4.getDresser().get(1).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).into(emceeHolder.contentImage2);
+                    emceeHolder.playImg3.setVisibility(View.GONE);
+                    emceeHolder.playImg4.setVisibility(View.GONE);
+                }else if (currentTabSelected == 1) {
                     emceeHolder.playImg1.setVisibility(View.GONE);
                     emceeHolder.playImg2.setVisibility(View.GONE);
-                } else if (currentTabSelected == 2) {
+                    emceeHolder.playImg3.setVisibility(View.GONE);
+                    emceeHolder.playImg4.setVisibility(View.GONE);
+                }else if (currentTabSelected == 2) {
                     emceeHolder.playImg1.setVisibility(View.GONE);
                     emceeHolder.playImg2.setVisibility(View.GONE);
-                    Picasso.with(getActivity()).load(f4.getPhotographer().get(0).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).into(emceeHolder.contentImage1);
-                    Picasso.with(getActivity()).load(f4.getPhotographer().get(1).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).into(emceeHolder.contentImage2);
-
-                } else if (currentTabSelected == 3) {
+                    emceeHolder.playImg3.setVisibility(View.GONE);
+                    emceeHolder.playImg4.setVisibility(View.GONE);
+                }else if (currentTabSelected == 3) {
                     emceeHolder.playImg1.setVisibility(View.VISIBLE);
                     emceeHolder.playImg2.setVisibility(View.VISIBLE);
-                    Picasso.with(getActivity()).load(f4.getCameraman().get(0).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage1);
-                    Picasso.with(getActivity()).load(f4.getCameraman().get(1).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage2);
-                } else {
-                    emceeHolder.playImg1.setVisibility(View.VISIBLE);
-                    emceeHolder.playImg2.setVisibility(View.VISIBLE);
-                    Picasso.with(getActivity()).load(f4.getHoster().get(0).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage1);
-                    Picasso.with(getActivity()).load(f4.getHoster().get(1).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage2);
+                    emceeHolder.playImg3.setVisibility(View.GONE);
+                    emceeHolder.playImg4.setVisibility(View.GONE);
                 }
-
-
             } else if (size == 3) {
                 emceeHolder.topLayout.setVisibility(View.VISIBLE);
                 emceeHolder.bottomLayout.setVisibility(View.VISIBLE);
@@ -697,48 +712,31 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
                 emceeHolder.contentImage3.setVisibility(View.VISIBLE);
                 emceeHolder.contentImage4.setVisibility(View.INVISIBLE);
 
+                Picasso.with(getActivity()).load(f4.getWorkList().get(0).getCoverUrlApp() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage1);
+                Picasso.with(getActivity()).load(f4.getWorkList().get(1).getCoverUrlApp() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage2);
+                Picasso.with(getActivity()).load(f4.getWorkList().get(2).getCoverUrlApp() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage3);
+
                 if (currentTabSelected == 0) {
                     emceeHolder.playImg1.setVisibility(View.VISIBLE);
                     emceeHolder.playImg2.setVisibility(View.VISIBLE);
                     emceeHolder.playImg3.setVisibility(View.VISIBLE);
-                    Picasso.with(getActivity()).load(f4.getHoster().get(0).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage1);
-                    Picasso.with(getActivity()).load(f4.getHoster().get(1).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage2);
-                    Picasso.with(getActivity()).load(f4.getHoster().get(2).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage3);
-                } else if (currentTabSelected == 1) {
-
+                    emceeHolder.playImg4.setVisibility(View.GONE);
+                }else if (currentTabSelected == 1) {
                     emceeHolder.playImg1.setVisibility(View.GONE);
                     emceeHolder.playImg2.setVisibility(View.GONE);
                     emceeHolder.playImg3.setVisibility(View.GONE);
-                    Picasso.with(getActivity()).load(f4.getDresser().get(0).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).into(emceeHolder.contentImage1);
-                    Picasso.with(getActivity()).load(f4.getDresser().get(1).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).into(emceeHolder.contentImage2);
-                    Picasso.with(getActivity()).load(f4.getDresser().get(2).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).into(emceeHolder.contentImage3);
-
-                } else if (currentTabSelected == 2) {
+                    emceeHolder.playImg4.setVisibility(View.GONE);
+                }else if (currentTabSelected == 2) {
                     emceeHolder.playImg1.setVisibility(View.GONE);
                     emceeHolder.playImg2.setVisibility(View.GONE);
                     emceeHolder.playImg3.setVisibility(View.GONE);
-                    Picasso.with(getActivity()).load(f4.getPhotographer().get(0).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).into(emceeHolder.contentImage1);
-                    Picasso.with(getActivity()).load(f4.getPhotographer().get(1).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).into(emceeHolder.contentImage2);
-                    Picasso.with(getActivity()).load(f4.getPhotographer().get(2).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).into(emceeHolder.contentImage3);
-
-                } else if (currentTabSelected == 3) {
+                    emceeHolder.playImg4.setVisibility(View.GONE);
+                }else if (currentTabSelected == 3) {
                     emceeHolder.playImg1.setVisibility(View.VISIBLE);
                     emceeHolder.playImg2.setVisibility(View.VISIBLE);
                     emceeHolder.playImg3.setVisibility(View.VISIBLE);
-
-                    Picasso.with(getActivity()).load(f4.getCameraman().get(0).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage1);
-                    Picasso.with(getActivity()).load(f4.getCameraman().get(1).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage2);
-                    Picasso.with(getActivity()).load(f4.getCameraman().get(2).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage3);
-
-                } else {
-                    emceeHolder.playImg1.setVisibility(View.VISIBLE);
-                    emceeHolder.playImg2.setVisibility(View.VISIBLE);
-                    emceeHolder.playImg3.setVisibility(View.VISIBLE);
-                    Picasso.with(getActivity()).load(f4.getHoster().get(0).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage1);
-                    Picasso.with(getActivity()).load(f4.getHoster().get(1).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage2);
-                    Picasso.with(getActivity()).load(f4.getHoster().get(2).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage3);
+                    emceeHolder.playImg4.setVisibility(View.GONE);
                 }
-
             } else if (size == 4) {
                 emceeHolder.topLayout.setVisibility(View.VISIBLE);
                 emceeHolder.bottomLayout.setVisibility(View.VISIBLE);
@@ -748,51 +746,31 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
                 emceeHolder.contentImage3.setVisibility(View.VISIBLE);
                 emceeHolder.contentImage4.setVisibility(View.VISIBLE);
 
+                Picasso.with(getActivity()).load(f4.getWorkList().get(0).getCoverUrlApp() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage1);
+                Picasso.with(getActivity()).load(f4.getWorkList().get(1).getCoverUrlApp() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage2);
+                Picasso.with(getActivity()).load(f4.getWorkList().get(2).getCoverUrlApp() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage3);
+                Picasso.with(getActivity()).load(f4.getWorkList().get(3).getCoverUrlApp() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage4);
+
                 if (currentTabSelected == 0) {
                     emceeHolder.playImg1.setVisibility(View.VISIBLE);
                     emceeHolder.playImg2.setVisibility(View.VISIBLE);
                     emceeHolder.playImg3.setVisibility(View.VISIBLE);
                     emceeHolder.playImg4.setVisibility(View.VISIBLE);
-                    Picasso.with(getActivity()).load(f4.getHoster().get(0).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage1);
-                    Picasso.with(getActivity()).load(f4.getHoster().get(1).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage2);
-                    Picasso.with(getActivity()).load(f4.getHoster().get(2).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage3);
-                    Picasso.with(getActivity()).load(f4.getHoster().get(3).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage4);
-                } else if (currentTabSelected == 1) {
+                }else if (currentTabSelected == 1) {
                     emceeHolder.playImg1.setVisibility(View.GONE);
                     emceeHolder.playImg2.setVisibility(View.GONE);
                     emceeHolder.playImg3.setVisibility(View.GONE);
                     emceeHolder.playImg4.setVisibility(View.GONE);
-                    Picasso.with(getActivity()).load(f4.getDresser().get(0).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).into(emceeHolder.contentImage1);
-                    Picasso.with(getActivity()).load(f4.getDresser().get(1).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).into(emceeHolder.contentImage2);
-                    Picasso.with(getActivity()).load(f4.getDresser().get(2).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).into(emceeHolder.contentImage3);
-                    Picasso.with(getActivity()).load(f4.getDresser().get(3).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).into(emceeHolder.contentImage4);
-                } else if (currentTabSelected == 2) {
+                }else if (currentTabSelected == 2) {
                     emceeHolder.playImg1.setVisibility(View.GONE);
                     emceeHolder.playImg2.setVisibility(View.GONE);
                     emceeHolder.playImg3.setVisibility(View.GONE);
                     emceeHolder.playImg4.setVisibility(View.GONE);
-                    Picasso.with(getActivity()).load(f4.getPhotographer().get(0).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).into(emceeHolder.contentImage1);
-                    Picasso.with(getActivity()).load(f4.getPhotographer().get(1).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).into(emceeHolder.contentImage2);
-                    Picasso.with(getActivity()).load(f4.getPhotographer().get(2).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).into(emceeHolder.contentImage3);
-                    Picasso.with(getActivity()).load(f4.getPhotographer().get(3).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).into(emceeHolder.contentImage4);
-                } else if (currentTabSelected == 3) {
+                }else if (currentTabSelected == 3) {
                     emceeHolder.playImg1.setVisibility(View.VISIBLE);
                     emceeHolder.playImg2.setVisibility(View.VISIBLE);
                     emceeHolder.playImg3.setVisibility(View.VISIBLE);
                     emceeHolder.playImg4.setVisibility(View.VISIBLE);
-                    Picasso.with(getActivity()).load(f4.getCameraman().get(0).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage1);
-                    Picasso.with(getActivity()).load(f4.getCameraman().get(1).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage2);
-                    Picasso.with(getActivity()).load(f4.getCameraman().get(2).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage3);
-                    Picasso.with(getActivity()).load(f4.getCameraman().get(3).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage4);
-                } else {
-                    emceeHolder.playImg1.setVisibility(View.VISIBLE);
-                    emceeHolder.playImg2.setVisibility(View.VISIBLE);
-                    emceeHolder.playImg3.setVisibility(View.VISIBLE);
-                    emceeHolder.playImg4.setVisibility(View.VISIBLE);
-                    Picasso.with(getActivity()).load(f4.getHoster().get(0).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage1);
-                    Picasso.with(getActivity()).load(f4.getHoster().get(1).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage2);
-                    Picasso.with(getActivity()).load(f4.getHoster().get(2).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage3);
-                    Picasso.with(getActivity()).load(f4.getHoster().get(3).getImageUrl() + DimenUtil.getVerticalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.mipmap.load_error).into(emceeHolder.contentImage4);
                 }
             }
 
@@ -809,7 +787,7 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
 
         @Override
         public void onClick(View view) {
-            if(NetworkUtil.hasConnection(getActivity())){
+            if (NetworkUtil.hasConnection(getActivity())) {
                 String p_i[] = view.getTag().toString().split("@");
                 int position = Integer.parseInt(p_i[0]);
                 int i = Integer.parseInt(p_i[1]) - 1;
@@ -820,25 +798,23 @@ public class F4Fragment extends BaseFragment implements OnRecyclerItemClickListe
                 if (currentTabSelected == 0) {
                     f4 = emceeList.get(position);
                     intent = new Intent(getActivity(), VideoActivity.class);
-                    intent.putExtra("url", f4.getHoster().get(i).getVideoUrl() + "");
+                    intent.putExtra("url", f4.getWorkList().get(i).getVideoUrl() + "");
                 } else if (currentTabSelected == 1) {
                     f4 = dresserList.get(position);
                     intent = new Intent(getActivity(), WorksDetailActivity.class);
-                    intent.putExtra("list", f4.getDresser().get(i).getDetailImages());
-                    intent.putExtra("isPlanner", true);
+                    intent.putExtra("list", f4.getWorkList().get(i).getAppDetailImages());
 
                 } else if (currentTabSelected == 2) {
                     f4 = photographerList.get(position);
                     intent = new Intent(getActivity(), WorksDetailActivity.class);
-                    intent.putExtra("list", f4.getPhotographer().get(i).getDetailImages());
-                    intent.putExtra("isPlanner", true);
+                    intent.putExtra("list", f4.getWorkList().get(i).getAppDetailImages());
                 } else if (currentTabSelected == 3) {
                     f4 = cameramanList.get(position);
                     intent = new Intent(getActivity(), VideoActivity.class);
-                    intent.putExtra("url", f4.getCameraman().get(i).getVideoUrl() + "");
+                    intent.putExtra("url", f4.getWorkList().get(i).getVideoUrl() + "");
                 }
                 animStart(intent);
-            }else {
+            } else {
                 handler.sendEmptyMessageDelayed(10, 100);
                 handler.sendEmptyMessageDelayed(11, 4000);
             }

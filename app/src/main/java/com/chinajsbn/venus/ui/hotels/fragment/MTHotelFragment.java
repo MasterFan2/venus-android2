@@ -566,7 +566,7 @@ public class MTHotelFragment extends BaseFragment implements OnClickListener, Ma
         ///check network
         if (NetworkUtil.hasConnection(getActivity())) {
             HttpClients.getInstance().searchHotels(param, callback);
-//            HttpClient.getInstance().getHotelAreas(areaCallback);
+            HttpClients.getInstance().districtList(areaCallback);
         } else {
             try {
                 dataList = db.findAll(Hotel.class);
@@ -583,9 +583,9 @@ public class MTHotelFragment extends BaseFragment implements OnClickListener, Ma
         }
     } //init end
 
-    private Callback<Base<List<FilterBean>>> areaCallback = new Callback<Base<List<FilterBean>>>() {
+    private Callback<Base<ArrayList<FilterBean>>> areaCallback = new Callback<Base<ArrayList<FilterBean>>>() {
         @Override
-        public void success(Base<List<FilterBean>> resp, Response response) {
+        public void success(Base<ArrayList<FilterBean>> resp, Response response) {
             if (resp.getCode() == 200) {
                 FilterBean all = new FilterBean(false, 0, "全部");
                 areas.add(all);

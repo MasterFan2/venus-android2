@@ -18,9 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
+import com.chinajsbn.venus.net.HttpClients;
 import com.chinajsbn.venus.net.bean.Base;
-import com.chinajsbn.venus.net.bean.Brands;
 import com.chinajsbn.venus.net.bean.CarType;
 import com.chinajsbn.venus.net.bean.Supplie;
 import com.chinajsbn.venus.ui.base.BaseFragment;
@@ -118,7 +117,6 @@ public class SuppliesFragment extends BaseFragment implements OnRecyclerItemClic
         recyclerView.setAdapter(adapter);
         refreshLayout.setProgressBackgroundColorSchemeResource(R.color.gray_400);
         refreshLayout.setColorSchemeColors(R.color.pink, R.color.green, R.color.orange, R.color.blue);
-//        refreshLayout.setColorSchemeResources(R.color.pink, R.color.green);
         refreshLayout.setProgressViewOffset(false, 0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
         refreshLayout.setOnRefreshListener(this);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -133,9 +131,9 @@ public class SuppliesFragment extends BaseFragment implements OnRecyclerItemClic
                         isNextPage = true;
                         pageIndex++;
                         if (previousPosition == 0) {
-                            HttpClient.getInstance().supplieList(MODULE_ID, pageIndex, pageSize, callback);
+                            HttpClients.getInstance().suppliesList(0, pageIndex, pageSize, callback);
                         } else {
-                            HttpClient.getInstance().supplieSearch(MODULE_ID, typeList.get(previousPosition).getId(), pageIndex, pageSize, callback);
+                            HttpClients.getInstance().suppliesList(typeList.get(previousPosition).getId(), pageIndex, pageSize, callback);
                         }
                     }else{
                         S.o(":::用品无网络，加载下一页");
@@ -162,9 +160,9 @@ public class SuppliesFragment extends BaseFragment implements OnRecyclerItemClic
 
                     if (NetworkUtil.hasConnection(getActivity())) {
                         if (tab.getPosition() == 0) {
-                            HttpClient.getInstance().supplieList(MODULE_ID, pageIndex, pageSize, callback);
+                            HttpClients.getInstance().suppliesList(0, pageIndex, pageSize, callback);
                         } else {
-                            HttpClient.getInstance().supplieSearch(MODULE_ID, typeList.get(tab.getPosition()).getId(), pageIndex, pageSize, callback);
+                            HttpClients.getInstance().suppliesList(typeList.get(tab.getPosition()).getId(), pageIndex, pageSize, callback);
                         }
                     } else {// not connect
                         refreshLayout.setEnabled(false);
@@ -195,7 +193,7 @@ public class SuppliesFragment extends BaseFragment implements OnRecyclerItemClic
 
         if (NetworkUtil.hasConnection(getActivity())) {
             //获取类型
-            HttpClient.getInstance().supplieTypes(suppliesTypeCallback);//
+            HttpClients.getInstance().suppliesTypeList(suppliesTypeCallback);//
         } else { //not connect
             refreshLayout.setEnabled(false);
             try {
@@ -265,10 +263,7 @@ public class SuppliesFragment extends BaseFragment implements OnRecyclerItemClic
     public void onRecyclerItemClick(View v, int position) {
         if(NetworkUtil.hasConnection(getActivity())){
             Intent intent = new Intent(getActivity(), SupplieDetailActivity.class);
-            intent.putExtra("moduleId", MODULE_ID);
-            intent.putExtra("detailId", dataList.get(position).getWeddingSuppliesId());
-            intent.putExtra("oldPrice", dataList.get(position).getMarketPrice());
-            intent.putExtra("newPrice", dataList.get(position).getSellingPrice());
+            intent.putExtra("supply", dataList.get(position));
             animStart(intent);
         }else{
             handler.sendEmptyMessageDelayed(10, 100);
@@ -298,9 +293,9 @@ public class SuppliesFragment extends BaseFragment implements OnRecyclerItemClic
         isNextPage = false;
         pageIndex = 1;
         if (previousPosition == 0) {
-            HttpClient.getInstance().supplieList(MODULE_ID, pageIndex, pageSize, callback);
+            HttpClients.getInstance().suppliesList(0, pageIndex, pageSize, callback);
         } else {
-            HttpClient.getInstance().supplieSearch(MODULE_ID, typeList.get(previousPosition).getId(), pageIndex, pageSize, callback);
+            HttpClients.getInstance().suppliesList(typeList.get(previousPosition).getId(), pageIndex, pageSize, callback);
         }
     }
 
@@ -329,6 +324,7 @@ public class SuppliesFragment extends BaseFragment implements OnRecyclerItemClic
                     dataList = resp.getData();
                     if (previousPosition == 0) {
                         try {
+                            db.dropTable(Supplie.class);
                             db.deleteAll(Supplie.class);
                             db.saveAll(dataList);
                         } catch (DbException e) {
@@ -368,11 +364,11 @@ public class SuppliesFragment extends BaseFragment implements OnRecyclerItemClic
         public void onBindViewHolder(FilmHolder holder, int position) {
             Supplie supplie = dataList.get(position);
 
-            if (!TextUtils.isEmpty(supplie.getCoverUrl()))
-                Picasso.with(getActivity()).load(supplie.getCoverUrl() + "@" + (DimenUtil.screenWidth / 2) + "w_" + (DimenUtil.screenWidth / 2) + "h_60Q").resize(DimenUtil.screenWidth / 2, DimenUtil.screenWidth / 2).placeholder(R.drawable.loading).into(holder.coverImg);
+            if (!TextUtils.isEmpty(supplie.getCoverUrlApp()))
+                Picasso.with(getActivity()).load(supplie.getCoverUrlApp() + "@" + (DimenUtil.screenWidth / 2) + "w_" + (DimenUtil.screenWidth / 2) + "h_60Q").resize(DimenUtil.screenWidth / 2, DimenUtil.screenWidth / 2).placeholder(R.drawable.loading).into(holder.coverImg);
 //
             holder.nameTxt.setText(supplie.getTitle());
-            if (supplie.getMarketPrice().toString().equals(supplie.getSellingPrice().toString())) {
+            if (supplie.getMarketPrice() == supplie.getSellingPrice()) {
                 holder.oldPriceTxt.setVisibility(View.INVISIBLE);
             } else {
                 holder.oldPriceTxt.setVisibility(View.VISIBLE);

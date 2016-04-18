@@ -23,9 +23,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
+import com.chinajsbn.venus.net.HttpClients;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Car;
+import com.chinajsbn.venus.net.bean.CarModule;
+import com.chinajsbn.venus.net.bean.CarParam;
 import com.chinajsbn.venus.net.bean.CarType;
 import com.chinajsbn.venus.ui.base.BaseFragment;
 import com.chinajsbn.venus.ui.base.FragmentFeature;
@@ -71,7 +73,7 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
     //--------------------------data-------------------------
     private List<Car> dataList; //主数据
     private List<CarType> brandList = new ArrayList<>();
-    private List<CarType> typeList = new ArrayList<>();
+    private List<CarModule> typeList = new ArrayList<>();
     private List<CarType> priceList = new ArrayList<>();
 
     private String[] prices = {"1000以下", "1000-2000", "2000-3000", "3000以上"};
@@ -103,6 +105,8 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
     @ViewInject(R.id.price_gridView)
     private MyGridView priceGrid;
 
+    private CarParam carParam = new CarParam();
+
     ///////////////////Dialog///////////////////
     private MTDialog networkDialog;//无网络提示
 
@@ -133,6 +137,8 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
         filterTxt.setTextColor(getResources().getColor(R.color.gray_600));
 
         tab_selected = 0;
+
+        carParam.reset();
         getFirstData();
     }
 
@@ -145,8 +151,10 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
         allTxt.setTextColor(getResources().getColor(R.color.gray_600));
         priceTxt.setTextColor(getResources().getColor(R.color.pink));
 //        filterTxt.setTextColor(getResources().getColor(R.color.gray_600));
+        carParam.reset();
 
         if(carNature == -1 || carNature == 1){
+            carParam.carNature = 2;
             carNature = 2;
             priceTxt.setText("车队");
             isNature = true;
@@ -154,6 +162,7 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
             priceTxt.setText("单车");
             isNature = true;
             carNature = 1;
+            carParam.carNature  = 1;
         }
 
         getFirstData();
@@ -166,7 +175,6 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
         tab_selected = 2;
         drawerLayout.openDrawer(GravityCompat.END);
         allTxt.setTextColor(getResources().getColor(R.color.gray_600));
-//        priceTxt.setTextColor(getResources().getColor(R.color.gray_600));
         filterTxt.setTextColor(getResources().getColor(R.color.pink));
     }
 
@@ -270,13 +278,13 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
 
         if(NetworkUtil.hasConnection(getActivity())){
             //获取所有车辆列表
-            HttpClient.getInstance().carList(MODULE_ID, pageIndex, pageSize, cb);
+            HttpClients.getInstance().carList(carParam, cb);
 
             //获取品牌列表
-            HttpClient.getInstance().carBrandList(brandCallback);
+            HttpClients.getInstance().carTypeList(brandCallback);
 
             //获取车类型列表
-            HttpClient.getInstance().carTypeList(typeCallback);
+            HttpClients.getInstance().carModelList(typeCallback);
         }else{
 
             refreshLayout.setEnabled(false);//禁用刷新
@@ -288,7 +296,7 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
                 }
                 adapter.notifyDataSetChanged();
 
-                typeList = db.findAll(Selector.from(CarType.class).where("tag", "=", TAG_TYPE));
+                typeList = db.findAll(Selector.from(CarModule.class).where("tag", "=", TAG_TYPE));
                 typeGridViewAdapter.setDataList(typeList);
 
                 brandList = db.findAll(Selector.from(CarType.class).where("tag", "=", TAG_BRAND));
@@ -316,15 +324,7 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
 
         if(NetworkUtil.hasConnection(getActivity())){
             refreshLayout.setRefreshing(true);
-            if(isAll && !isFilter && !isNature){
-                HttpClient.getInstance().carList(MODULE_ID, pageIndex, pageSize, cb);
-            }else{
-                if(isNature){ //车队
-                    HttpClient.getInstance().carSearchParamAll(MODULE_ID, carNature, typeId + "", brandId + "", price_start, price_end, pageIndex, pageSize, searchCallback);
-                }else{
-                    HttpClient.getInstance().carSearch(MODULE_ID, typeId + "", brandId + "", price_start, price_end, pageIndex, pageSize, searchCallback);
-                }
-            }
+            HttpClients.getInstance().carList(carParam, cb);
         }else{// not connect
             if(isAll && !isFilter && !isNature){
                 try {
@@ -379,19 +379,11 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
      * 获取下一页数据
      */
     private void getNextData(){
-        pageIndex ++ ;
+        carParam.pageIndex = carParam.pageIndex ++ ;
         isNextPage = true;
 
         if(NetworkUtil.hasConnection(getActivity())){
-            if(isAll){
-                HttpClient.getInstance().carList(MODULE_ID, pageIndex, pageSize, cb);
-            }else{
-                if(isNature){ //车队
-                    HttpClient.getInstance().carSearchParamAll(MODULE_ID, carNature, typeId + "", brandId + "", price_start, price_end, pageIndex, pageSize, searchCallback);
-                }else{
-                    HttpClient.getInstance().carSearch(MODULE_ID, typeId + "", brandId + "", price_start, price_end, pageIndex, pageSize, searchCallback);
-                }
-            }
+            HttpClients.getInstance().carList(carParam, cb);
         }else{
             S.o("加载下一页，无网络");
         }
@@ -407,11 +399,7 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
 
         if(NetworkUtil.hasConnection(getActivity())){
             refreshLayout.setRefreshing(true);
-            if(isNature) {//通过车队筛选
-                HttpClient.getInstance().carSearchParamAll(MODULE_ID, carNature, typeId + "", brandId + "", price_start, price_end, pageIndex, pageSize, searchCallback);
-            }else{
-                HttpClient.getInstance().carSearch(MODULE_ID, typeId + "", brandId + "", price_start, price_end, pageIndex, pageSize, searchCallback);
-            }
+            HttpClients.getInstance().carList(carParam, cb);
         }else{//not connect
             if(isNature){ //车队
                 try {
@@ -478,18 +466,15 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
         }
     };
 
-    private Callback<Base<ArrayList<CarType>>> typeCallback = new Callback<Base<ArrayList<CarType>>>() {
+    private Callback<Base<ArrayList<CarModule>>> typeCallback = new Callback<Base<ArrayList<CarModule>>>() {
         @Override
-        public void success(Base<ArrayList<CarType>> resp, Response response) {
+        public void success(Base<ArrayList<CarModule>> resp, Response response) {
             if (resp.getCode() == 200) {
                 typeList = resp.getData();
                 if (typeList != null && typeList.size() > 0) {
                     typeGridViewAdapter.setDataList(typeList);
                     try {
-                        db.delete(CarType.class, WhereBuilder.b("tag", "=", TAG_TYPE));
-                        for (CarType type : typeList){
-                            type.setTag(TAG_TYPE);
-                        }
+                        db.dropTable(CarModule.class);
                         db.saveAll(typeList);
                     } catch (DbException e) {
                         e.printStackTrace();
@@ -500,7 +485,7 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
 
         @Override
         public void failure(RetrofitError error) {
-
+            S.o("Module ERR" + error.getMessage());
         }
     };
 
@@ -531,13 +516,11 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
      */
     @OnClick(R.id.filter_confirm_txt)
     public void confirmClick(View view) {
-
         tab_selected = 2;
-
         //搜索
         CarType price = priceGridViewAdapter.getCheckedItem();
         CarType brand = brandGridViewAdapter.getCheckedItem();
-        CarType type = typeGridViewAdapter.getCheckedItem();
+        CarModule type = typeGridViewAdapter.getCheckedItem();
 
         //
         if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
@@ -545,11 +528,8 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
         }
         //没有选择条件
         if (price == null && brand == null && type == null) {
-            price_start = "0";
-            price_end   = "0";
-            typeId   = 0;
-            brandId  = 0;
             isFilter = false;
+            carParam.reset();
             getFirstData();
             return;
         }
@@ -557,66 +537,34 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
         isAll = false;
         if(price != null){//price
             if(price.getName().contains("以上")){
-                price_start = "3001";
-                price_end   = "1000000";
+                carParam.minPrice = 3001;
+                carParam.maxPrice = 1000000;
             }else if(price.getName().contains("以下")){
-                price_start = "0";
-                price_end   = "999";
+                carParam.minPrice = 0;
+                carParam.maxPrice = 999;
             }else{
-                price_start = price.getName().split("-")[0];
-                price_end = price.getName().split("-")[1];
+                carParam.minPrice = Integer.parseInt(price.getName().split("-")[0]);
+                carParam.maxPrice = Integer.parseInt(price.getName().split("-")[1]);
             }
         }else{
-            price_start = "0";
-            price_end   = "0";
+            carParam.minPrice = -1;
+            carParam.maxPrice = -1;
         }
 
         if(brand != null){//brand
-            brandId = brand.getId();
+            carParam.brandId = brand.getId();
         }else{
-            brandId = 0;
+            carParam.brandId = -1;
         }
 
         if(type != null){//type
-            typeId = type.getId();
+            carParam.modelsId = type.getId();
         }else{
-            typeId = 0;
+            carParam.modelsId = -1;
         }
 
         getDataByFilter();
     }
-
-    /**
-     * 查询回调
-     */
-    private Callback<Base<ArrayList<Car>>> searchCallback = new Callback<Base<ArrayList<Car>>>() {
-        @Override
-        public void success(Base<ArrayList<Car>> resp, Response response) {
-            if (snackbar != null && snackbar.isShown()) {
-                handler2.sendEmptyMessageDelayed(1, 800);
-            }
-            if(resp.getCode() == 200){
-                if (resp.getData() != null && resp.getData().size() >= pageSize) {
-                    canRefresh = true;
-                } else {
-                    canRefresh = false;
-                }
-
-                if (refreshLayout.isRefreshing()) {
-                    refreshLayout.setRefreshing(false);
-                }
-                if (isNextPage) {
-                    dataList.addAll(resp.getData());
-                } else {
-                    dataList = resp.getData();
-                }
-            }
-            adapter.notifyDataSetChanged();
-        }
-        @Override
-        public void failure(RetrofitError error) {}
-    };
-
 
     /**
      * 默认回调
@@ -659,7 +607,7 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
 
         @Override
         public void failure(RetrofitError error) {
-
+            S.o("ERR===================================================================");
         }
     };
 
@@ -667,8 +615,7 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
     public void onRecyclerItemClick(View v, int position) {
         if(NetworkUtil.hasConnection(getActivity())){
             Intent intent = new Intent(getActivity(), CarDetailActivity.class);
-            intent.putExtra("moduleId", MODULE_ID);
-            intent.putExtra("detailId", dataList.get(position).getWeddingCarRentalId());
+            intent.putExtra("car", dataList.get(position));
             animStart(intent);
         }else{
             handler.sendEmptyMessageDelayed(10, 100);
@@ -720,8 +667,8 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
         public void onBindViewHolder(FilmHolder holder, int position) {
             Car car = dataList.get(position);
 
-            if (!TextUtils.isEmpty(car.getCoverUrl()))
-                Picasso.with(getActivity()).load(car.getCoverUrl() + "@"+ (DimenUtil.screenWidth / 2)+"w_"+ (DimenUtil.screenWidth/ 3) +"h_60Q").resize(DimenUtil.screenWidth / 2, DimenUtil.screenWidth / 3).placeholder(R.drawable.loading).into(holder.coverImg);
+            if (!TextUtils.isEmpty(car.getCoverUrlApp()))
+                Picasso.with(getActivity()).load(car.getCoverUrlApp() + "@"+ (DimenUtil.screenWidth / 2)+"w_"+ (DimenUtil.screenWidth/ 3) +"h_60Q").resize(DimenUtil.screenWidth / 2, DimenUtil.screenWidth / 3).placeholder(R.drawable.loading).into(holder.coverImg);
 //
             holder.nameTxt.setText(Html.fromHtml(car.getTitle()));
             if(car.getMarketRentalPrice() == car.getRentalPrice()){
@@ -789,8 +736,102 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
 
     //--------------------------------
     private GridViewAdapter priceGridViewAdapter = new GridViewAdapter();//价钱
-    private GridViewAdapter typeGridViewAdapter = new GridViewAdapter(); //车型
+    private GridTypeViewAdapter typeGridViewAdapter = new GridTypeViewAdapter(); //车型
     private GridViewAdapter brandGridViewAdapter = new GridViewAdapter();//品牌
+
+    class GridTypeViewAdapter extends BaseAdapter {
+        private int previousPosition = -1;//上一个选择的
+        private List<CarModule> dataList;
+
+        public GridTypeViewAdapter() {
+        }
+
+        public GridTypeViewAdapter(List<CarModule> d) {
+            this.dataList = d;
+        }
+
+        public void setDataList(List<CarModule> dataList) {
+            this.dataList = dataList;
+            notifyDataSetChanged();
+        }
+
+        public CarModule getCheckedItem() {
+            if (previousPosition != -1)
+                return dataList.get(previousPosition);
+            return null;
+        }
+
+        /**
+         * 设置选中项
+         *
+         * @param position
+         */
+        public void setChecked(int position) {
+            if (position == -1) {
+                if (previousPosition != -1) {
+                    dataList.get(previousPosition).setChecked(false);
+                    previousPosition = -1;
+                }
+                notifyDataSetChanged();
+                return;
+            }
+            if (previousPosition == -1) {//first
+                previousPosition = position;
+                dataList.get(position).setChecked(true);
+            } else if (previousPosition == position) {
+                dataList.get(position).setChecked(false);
+                previousPosition = -1;
+            } else {
+                dataList.get(position).setChecked(true);
+                dataList.get(previousPosition).setChecked(false);
+                previousPosition = position;
+            }
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public int getCount() {
+            return dataList == null ? 0 : dataList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder;
+            CarModule type = dataList.get(position);
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getActivity()).inflate(R.layout.car_single_textview, null);
+                holder = new ViewHolder(convertView);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+            holder.txt.setText(type.getName());
+            if (type.isChecked()) {
+                holder.txt.setBackgroundResource(R.drawable.filter_checked_bg);
+            } else {
+                holder.txt.setBackgroundResource(R.drawable.filter_none_bg);
+            }
+            return convertView;
+        }
+
+        class ViewHolder {
+            TextView txt;
+
+            public ViewHolder(View v) {
+                txt = (TextView) v.findViewById(R.id.txt);
+            }
+        }
+    }
 
     class GridViewAdapter extends BaseAdapter {
         private int previousPosition = -1;//上一个选择的

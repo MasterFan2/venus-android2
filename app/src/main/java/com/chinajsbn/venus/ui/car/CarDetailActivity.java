@@ -3,7 +3,6 @@ package com.chinajsbn.venus.ui.car;
 import android.graphics.Paint;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +17,8 @@ import android.widget.TextView;
 import com.chinajsbn.venus.R;
 import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.bean.Base;
+import com.chinajsbn.venus.net.bean.Car;
 import com.chinajsbn.venus.net.bean.CarDetail;
-import com.chinajsbn.venus.net.bean.HotelDetail;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.MBaseFragmentActivity;
 import com.chinajsbn.venus.utils.DimenUtil;
@@ -70,17 +69,53 @@ public class CarDetailActivity extends MBaseFragmentActivity {
     private String moduleId;
     private int detailId;
 
+    private Car car;
+
     @Override
     public void initialize() {
-        moduleId = getIntent().getStringExtra("moduleId");
-        detailId = getIntent().getIntExtra("detailId", -1);
+        car = (Car) getIntent().getSerializableExtra("car");
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(DimenUtil.screenWidth, DimenUtil.screenWidth);
         pagerLayout.setLayoutParams(params);
 
         initWebView();
 
-        HttpClient.getInstance().carDetail(moduleId, detailId + "", callback);
+        if (car != null) {
+            if(car.getRentalPrice() == 0){
+                newPriceTxt.setText("面议");
+                oldPriceTxt.setVisibility(View.INVISIBLE);
+            }else{
+                newPriceTxt.setText("￥" + car.getRentalPrice());
+            }
+
+            oldPriceTxt.setText("￥" +car.getMarketRentalPrice());
+            //中间删除线
+            oldPriceTxt.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG); //中间横线
+            oldPriceTxt.getPaint().setAntiAlias(true);// 抗锯齿
+
+            titleTxt.setText(car.getTitle());
+            descTxt.setText(car.getDescription());
+
+            String strParams = car.getParameter();
+            if(strParams.contains("#")){
+                strParams = strParams.split("#")[0].replace("|", "\n").replace(" ", "");
+            }else{
+                strParams = strParams.replace("|", "\n");
+            }
+            parameterTxt.setText(strParams);
+
+            if(car.getAppDetailImages() != null){
+                String tempStr = car.getAppDetailImages();
+                tempStr = tempStr.replace("[", "").replace("]", "").replace("\"", "");
+                viewPager.setAdapter(new MyViewPagerAdapter(tempStr.split(",")));
+                indicator.setViewPager(viewPager);
+            }else{
+                pagerLayout.setVisibility(View.GONE);
+            }
+
+            webView.loadData(car.getContent().replace("<img ", "<img width='100%' "), "text/html;charset=UTF-8", null);
+        }
+//        HttpClient.getInstance().carDetail(moduleId, detailId + "", callback);
     }
 
     private void initWebView(){

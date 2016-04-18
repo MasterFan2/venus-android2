@@ -1,6 +1,5 @@
 package com.chinajsbn.venus.net.bean;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

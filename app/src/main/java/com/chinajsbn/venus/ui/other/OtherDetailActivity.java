@@ -45,29 +45,14 @@ public class OtherDetailActivity extends MBaseFragmentActivity {
 
         webSettings.setDefaultTextEncodingName("utf-8");
 
-        if(other != null) {
-
-            HttpClient.getInstance().otherDetail(other.getWeddingClassroomId(), cb);
-//            webView.loadData(, "text/html", "UTF-8");
-        }
         //加载需要显示的网页
         webView.setWebViewClient(new webViewClient());
+
+        if(other != null) {
+            String content = other.getContent();
+            webView.loadData(content.replace("<img ", "<img width='100%' "), "text/html;charset=UTF-8", null);
+        }
     }
-
-    private Callback<Base<OtherDetail>> cb = new Callback<Base<OtherDetail>>() {
-        @Override
-        public void success(Base<OtherDetail> otherDetailBase, Response response) {
-            if(otherDetailBase.getCode() == 200){
-                String content = otherDetailBase.getData().getContent();
-                webView.loadData(content.replace("<img ", "<img width='100%' "), "text/html;charset=UTF-8", null);
-            }
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-
-        }
-    };
 
     //Web视图
     private class webViewClient extends WebViewClient {

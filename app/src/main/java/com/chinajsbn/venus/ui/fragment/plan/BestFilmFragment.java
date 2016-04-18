@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
 import com.chinajsbn.venus.net.HttpClient;
+import com.chinajsbn.venus.net.HttpClients;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Film;
 import com.chinajsbn.venus.net.bean.MasterFanSeason;
@@ -175,9 +176,7 @@ public class BestFilmFragment extends BaseFragment implements MasterListView.OnR
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 if(NetworkUtil.hasConnection(getActivity())){
                     Intent intent = new Intent(getActivity(), MPlanDetailActivity.class);
-                    intent.putExtra("parentId", moduleId);
-                    intent.putExtra("detailId", adapter.getItem(position - 1).getWeddingCaseId() + "");
-                    intent.putExtra("name", adapter.getItem(position - 1).getSchemeName());
+                    intent.putExtra("scheme", adapter.getItem(position - 1));
                     animStart(intent);
                 }else {
                     handler.sendEmptyMessageDelayed(10, 10);
@@ -325,13 +324,13 @@ public class BestFilmFragment extends BaseFragment implements MasterListView.OnR
                 holder = (ViewHolder) view.getTag();
             }
 
-            holder.nameTxt.setText(dataList.get(position).getSchemeName());
+            holder.nameTxt.setText(dataList.get(position).getName());
             holder.styleTxt.setText(dataList.get(position).getStyleName());
             //加载内容
-            if (TextUtils.isEmpty(dataList.get(position).getWeddingCaseImage())) {
+            if (TextUtils.isEmpty(dataList.get(position).getCoverUrlApp())) {
                 Picasso.with(getActivity()).load(R.mipmap.ic_launcher).into(holder.contentImg);
             } else {
-                Picasso.with(getActivity()).load(dataList.get(position).getWeddingCaseImage() + DimenUtil.getHorizontalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).error(getResources().getDrawable(R.mipmap.ic_launcher)).resize(DimenUtil.screenWidth, DimenUtil.targetHeight).into(holder.contentImg);
+                Picasso.with(getActivity()).load(dataList.get(position).getCoverUrlApp() + DimenUtil.getHorizontalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).error(getResources().getDrawable(R.mipmap.ic_launcher)).resize(DimenUtil.screenWidth, DimenUtil.targetHeight).into(holder.contentImg);
             }
             //
             return view;
@@ -353,7 +352,7 @@ public class BestFilmFragment extends BaseFragment implements MasterListView.OnR
     @Override
     public void show() {
         if (NetworkUtil.hasConnection(getActivity())) {
-            HttpClient.getInstance().bestFilmList(moduleId, pageIndex, pageSize, cb);
+            HttpClients.getInstance().gpList(0, pageIndex, pageSize, cb);
         } else {//not connect
             listView.setPullRefreshEnable(false);
             try {
@@ -364,7 +363,7 @@ public class BestFilmFragment extends BaseFragment implements MasterListView.OnR
             }
         }
 
-//        HttpClient.getInstance().seasonList(seasonCallback);//分季
+//        HttpClients.getInstance().seasonList(seasonCallback);//分季
     }
 
     private Callback<Base<ArrayList<Scheme>>> bySeasonIdCallback = new Callback<Base<ArrayList<Scheme>>>() {
@@ -473,10 +472,10 @@ public class BestFilmFragment extends BaseFragment implements MasterListView.OnR
         pageIndex = 1;
         if (tabCustomSeason == 0) {
             isNextPage = false;
-            HttpClient.getInstance().bestFilmList(moduleId, pageIndex, pageSize, cb);
+            HttpClients.getInstance().gpList(0, pageIndex, pageSize, cb);
         } else {
             isSeasonNextPage = false;
-            HttpClient.getInstance().planListBySeasonId(moduleId, pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId()+"", bySeasonIdCallback);
+            HttpClients.getInstance().gpList(seasonList.get(seasonPosition).getSeasonId(), pageIndex, pageSize, bySeasonIdCallback);
         }
 
 
@@ -488,10 +487,10 @@ public class BestFilmFragment extends BaseFragment implements MasterListView.OnR
         pageIndex++;
         if (tabCustomSeason == 0) {
             isNextPage = true;
-            HttpClient.getInstance().bestFilmList(moduleId, pageIndex, pageSize, cb);
+            HttpClients.getInstance().gpList(0, pageIndex, pageSize, cb);
         } else {
             isSeasonNextPage = true;
-            HttpClient.getInstance().planListBySeasonId(moduleId, pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId()+"", bySeasonIdCallback);
+            HttpClients.getInstance().gpList(seasonList.get(seasonPosition).getSeasonId(), pageIndex, pageSize, bySeasonIdCallback);
         }
     }
 }

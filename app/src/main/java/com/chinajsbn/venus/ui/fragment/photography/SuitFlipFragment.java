@@ -57,9 +57,7 @@ public class SuitFlipFragment extends BaseFragment implements OnClickListener {
     public void itemClick(View view){
         if(NetworkUtil.hasConnection(getActivity())){
             Intent intent = new Intent(getActivity(), SuitDetailActivity.class);
-            intent.putExtra("suitId", suitID);
-            intent.putExtra("detailId", suit.getWeddingDressSuitId());
-            intent.putExtra("url", suit.getCoverUrlApp());
+            intent.putExtra("suit", suit);
             animStart(intent);
         }else{
             handler.sendEmptyMessageDelayed(10, 100);

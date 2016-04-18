@@ -37,12 +37,34 @@ public class Other implements Serializable{
     @Column(column = "description")
     private String description;
 
+    @Column(column = "coverUrlApp")
+    private String coverUrlApp;
+
+    @Column(column = "content")
+    private String content;
+
     @Id
     @Column(column = "weddingClassroomId")
     private int weddingClassroomId;
 
     @Column(column = "moduleTypeId")
     private int moduleTypeId;
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getCoverUrlApp() {
+        return coverUrlApp;
+    }
+
+    public void setCoverUrlApp(String coverUrlApp) {
+        this.coverUrlApp = coverUrlApp;
+    }
 
     public String getAuthor() {
         return author;

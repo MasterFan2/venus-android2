@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
 import com.chinajsbn.venus.net.HttpClient;
+import com.chinajsbn.venus.net.HttpClients;
+import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Brands;
 import com.chinajsbn.venus.net.bean.BrandsResp;
 import com.chinajsbn.venus.ui.base.BaseFragment;
@@ -38,6 +40,7 @@ import com.tool.widget.dialog.ViewHolder;
 import com.tool.widget.mt_listview.MasterListView;
 import com.tool.widget.mt_listview.MyListView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.Callback;
@@ -71,20 +74,6 @@ public class DressesFragment extends BaseFragment implements  MasterListView.OnR
     @ViewInject(R.id.listView)
     private MyListView listView;
     private MyAdapter adapter;
-
-//    @OnClick(R.id.item_dresses_tab_gjhs)
-//    public void gjhsClick(View view){
-//        dressType = 1;
-//        listView.setPullRefreshEnable(false);
-//        HttpClient.getInstance().brandsList(dressType, cb);
-//    }
-//
-//    @OnClick(R.id.item_dresses_tab_mxlf)
-//    public void mxlfClick(View view){
-//        dressType = 2;
-//        listView.setPullRefreshEnable(false);
-//        HttpClient.getInstance().brandsList(dressType, cb);
-//    }
 
     @Override
     public void initialize() {
@@ -120,7 +109,7 @@ public class DressesFragment extends BaseFragment implements  MasterListView.OnR
                 dressType = tab.getPosition() + 1;
                 if(NetworkUtil.hasConnection(getActivity())){
                     //
-                    HttpClient.getInstance().brandsList(dressType, cb);
+                    HttpClients.getInstance().dressBrandList(dressType, cb);
                 }else{
                     try {
                         dataList = db.findAll(Selector.from(Brands.class).where("tab", "=", dressType));
@@ -149,7 +138,7 @@ public class DressesFragment extends BaseFragment implements  MasterListView.OnR
 
         //
         if(NetworkUtil.hasConnection(getActivity())){
-            HttpClient.getInstance().brandsList(dressType, cb);
+            HttpClients.getInstance().dressBrandList(dressType, cb);
         }else{
             try {
                 dataList = db.findAll(Selector.from(Brands.class).where("tab", "=", dressType));
@@ -191,6 +180,7 @@ public class DressesFragment extends BaseFragment implements  MasterListView.OnR
                         brands.setTab(1);
                     }
                     try {
+                        db.dropTable(Brands.class);
                         db.delete(Brands.class, WhereBuilder.b("tab", "=", 1));
                         db.saveAll(datas);
                     } catch (DbException e) {
@@ -235,9 +225,9 @@ public class DressesFragment extends BaseFragment implements  MasterListView.OnR
         }
     }
 
-    private Callback<BrandsResp> cb = new Callback<BrandsResp>() {
+    private Callback<Base<ArrayList<Brands>>> cb = new Callback<Base<ArrayList<Brands>>>() {
         @Override
-        public void success(BrandsResp brandsResp, Response response) {
+        public void success(Base<ArrayList<Brands>> brandsResp, Response response) {
             listView.stopRefresh();
             if(brandsResp.getCode() == 200){
                 dataList = brandsResp.getData();
@@ -301,9 +291,9 @@ public class DressesFragment extends BaseFragment implements  MasterListView.OnR
             }
 
             //
-            holder.nameTxt.setText(brands.getWeddingDressBrandName());
-            if(!TextUtils.isEmpty(brands.getImageUrl())) {
-                Picasso.with(getActivity()).load(brands.getImageUrl() + DimenUtil.getHorizontalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).resize(DimenUtil.screenWidth, DimenUtil.targetHeight).into(holder.contentImg);
+            holder.nameTxt.setText(brands.getName());
+            if(!TextUtils.isEmpty(brands.getLogoUrl())) {
+                Picasso.with(getActivity()).load(brands.getLogoUrl() + DimenUtil.getHorizontalListViewStringDimension(DimenUtil.screenWidth)).placeholder(R.drawable.loading).resize(DimenUtil.screenWidth, DimenUtil.targetHeight).into(holder.contentImg);
             }
 
             holder.layout.setOnClickListener(new View.OnClickListener() {
@@ -311,7 +301,7 @@ public class DressesFragment extends BaseFragment implements  MasterListView.OnR
                 public void onClick(View v) {
                     if(NetworkUtil.hasConnection(getActivity())){
                         Intent intent = new Intent(getActivity(), DressDetailActivity.class);
-                        intent.putExtra("brandId", brands.getWeddingDressBrandId());
+                        intent.putExtra("brandId", brands.getBrandId());
                         animStart(intent);
                     }else{
                         handler.sendEmptyMessageDelayed(10, 100);
@@ -351,7 +341,7 @@ public class DressesFragment extends BaseFragment implements  MasterListView.OnR
         listView.startRefresh();
         listView.saveRefreshStrTime();
         listView.setPullRefreshEnable(false);
-        HttpClient.getInstance().brandsList(dressType, cb);
+        HttpClients.getInstance().dressBrandList(dressType, cb);
     }
 
     @Override

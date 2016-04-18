@@ -187,6 +187,12 @@ public class MPhotoCustomerFragment extends BaseFragment implements OnRecyclerIt
         db = DbUtils.create(getActivity());
         db.configAllowTransaction(true);
 
+        try {
+            db.dropTable(Custom.class);
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+
         ///tabLayout
         for (int i = 0; i < filters.length; i++) {
             TabLayout.Tab tab = tabLayout.newTab();
@@ -475,7 +481,6 @@ public class MPhotoCustomerFragment extends BaseFragment implements OnRecyclerIt
     private Callback<Base<ArrayList<Custom>>> cb = new Callback<Base<ArrayList<Custom>>>() {
         @Override
         public void success(Base<ArrayList<Custom>> simpleResp, Response response) {
-
             if (dialog != null && dialog.isShowing()) dialog.dismiss();
             listView.stopRefresh();
 
@@ -613,27 +618,7 @@ public class MPhotoCustomerFragment extends BaseFragment implements OnRecyclerIt
             } else {
                 holder = (ViewHolder) view.getTag();
             }
-//            if (custom.getShootingStyles() != null && custom.getShootingStyles().size() > 0)
-//                holder.styleTxt.setText("风格:" + custom.getShootingStyles().get(0).getShootingStyleName());
-//            else
-//                holder.styleTxt.setText("风格:" + custom.getShootingStyleName());
 
-            //加载摄影师
-//            if (custom.getPhotographer() != null && custom.getStylist() != null) {
-//                holder.name2Txt.setVisibility(View.GONE);
-//                holder.headImgLayout.setVisibility(View.VISIBLE);
-//                holder.nameTxt.setText(custom.getContentName());
-//                Picasso.with(getActivity()).load(custom.getPhotographer().getPhotoUrl()).error(getResources().getDrawable(R.mipmap.ic_launcher)).into(holder.photographerImg);
-//                holder.phtographerNameTxt.setText(custom.getPhotographer().getPersonName());
-//                //加造型师
-//                if (custom.getStylist() != null && !TextUtils.isEmpty(custom.getStylist().getPhotoUrl())) {
-//                    Picasso.with(getActivity()).load(custom.getStylist().getPhotoUrl()).error(getResources().getDrawable(R.mipmap.ic_launcher)).into(holder.stylistImg);
-//                }
-//            } else {
-//                holder.name2Txt.setVisibility(View.VISIBLE);
-//                holder.name2Txt.setText(custom.getContentName());
-//                holder.headImgLayout.setVisibility(View.GONE);
-//            }
             //加载内容
             if (TextUtils.isEmpty(custom.getCoverUrlApp())) {
                 Picasso.with(getActivity()).load(R.mipmap.ic_launcher).into(holder.contentImg);

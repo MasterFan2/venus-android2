@@ -7,21 +7,29 @@ import java.io.Serializable;
  * Created by 13510 on 2015/11/30.
  */
 public class Dress implements Serializable {
+    private int id;
     private String description;
     private String imageUrl;
-    private String weddingDressName;
+    private String name;
     private String weddingDressNo;
 
     public Dress() {
     }
 
     public String getDescription() {
-
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getImageUrl() {
@@ -32,12 +40,12 @@ public class Dress implements Serializable {
         this.imageUrl = imageUrl;
     }
 
-    public String getWeddingDressName() {
-        return weddingDressName;
+    public String getName() {
+        return name;
     }
 
-    public void setWeddingDressName(String weddingDressName) {
-        this.weddingDressName = weddingDressName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getWeddingDressNo() {
@@ -45,14 +53,6 @@ public class Dress implements Serializable {
     }
 
     public void setWeddingDressNo(String weddingDressNo) {
-        this.weddingDressNo = weddingDressNo;
-    }
-
-    public Dress(String description, String imageUrl, String weddingDressName, String weddingDressNo) {
-
-        this.description = description;
-        this.imageUrl = imageUrl;
-        this.weddingDressName = weddingDressName;
         this.weddingDressNo = weddingDressNo;
     }
 }

@@ -39,9 +39,11 @@ public class PhotoSuitTagCosmeticsFragment extends BaseFragment implements OnRec
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        ArrayList<DetailSubImg> imgs = (ArrayList<DetailSubImg>) getArguments().getSerializable("cosmeticsArgs");
+        String imgs =  getArguments().getString("cosmeticsArgs");
+        imgs = imgs.replace("[", "").replace("]", "").replace("\"", "").replace("\\", "");
+        String[] imgArr = imgs.split(",");
 
-        recyclerView.setAdapter(new MyAdapter(imgs, PhotoSuitTagCosmeticsFragment.this));
+        recyclerView.setAdapter(new MyAdapter(imgArr, PhotoSuitTagCosmeticsFragment.this));
     }
 
     @Override
@@ -60,10 +62,10 @@ public class PhotoSuitTagCosmeticsFragment extends BaseFragment implements OnRec
 
     class MyAdapter extends RecyclerView.Adapter<MyAdapter.MViewHolder> {
 
-        private ArrayList<DetailSubImg> dataList;
+        private  String[] dataList;
         private OnRecyclerItemClickListener onRecyclerItemClickListener;
 
-        public MyAdapter(ArrayList<DetailSubImg> list, OnRecyclerItemClickListener listener){
+        public MyAdapter( String[] list, OnRecyclerItemClickListener listener){
             this.dataList = list;
             this.onRecyclerItemClickListener = listener;
         }
@@ -76,16 +78,16 @@ public class PhotoSuitTagCosmeticsFragment extends BaseFragment implements OnRec
 
         @Override
         public void onBindViewHolder(MViewHolder holder, int position) {
-            if(TextUtils.isEmpty(dataList.get(position).getImageUrl())){
+            if(TextUtils.isEmpty(dataList[position])){
                 Picasso.with(getActivity()).load(R.mipmap.ic_launcher).into(holder.contentImg);
             }else{
-                Picasso.with(getActivity()).load(dataList.get(position).getImageUrl()+ DimenUtil.getHorizontal() + DimenUtil.getSuffixUTF8()).error(getResources().getDrawable(R.mipmap.ic_launcher)).placeholder(R.drawable.loading).into(holder.contentImg);
+                Picasso.with(getActivity()).load(dataList[position]+ DimenUtil.getHorizontal() + DimenUtil.getSuffixUTF8()).error(getResources().getDrawable(R.mipmap.ic_launcher)).placeholder(R.drawable.loading).into(holder.contentImg);
             }
         }
 
         @Override
         public int getItemCount() {
-            return dataList == null ? 0 : dataList.size();
+            return dataList == null ? 0 : dataList.length;
         }
 
         public final class MViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

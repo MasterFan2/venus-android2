@@ -56,6 +56,7 @@
                 android:layout_marginTop="8dp"
                 android:gravity="center"
                 android:text="风格:-"
+                android:visibility="invisible"
                 android:textColor="@color/subtitle_text_color"
                 android:textSize="14sp"/>
         </RelativeLayout>
@@ -90,6 +91,7 @@
                     android:layout_marginTop="8dp"
                     android:gravity="center"
                     android:text="摄影师"
+                    android:visibility="invisible"
                     />
             </LinearLayout>
 

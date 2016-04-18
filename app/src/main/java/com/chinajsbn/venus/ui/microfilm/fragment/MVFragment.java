@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
+import com.chinajsbn.venus.net.HttpClients;
 import com.chinajsbn.venus.net.bean.Base;
-import com.chinajsbn.venus.net.bean.CoverImage;
 import com.chinajsbn.venus.net.bean.Film;
 import com.chinajsbn.venus.ui.base.BaseFragment;
 import com.chinajsbn.venus.ui.base.FragmentFeature;
@@ -46,6 +44,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 /**
+ * 爱情MV
  * Created by 13510 on 2015/11/26.
  */
 @FragmentFeature(layout = R.layout.fragment_microfilm)
@@ -100,25 +99,25 @@ public class MVFragment extends BaseFragment implements OnRecyclerItemClickListe
 
         recyclerView.setRefreshProgressStyle(ProgressStyle.SysProgress);
         recyclerView.setLaodingMoreProgressStyle(ProgressStyle.Pacman);
-        recyclerView.setArrowImageView(R.mipmap.ic_arrow_right);
         recyclerView.setLoadingMoreEnabled(false);
         recyclerView.setPullRefreshEnabled(true);
         recyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-                HttpClient.getInstance().filmList("date", videoType, pageIndex, pageSize, cb);
+                pageIndex = 1;
+                HttpClients.getInstance().mvfilmList(pageIndex, pageSize, cb);
                 isRefresh = true;
             }
 
             @Override
             public void onLoadMore() {
                 pageIndex++;
-                HttpClient.getInstance().filmList("date", videoType, pageIndex, pageSize, cb);
+                HttpClients.getInstance().mvfilmList(pageIndex, pageSize, cb);
             }
         });
 
         if (NetworkUtil.hasConnection(getActivity())) {
-            HttpClient.getInstance().filmList("date", videoType, pageIndex, pageSize, cb);
+            HttpClients.getInstance().mvfilmList(pageIndex, pageSize, cb);
         } else {
             try {
                 dataList = db.findAll(Selector.from(Film.class).where("tag", "=", tag));
@@ -149,7 +148,6 @@ public class MVFragment extends BaseFragment implements OnRecyclerItemClickListe
                         try {
                             for (Film film : dataList) {
                                 film.setTag(tag);
-                                film.setImgUrl(film.getCoverImage().getImageUrl());
                             }
 
                             db.delete(Film.class, WhereBuilder.b("tag", "=", tag));
@@ -217,11 +215,8 @@ public class MVFragment extends BaseFragment implements OnRecyclerItemClickListe
         @Override
         public void onBindViewHolder(FilmHolder holder, int position) {
             Film film = dataList.get(position);
-            if (film.getCoverImage() != null)
-                Picasso.with(getActivity()).load(film.getCoverImage().getImageUrl() + DimenUtil.getHorizontalListViewStringDimension(DimenUtil.screenWidth)).resize(DimenUtil.screenWidth, DimenUtil.targetHeight).placeholder(R.drawable.loading).into(holder.coverImg);
-            else if(!TextUtils.isEmpty(film.getImgUrl())){
-                Picasso.with(getActivity()).load(film.getImgUrl() + DimenUtil.getHorizontalListViewStringDimension(DimenUtil.screenWidth)).resize(DimenUtil.screenWidth, DimenUtil.targetHeight).placeholder(R.drawable.loading).into(holder.coverImg);
-            }
+            if (film.getCoverUrlApp() != null)
+                Picasso.with(getActivity()).load(film.getCoverUrlApp() + DimenUtil.getHorizontalListViewStringDimension(DimenUtil.screenWidth)).resize(DimenUtil.screenWidth, DimenUtil.targetHeight).placeholder(R.drawable.loading).into(holder.coverImg);
             holder.nameTxt.setText(film.getName());
             holder.hintTxt.setText("浏览:" + film.getHits());
         }
@@ -266,7 +261,7 @@ public class MVFragment extends BaseFragment implements OnRecyclerItemClickListe
     @Override
     public void onRecyclerItemClick(View v, int position) {
         Intent intent = new Intent(getActivity(), VideoActivity.class);
-        intent.putExtra("url", dataList.get(position - 1).getCoverUrlApp());
+        intent.putExtra("url", dataList.get(position - 1).getVideoUrl());
         animStart(intent);
     }
 }
