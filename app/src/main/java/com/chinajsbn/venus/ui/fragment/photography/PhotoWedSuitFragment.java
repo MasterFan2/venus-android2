@@ -140,7 +140,9 @@ public class PhotoWedSuitFragment extends BaseFragment implements OnClickListene
                         totalTxt.setText("/" + size);
                         pagesTxt.setText("0");
                     }else {
-
+                        for (WeddingSuit suit : suitList){
+                            S.o(":本地缓存::>>>" + suit.getName());
+                        }
                         SuitAdapter adapter = new SuitAdapter(getActivity().getSupportFragmentManager(), suitList);
                         stackView.setAdapter(adapter);
                         totalTxt.setText("/" + size);
@@ -231,8 +233,12 @@ public class PhotoWedSuitFragment extends BaseFragment implements OnClickListene
                     totalTxt.setText("/" + size);
                     pagesTxt.setText("0");
                 }else {
+                    for (WeddingSuit suit : weddingSuits.getData()){
+                        S.o(":网络缓存::>>>" + suit.getName());
+                    }
                     try {
-                        db.saveOrUpdateAll(weddingSuits.getData());
+                        db.dropTable(WeddingSuit.class);
+                        db.saveAll(weddingSuits.getData());
                     } catch (DbException e) {
                         e.printStackTrace();
                     }

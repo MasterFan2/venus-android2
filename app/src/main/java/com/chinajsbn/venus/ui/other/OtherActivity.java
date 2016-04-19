@@ -140,6 +140,11 @@ public class OtherActivity extends MBaseFragmentActivity implements MasterListVi
         tabLayout.setScrollPosition(moduleTypeId, 0, true);
 
         if(NetworkUtil.hasConnection(context)){
+            try {
+                db.dropTable(Other.class);
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
             switch (moduleTypeId){
                 case 0:
                     HttpClients.getInstance().photographerRoomList(1, 100, cb);
@@ -183,6 +188,8 @@ public class OtherActivity extends MBaseFragmentActivity implements MasterListVi
                 dataList = resp.getData();
                 try {
                     db.delete(Other.class, WhereBuilder.b("moduleTypeId", "=", moduleTypeId));
+                    for (Other o: resp.getData())
+                        o.setModuleTypeId(moduleTypeId);
                     db.saveAll(dataList);
                 } catch (DbException e) {
                     e.printStackTrace();

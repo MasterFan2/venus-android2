@@ -131,7 +131,7 @@ public class MPhotoSimpleFragment extends BaseFragment implements MasterListView
     //------------------params end------------------
 
     private List<Style> styleList;
-    private ArrayList<Sence> senceList;
+    private List<Sence> senceList;
 
 
     //------------------Cache------------------
@@ -141,8 +141,6 @@ public class MPhotoSimpleFragment extends BaseFragment implements MasterListView
 
     @Override
     public void initialize() {
-
-        S.o(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>initialize");
 
         db = DbUtils.create(getActivity());
         db.configAllowTransaction(true);
@@ -241,11 +239,14 @@ public class MPhotoSimpleFragment extends BaseFragment implements MasterListView
         getFirstPages();
 
         if (NetworkUtil.hasConnection(getActivity())) {
+            fabToolbar.setVisibility(View.VISIBLE);
             HttpClients.getInstance().styleList(1, 100, styleListCallback);
             HttpClients.getInstance().senceList(1, 100, senceListCallback);
         }else {
+            fabToolbar.setVisibility(View.INVISIBLE);
             try {
                 styleList = db.findAll(Style.class);
+                senceList = db.findAll(Sence.class);
 //                List<Address> addressList = db.findAll(Address.class);
 //                addrStyle.setAddress(addressList);
 
@@ -409,7 +410,7 @@ public class MPhotoSimpleFragment extends BaseFragment implements MasterListView
                 senceList = addrStyleResp.getData();
                 try {
                     db.deleteAll(Sence.class);
-                    db.saveAll(styleList);
+                    db.saveAll(senceList);
                 } catch (DbException e) {
                     e.printStackTrace();
                 }
@@ -422,7 +423,6 @@ public class MPhotoSimpleFragment extends BaseFragment implements MasterListView
 
 
     private void getFirstPages() {
-        S.o("==============================================getFirstPages");
         isNextPage = false;
         pageIndex = 1;
         dataType = DataType.FIRST_PAGE;
@@ -442,7 +442,6 @@ public class MPhotoSimpleFragment extends BaseFragment implements MasterListView
             listView.setPullRefreshEnable(false);
             try {
                 dataList = db.findAll(Simple.class);
-                S.o(">>>>>>>>>>>>>>>>>>>>>" + (dataList == null ? 0 : dataList.size()));
                 if (dataList != null && dataList.size() > 0) {
                     //
                     adapter.notifyDataSetChanged();
@@ -452,7 +451,6 @@ public class MPhotoSimpleFragment extends BaseFragment implements MasterListView
                 }
             } catch (DbException e) {
                 e.printStackTrace();
-                S.o("==============================================DbException");
             }
             if (dialog != null && dialog.isShowing()) dialog.dismiss();
         }

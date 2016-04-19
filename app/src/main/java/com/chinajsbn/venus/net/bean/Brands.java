@@ -28,6 +28,9 @@ public class Brands {
     @Column(column = "name")
     private String name;
 
+    @Column(column = "type")
+    private int type;
+
     @Id
     @Column(column = "weddingDressBrandId")
     private int weddingDressBrandId;
@@ -49,7 +52,14 @@ public class Brands {
         this.tab = tab;
     }
 
-    public Brands() {
+    public Brands() {}
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     public String getName() {
@@ -124,12 +134,4 @@ public class Brands {
         this.weight = weight;
     }
 
-    public Brands(String description, String imageUrl, int weddingDressBrandId, String weddingDressBrandName, int weight) {
-
-        this.description = description;
-        this.imageUrl = imageUrl;
-        this.weddingDressBrandId = weddingDressBrandId;
-        this.weddingDressBrandName = weddingDressBrandName;
-        this.weight = weight;
-    }
 }

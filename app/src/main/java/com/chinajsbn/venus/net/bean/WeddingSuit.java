@@ -56,7 +56,6 @@ public class WeddingSuit implements Serializable{
     @Column(column = "salePrice")
     private int salePrice;                  //价钱
 
-    @Id
     @Column(column = "productId")
     private String productId;           //套系ID
 

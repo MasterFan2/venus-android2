@@ -39,6 +39,7 @@ public class LauncherActivity extends MBaseFragmentActivity implements OnClickLi
     @Override
     public void initialize() {
 
+        //2.0接口没有检测版本更新，所以直接跳到首页
         new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -47,6 +48,8 @@ public class LauncherActivity extends MBaseFragmentActivity implements OnClickLi
                 finish();
             }
         }.sendEmptyMessageDelayed(0, 3500);
+
+        //有网检查版本更新。
 //        if(NetworkUtil.hasConnection(context)) {
 //            HttpClient.getInstance().checkUpgrade(2, PackageUtil.getVersion(context), 1, cb);
 //        }else {

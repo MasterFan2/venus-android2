@@ -1,15 +1,23 @@
 package com.chinajsbn.venus.net.bean;
 
+import com.lidroid.xutils.db.annotation.Column;
+import com.lidroid.xutils.db.annotation.Id;
+import com.lidroid.xutils.db.annotation.Table;
+
 /**
  * Created by MasterFan on 2016/4/14 17:35.
  * <p/>
  * description:级别
  */
+@Table(name = "CarLevel")
 public class CarLevel {
     private String description;
+    @Id
+    @Column(column = "id")
     private int id;
     private int isUsed;
     private int levelId;
+    @Column(column = "name")
     private int name;
 
     public String getDescription() {
@@ -53,6 +61,5 @@ public class CarLevel {
     }
 
     public CarLevel() {
-
     }
 }

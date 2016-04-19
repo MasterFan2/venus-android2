@@ -231,6 +231,7 @@ public class DressesFragment extends BaseFragment implements  MasterListView.OnR
             listView.stopRefresh();
             if(brandsResp.getCode() == 200){
                 dataList = brandsResp.getData();
+
                 cacheData(dressType, dataList);
                 adapter.notifyDataSetChanged();
             }else{

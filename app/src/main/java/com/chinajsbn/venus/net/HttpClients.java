@@ -125,7 +125,7 @@ public class HttpClients {
     //接口
     interface NetInterface {
 
-        @GET("/adv/" + CLIENT + "_index_top")
+        @GET("/vda/" + CLIENT + "_index_top")
         void getHomeAdvert(Callback<Base<ArrayList<Advert>>> cb);//获取首页广告
 
         /**============酒店===============*/

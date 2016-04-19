@@ -296,7 +296,7 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
                 }
                 adapter.notifyDataSetChanged();
 
-                typeList = db.findAll(Selector.from(CarModule.class).where("tag", "=", TAG_TYPE));
+                typeList = db.findAll(Selector.from(CarModule.class));
                 typeGridViewAdapter.setDataList(typeList);
 
                 brandList = db.findAll(Selector.from(CarType.class).where("tag", "=", TAG_BRAND));
@@ -337,15 +337,14 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
                 if(isNature){ //车队
                     try {
                         Selector selector = Selector.from(Car.class).where("carNature", "=", carNature);
-                        if(typeId != 0){
-                            selector.and("carModelsId", "=", typeId);
+                        if(carParam.modelsId != -1){
+                            selector.and("modelsId", "=", carParam.modelsId);
                         }
-                        if(brandId != 0){
-                            selector.and("carBrandId", "=", brandId);
+                        if(carParam.brandId != -1){
+                            selector.and("brandId", "=", carParam.brandId);
                         }
-
-                        if(!price_end.equals("0")){
-                            selector.and("rentalPrice", "between", new String[]{price_start, price_end});
+                        if(carParam.maxPrice != -1){
+                            selector.and("rentalPrice", "between", new int[]{carParam.minPrice, carParam.maxPrice});
                         }
 
                         dataList = db.findAll(selector);
@@ -355,14 +354,14 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
                 }else{
                     try {
                         Selector selector = Selector.from(Car.class).where("title", "!=", "null");
-                        if(typeId != 0){
-                            selector.and("carModelsId", "=", typeId);
+                        if(carParam.modelsId != -1){
+                            selector.and("modelsId", "=", carParam.modelsId);
                         }
-                        if(brandId != 0){
-                            selector.and("carBrandId", "=", brandId);
+                        if(carParam.brandId != -1){
+                            selector.and("brandId", "=", carParam.brandId);
                         }
-                        if(!price_end.equals("0")){
-                            selector.and("rentalPrice", "between", new String[]{price_start, price_end});
+                        if(carParam.maxPrice != -1){
+                            selector.and("rentalPrice", "between", new int[]{carParam.minPrice, carParam.maxPrice});
                         }
 
                         dataList = db.findAll(selector);
@@ -404,14 +403,14 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
             if(isNature){ //车队
                 try {
                     Selector selector = Selector.from(Car.class).where("carNature", "=", carNature);
-                    if(typeId != 0){
-                        selector.and("carModelsId", "=", typeId);
+                    if(carParam.modelsId != -1){
+                        selector.and("modelsId", "=", carParam.modelsId);
                     }
-                    if(brandId != 0){
-                        selector.and("carBrandId", "=", brandId);
+                    if(carParam.brandId != -1){
+                        selector.and("brandId", "=", carParam.brandId);
                     }
-                    if(!price_end.equals("0")){
-                        selector.and("rentalPrice", "between", new String[]{price_start, price_end});
+                    if(carParam.maxPrice != -1){
+                        selector.and("rentalPrice", "between",new int[]{carParam.minPrice, carParam.maxPrice});
                     }
 
                     dataList = db.findAll(selector);
@@ -421,15 +420,14 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
             }else{
                 try {
                     Selector selector = Selector.from(Car.class).where("title", "!=", "null");
-                    if(typeId != 0){
-                        selector.and("carModelsId", "=", typeId);
+                    if(carParam.modelsId != -1){
+                        selector.and("modelsId", "=", carParam.modelsId);
                     }
-                    if(brandId != 0){
-                        selector.and("carBrandId", "=", brandId);
+                    if(carParam.brandId != -1){
+                        selector.and("brandId", "=", carParam.brandId);
                     }
-
-                    if(!price_end.equals("0")){
-                        selector.and("rentalPrice", "between", new String[]{price_start, price_end});
+                    if(carParam.maxPrice != -1){
+                        selector.and("rentalPrice", "between", new int[]{carParam.minPrice, carParam.maxPrice});
                     }
                     dataList = db.findAll(selector);
                 } catch (DbException e) {
@@ -553,12 +551,14 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
 
         if(brand != null){//brand
             carParam.brandId = brand.getId();
+            brandId = brand.getId();
         }else{
             carParam.brandId = -1;
         }
 
         if(type != null){//type
-            carParam.modelsId = type.getId();
+            carParam.modelsId = type.getModelsId();
+            typeId = type.getModelsId();
         }else{
             carParam.modelsId = -1;
         }
@@ -595,7 +595,7 @@ public class CarFragment extends BaseFragment implements OnRecyclerItemClickList
                 dataList = resp.getData();
                 if(tab_selected == 0) {
                     try {
-                        db.deleteAll(Car.class);
+                        db.dropTable(Car.class);
                         db.saveAll(dataList);
                     } catch (DbException e) {
                         e.printStackTrace();

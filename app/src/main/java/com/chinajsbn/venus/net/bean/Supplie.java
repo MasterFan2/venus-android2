@@ -54,8 +54,8 @@ public class Supplie implements Serializable{
     @Column(column = "weddingSuppliesTypeId")
     private int weddingSuppliesTypeId;
 
-    @Column(column = "brandId")
-    private int brandId;
+    @Column(column = "brand")
+    private int brand;
 
     @Id
     @Column(column = "weddingSuppliesId")
@@ -93,12 +93,12 @@ public class Supplie implements Serializable{
         this.parameter = parameter;
     }
 
-    public int getBrandId() {
-        return brandId;
+    public int getBrand() {
+        return brand;
     }
 
-    public void setBrandId(int brandId) {
-        this.brandId = brandId;
+    public void setBrand(int brand) {
+        this.brand = brand;
     }
 
     public String getCoverUrl() {

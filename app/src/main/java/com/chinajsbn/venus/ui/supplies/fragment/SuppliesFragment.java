@@ -170,7 +170,7 @@ public class SuppliesFragment extends BaseFragment implements OnRecyclerItemClic
                             if(previousPosition == 0){
                                 dataList = db.findAll(Supplie.class);
                             }else{
-                                dataList = db.findAll(Selector.from(Supplie.class).where("weddingSuppliesTypeId", "=", localCarTypeList.get(previousPosition -1).getId()));
+                                dataList = db.findAll(Selector.from(Supplie.class).where("brand", "=", localCarTypeList.get(previousPosition -1).getId()));
                             }
                             adapter.notifyDataSetChanged();
                         } catch (DbException e) {
@@ -325,7 +325,6 @@ public class SuppliesFragment extends BaseFragment implements OnRecyclerItemClic
                     if (previousPosition == 0) {
                         try {
                             db.dropTable(Supplie.class);
-                            db.deleteAll(Supplie.class);
                             db.saveAll(dataList);
                         } catch (DbException e) {
                             e.printStackTrace();
