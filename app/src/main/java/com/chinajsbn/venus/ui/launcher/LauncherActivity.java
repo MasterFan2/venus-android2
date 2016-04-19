@@ -9,15 +9,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.bean.VersionInfo;
 import com.chinajsbn.venus.net.bean.VersionResp;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.MBaseFragmentActivity;
 import com.chinajsbn.venus.ui.home.HomeActivity;
 import com.chinajsbn.venus.ui.upgrade.UpgradeActivity;
-import com.chinajsbn.venus.utils.NetworkUtil;
-import com.chinajsbn.venus.utils.PackageUtil;
 import com.chinajsbn.venus.utils.PreUtil;
 import com.chinajsbn.venus.utils.T;
 import com.tool.widget.dialog.MTDialog;

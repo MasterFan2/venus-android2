@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.bean.LoginResp;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.BaseActivity;
@@ -118,7 +117,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 
         dialogShow(dialog, progressView);
 
-        HttpClient.getInstance().login(account, password, 1, cb);
+        //HttpClient.getInstance().login(account, password, 1, cb);
 
 //        new Handler(){
 //            @Override

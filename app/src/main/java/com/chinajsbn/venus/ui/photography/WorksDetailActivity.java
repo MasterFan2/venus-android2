@@ -12,17 +12,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.WorksDetail;
 import com.chinajsbn.venus.net.bean.WorksDetailImage;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.MBaseFragmentActivity;
 import com.chinajsbn.venus.utils.DimenUtil;
-import com.chinajsbn.venus.utils.NetworkUtil;
 import com.chinajsbn.venus.utils.T;
 import com.lidroid.xutils.DbUtils;
-import com.lidroid.xutils.db.sqlite.Selector;
 import com.lidroid.xutils.exception.DbException;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;

@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.bean.BaseResp;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.MBaseFragmentActivity;
@@ -105,7 +104,7 @@ public class RegisterActivity extends MBaseFragmentActivity implements OnClickLi
             return;
         }
 
-        HttpClient.getInstance().signup(uname, code, 1, 100, signupCallback);
+        //HttpClient.getInstance().signup(uname, code, 1, 100, signupCallback);
     }
 
     /**
@@ -176,7 +175,7 @@ public class RegisterActivity extends MBaseFragmentActivity implements OnClickLi
 
         isRun = true;
 
-        HttpClient.getInstance().getSmsCode(phone, 0, cb);
+        //HttpClient.getInstance().getSmsCode(phone, 0, cb);
     }
 
     private Callback<BaseResp> cb = new Callback<BaseResp>() {

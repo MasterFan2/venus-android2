@@ -46,7 +46,6 @@ public class SimpleDetailActivity extends MBaseFragmentActivity implements OnRec
     @ViewInject(R.id.titleView)
     private MasterTitleView titleView;
     //---------------------------------------------------------
-    private String strStyles = "";
     private String name = "";
     private String date = "";
     private Simple headSimple;
@@ -56,6 +55,8 @@ public class SimpleDetailActivity extends MBaseFragmentActivity implements OnRec
 
     private String f = "";
     private String m = "";
+
+    private String styleName = null;
 
     private DbUtils db;
 
@@ -88,6 +89,8 @@ public class SimpleDetailActivity extends MBaseFragmentActivity implements OnRec
 
         f = getIntent().getStringExtra("f");
         m = getIntent().getStringExtra("m");
+
+        styleName = getIntent().getStringExtra("style");
 
         String images = getIntent().getStringExtra("images");
         generateData(images);
@@ -245,13 +248,15 @@ public class SimpleDetailActivity extends MBaseFragmentActivity implements OnRec
                 holder.styleLayout.setVisibility(View.VISIBLE);
                 holder.contentImg2.setVisibility(View.VISIBLE);
                 holder.contentImg1.setVisibility(View.GONE);
-                holder.styleTxt.setText("风格：\n" + strStyles);
+                holder.styleTxt.setText("风格：\n" + styleName);
                 holder.nameTxt.setText(name);
                 if (simpleOrCustom.equals("custom")) {
                     holder.dateTxt.setText(date.split(" ")[0]);
                     holder.moreTxt.setVisibility(View.GONE);
+                    holder.styleTxt.setVisibility(View.GONE);
                 } else {
                     holder.dateTxt.setVisibility(View.GONE);
+                    holder.styleTxt.setVisibility(View.VISIBLE);
                     //查看更多
                     holder.moreTxt.setOnClickListener(new View.OnClickListener() {
                         @Override

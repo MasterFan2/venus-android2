@@ -19,20 +19,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.HttpClients;
 import com.chinajsbn.venus.net.bean.Banquet;
 import com.chinajsbn.venus.net.bean.Base;
-import com.chinajsbn.venus.net.bean.Combo;
 import com.chinajsbn.venus.net.bean.Hotel;
-import com.chinajsbn.venus.net.bean.HotelDetail;
-import com.chinajsbn.venus.net.bean.HotelLabel;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.MBaseFragmentActivity;
 import com.chinajsbn.venus.utils.DimenUtil;
-import com.chinajsbn.venus.utils.S;
 import com.chinajsbn.venus.utils.T;
-import com.google.gson.JsonObject;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 import com.squareup.picasso.Picasso;
@@ -46,8 +40,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;

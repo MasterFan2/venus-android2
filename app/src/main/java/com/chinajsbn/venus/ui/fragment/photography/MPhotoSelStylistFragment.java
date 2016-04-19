@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Photographer;
 import com.chinajsbn.venus.ui.base.BaseFragment;
@@ -73,7 +72,7 @@ public class MPhotoSelStylistFragment extends BaseFragment implements OnRecycler
         listView.setAdapter(seniorAdapter);
 
         //获取总监数据
-        HttpClient.getInstance().getStylist(1, 1, 10, majordomoCallback);
+        //HttpClient.getInstance().getStylist(1, 1, 10, majordomoCallback);
     }
 
     @Override
@@ -106,7 +105,7 @@ public class MPhotoSelStylistFragment extends BaseFragment implements OnRecycler
             majordomoAdapter.notifyDataSetChanged();
 
             //获取资深造型师数据
-            HttpClient.getInstance().getStylist(2, 1, 20, seniorCallback);
+            //HttpClient.getInstance().getStylist(2, 1, 20, seniorCallback);
         }// success end
 
         @Override

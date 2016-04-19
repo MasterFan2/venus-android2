@@ -10,10 +10,7 @@ import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
-import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.WeddingSuit;
-import com.chinajsbn.venus.net.bean.WeddingSuitDetail;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.MBaseFragmentActivity;
 import com.chinajsbn.venus.ui.fragment.detail.PhotoSuitTagCosmeticsFragment;
@@ -21,8 +18,6 @@ import com.chinajsbn.venus.ui.fragment.detail.PhotoSuitTagDetailFragment;
 import com.chinajsbn.venus.ui.fragment.detail.PhotoSuitTagSceneryFragment;
 import com.chinajsbn.venus.ui.fragment.detail.PhotoSuitTagclothingFragment;
 import com.chinajsbn.venus.utils.DimenUtil;
-import com.chinajsbn.venus.utils.S;
-import com.chinajsbn.venus.utils.T;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 import com.squareup.picasso.Picasso;
@@ -37,9 +32,6 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 import github.chenupt.multiplemodel.viewpager.ModelPagerAdapter;
 import github.chenupt.multiplemodel.viewpager.PagerModelManager;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 /**
  * create by master fan on 15/07/17

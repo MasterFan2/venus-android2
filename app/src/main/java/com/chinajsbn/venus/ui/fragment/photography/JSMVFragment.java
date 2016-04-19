@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.HttpClients;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Film;
@@ -22,7 +21,6 @@ import com.chinajsbn.venus.ui.base.FragmentFeature;
 import com.chinajsbn.venus.ui.base.OnRecyclerItemClickListener;
 import com.chinajsbn.venus.ui.plan.VideoActivity;
 import com.chinajsbn.venus.utils.NetworkUtil;
-import com.chinajsbn.venus.utils.S;
 import com.lidroid.xutils.DbUtils;
 import com.lidroid.xutils.db.sqlite.Selector;
 import com.lidroid.xutils.db.sqlite.WhereBuilder;
@@ -35,7 +33,6 @@ import com.tool.widget.dialog.ViewHolder;
 import com.tool.widget.xrecyclerview.ProgressStyle;
 import com.tool.widget.xrecyclerview.XRecyclerView;
 
-import java.nio.DoubleBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,7 +97,7 @@ public class JSMVFragment extends BaseFragment implements OnRecyclerItemClickLis
             @Override
             public void onRefresh() {
                 pageIndex = 1;
-                HttpClient.getInstance().filmList(order, type, pageIndex, pageSize, cb);
+                HttpClients.getInstance().documentaryList(pageIndex, pageSize, cb);
                 isNextPage = false;
                 isRefresh = true;
             }
@@ -109,7 +106,7 @@ public class JSMVFragment extends BaseFragment implements OnRecyclerItemClickLis
             public void onLoadMore() {
                 pageIndex++;
                 isNextPage = true;
-                HttpClient.getInstance().filmList(order, type, pageIndex, pageSize, cb);
+                HttpClients.getInstance().documentaryList(pageIndex, pageSize, cb);
             }
         });
     }

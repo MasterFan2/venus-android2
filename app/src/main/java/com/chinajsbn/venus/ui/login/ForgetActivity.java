@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.bean.BaseResp;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.MBaseFragmentActivity;
@@ -140,7 +139,7 @@ public class ForgetActivity extends MBaseFragmentActivity implements OnClickList
 
         isRun = true;
 
-        HttpClient.getInstance().getSmsCode(phone, 2, cb);
+        //HttpClient.getInstance().getSmsCode(phone, 2, cb);
     }
 
     /**
@@ -176,7 +175,7 @@ public class ForgetActivity extends MBaseFragmentActivity implements OnClickList
         }
 
 
-        HttpClient.getInstance().forget(phone, validateCode, forgetCallback);
+       // HttpClient.getInstance().forget(phone, validateCode, forgetCallback);
     }
 
     /**

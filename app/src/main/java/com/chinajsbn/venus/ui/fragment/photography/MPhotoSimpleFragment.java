@@ -17,13 +17,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.HttpClients;
-import com.chinajsbn.venus.net.bean.AddrStyle;
-import com.chinajsbn.venus.net.bean.Address;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.MoreTag;
-import com.chinajsbn.venus.net.bean.PhotoStyle;
 import com.chinajsbn.venus.net.bean.Sence;
 import com.chinajsbn.venus.net.bean.Simple;
 import com.chinajsbn.venus.net.bean.SimpleStyles;
@@ -177,15 +173,21 @@ public class MPhotoSimpleFragment extends BaseFragment implements MasterListView
                     intent.putExtra("date", simple.getCreateDate());
                     intent.putExtra("name", simple.getName());
 
-                    ArrayList<SimpleStyles> styles = simple.getShootingStyles();
-                    String strStyles = "";
-                    if (styles != null && styles.size() > 0) {
-                        for (int i = 0; i < styles.size(); i++) {
-                            strStyles += styles.get(i).getShootingStyleName() + ",";
+                    String style = simple.getShootingStyle();
+                    String _styleName = null;
+                    if (style.contains(",")) {
+                        String[] styles = style.split(",");
+                        final int size = styleList == null ? 0 : styleList.size();
+                        int _styleId = Integer.parseInt(styles[0]);
+                        for (int i = 0; i < size; i++) {
+                            if(styleList.get(i).getId() == _styleId ) {
+                                _styleName = styleList.get(i).getName();
+                                break;
+                            }
                         }
-                        strStyles = strStyles.substring(0, strStyles.lastIndexOf(","));
                     }
-                    intent.putExtra("styles", strStyles);
+
+                    intent.putExtra("style", _styleName);
 
 //                    simpleDetailStyleId = (styles == null || styles.size() == 0) ? "-1" : styles.get(0).getShootingStyleId();
 
@@ -321,10 +323,6 @@ public class MPhotoSimpleFragment extends BaseFragment implements MasterListView
                     if(dataList != null && dataList.size() > 0){
 
                         for (Simple s : dataList){
-                            if(s.getShootingStyles() != null && s.getShootingStyles().size() > 0){
-                                s.setStyleId(s.getShootingStyles().get(0).getShootingStyleId());
-                                s.setStyleName(s.getShootingStyles().get(0).getShootingStyleName());
-                            }
                             if(s.getShootingExteriors() != null && s.getShootingExteriors().size() > 0) {
                                 s.setAddressId(s.getShootingExteriors().get(0).getShootingExteriorId());
                                 s.setAddressName(s.getShootingExteriors().get(0).getShootingExteriorName());
@@ -623,10 +621,10 @@ public class MPhotoSimpleFragment extends BaseFragment implements MasterListView
                 holder = (ViewHolder) view.getTag();
             }
 
-            if (dataList.get(position).getShootingStyles() != null && dataList.get(position).getShootingStyles().size() > 0)
-                holder.styleTxt.setText("风格: " + dataList.get(position).getShootingStyles().get(0).getShootingStyleName());
-            else
-                holder.styleTxt.setText("风格: " + dataList.get(position).getStyleName());
+//            if (dataList.get(position).getShootingStyles() != null && dataList.get(position).getShootingStyles().size() > 0)
+//                holder.styleTxt.setText("风格: " + dataList.get(position).getShootingStyles().get(0).getShootingStyleName());
+//            else
+//                holder.styleTxt.setText("风格: " + dataList.get(position).getStyleName());
 
             holder.nameTxt.setText(dataList.get(position).getName());
 

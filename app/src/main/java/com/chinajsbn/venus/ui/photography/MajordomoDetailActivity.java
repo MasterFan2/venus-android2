@@ -5,37 +5,24 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
-import com.chinajsbn.venus.net.bean.Base;
-import com.chinajsbn.venus.net.bean.Photographer;
 import com.chinajsbn.venus.net.bean.Team;
-import com.chinajsbn.venus.net.bean.Work;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.MBaseFragmentActivity;
 import com.chinajsbn.venus.ui.fragment.photography.MajordomoAlbumFragment;
-import com.chinajsbn.venus.ui.fragment.photography.MajordomoDescFragment;
-import com.chinajsbn.venus.utils.T;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 import com.squareup.picasso.Picasso;
 import com.tool.widget.CircleImageView;
 import com.tool.widget.MasterTitleView;
-import com.tool.widget.dragtop.DragTopLayout;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
 import github.chenupt.multiplemodel.viewpager.ModelPagerAdapter;
 import github.chenupt.multiplemodel.viewpager.PagerModelManager;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 @ActivityFeature(layout = R.layout.activity_majordomo_detail)
 public class MajordomoDetailActivity extends MBaseFragmentActivity {

@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Photographer;
 import com.chinajsbn.venus.ui.base.BaseFragment;
@@ -70,7 +69,7 @@ public class MPhotoSelPhotographerFragment extends BaseFragment implements OnRec
         listView.setAdapter(seniorAdapter);
 
         //获取数据
-        HttpClient.getInstance().getPhotographer(1, 1, 20, majordomoCallback);
+       //HttpClient.getInstance().getPhotographer(1, 1, 20, majordomoCallback);
     }
 
     @Override
@@ -298,7 +297,7 @@ public class MPhotoSelPhotographerFragment extends BaseFragment implements OnRec
                 majordomoData = photographers.getData();
                 majordomoAdapter.notifyDataSetChanged();
 
-                HttpClient.getInstance().getPhotographer(2, 1, 20, seniorCallback);
+                //HttpClient.getInstance().getPhotographer(2, 1, 20, seniorCallback);
             }
         }// success end
 

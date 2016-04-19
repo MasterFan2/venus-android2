@@ -1,10 +1,8 @@
 package com.chinajsbn.venus.ui.fragment.photography;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Cache;
 import com.chinajsbn.venus.net.bean.DoublePhotographer;
@@ -24,7 +21,6 @@ import com.chinajsbn.venus.net.bean.Photographer;
 import com.chinajsbn.venus.net.bean.PhotographerWorks;
 import com.chinajsbn.venus.ui.base.BaseFragment;
 import com.chinajsbn.venus.ui.base.FragmentFeature;
-import com.chinajsbn.venus.ui.base.MBaseFragment;
 import com.chinajsbn.venus.ui.base.OnRecyclerItemClickListener;
 import com.chinajsbn.venus.ui.photography.MajordomoDetailActivity;
 import com.chinajsbn.venus.ui.photography.WorksDetailActivity;
@@ -112,7 +108,7 @@ public class MTSelPhotographerFragment extends BaseFragment implements OnRecycle
         //获取总监数据
         if (NetworkUtil.hasConnection(getActivity())) {
             dialog.show();
-            HttpClient.getInstance().getPhotographer(1, 1, 20, majordomoCallback);
+           // HttpClient.getInstance().getPhotographer(1, 1, 20, majordomoCallback);
         } else {//获取本地数据
             try {
                 List<Photographer> listMajordomo = db.findAll(Selector.from(Photographer.class).where("tag", "=", MTDBUtil.PHOTO_MAJORDOMO));
@@ -260,7 +256,7 @@ public class MTSelPhotographerFragment extends BaseFragment implements OnRecycle
                 } catch (DbException e) {
                     e.printStackTrace();
                 }
-                HttpClient.getInstance().getPhotographer(2, 1, 20, seniorCallback);
+               // HttpClient.getInstance().getPhotographer(2, 1, 20, seniorCallback);
             }
         }// success end
 

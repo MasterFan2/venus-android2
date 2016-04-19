@@ -16,18 +16,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.HttpClients;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Film;
 import com.chinajsbn.venus.net.bean.MasterFanSeason;
-import com.chinajsbn.venus.net.bean.Scheme;
 import com.chinajsbn.venus.ui.base.BaseFragment;
 import com.chinajsbn.venus.ui.base.FragmentFeature;
 import com.chinajsbn.venus.ui.plan.VideoActivity;
 import com.chinajsbn.venus.utils.DimenUtil;
 import com.chinajsbn.venus.utils.NetworkUtil;
-import com.chinajsbn.venus.utils.T;
 import com.lidroid.xutils.DbUtils;
 import com.lidroid.xutils.db.sqlite.Selector;
 import com.lidroid.xutils.db.sqlite.WhereBuilder;
@@ -163,7 +160,7 @@ public class FilmFragment extends BaseFragment implements MasterListView.OnRefre
                     multiViewPager.setVisibility(View.VISIBLE);
                     if (filterList == null) {
                         if (seasonPosition != -1 && seasonList != null && seasonList.size() > 0) {
-                            HttpClient.getInstance().filmListBySeasonId("hits", "3", pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId()+"", filmListBySeasonIdCallback);
+                            //HttpClient.getInstance().filmListBySeasonId("hits", "3", pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId()+"", filmListBySeasonIdCallback);
                         }
                     } else {
                         dataList = filterList;
@@ -193,7 +190,7 @@ public class FilmFragment extends BaseFragment implements MasterListView.OnRefre
             @Override
             public void onPageSelected(int position) {
                 seasonPosition = position;
-                HttpClient.getInstance().filmListBySeasonId("hits", "3", pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId()+"", filmListBySeasonIdCallback);
+                //HttpClient.getInstance().filmListBySeasonId("hits", "3", pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId()+"", filmListBySeasonIdCallback);
             }
 
             @Override

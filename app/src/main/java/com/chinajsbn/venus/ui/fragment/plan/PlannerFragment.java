@@ -14,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Dresser;
 import com.chinajsbn.venus.net.bean.Planner;
@@ -104,7 +103,7 @@ public class PlannerFragment extends BaseFragment implements OnRecyclerItemClick
         if (dataList == null || dataList.size() <= 0) {
             if(NetworkUtil.hasConnection(getActivity())){
                 dialog.show();
-                HttpClient.getInstance().getPlannerList(pageIndex, pageSize, callback);
+                //HttpClient.getInstance().getPlannerList(pageIndex, pageSize, callback);
             }else {
                 try {
                     List<Planner> plannerList = db.findAll(Planner.class);

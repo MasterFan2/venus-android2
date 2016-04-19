@@ -12,25 +12,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.bean.Banquet;
-import com.chinajsbn.venus.net.bean.BanquetDetail;
-import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.MBaseFragmentActivity;
 import com.chinajsbn.venus.utils.DimenUtil;
-import com.chinajsbn.venus.utils.S;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 import com.squareup.picasso.Picasso;
 import com.tool.widget.MasterTitleView;
 import com.tool.widget.TouchImageView;
-
-import java.util.ArrayList;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 /**
  * create by master fan on 2015/09/01

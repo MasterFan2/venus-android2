@@ -3,7 +3,6 @@ package com.chinajsbn.venus.ui.photography;
 import android.view.View;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Photographer;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
@@ -23,7 +22,7 @@ public class StylistDetailActivity extends MBaseFragmentActivity {
     @Override
     public void initialize() {
         int id  = getIntent().getIntExtra("id" , -1);
-        HttpClient.getInstance().getStylistDetail("" + id, cb);
+        //HttpClient.getInstance().getStylistDetail("" + id, cb);
     }
 
     private Callback<Base<ArrayList<Photographer>>> cb = new Callback<Base<ArrayList<Photographer>>>() {

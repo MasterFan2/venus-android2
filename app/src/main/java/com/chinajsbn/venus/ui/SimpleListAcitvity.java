@@ -1,7 +1,6 @@
 package com.chinajsbn.venus.ui;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClientApi;
 import com.chinajsbn.venus.net.bean.BaseResp;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.BaseActivity;
@@ -20,7 +19,7 @@ public class SimpleListAcitvity extends BaseActivity {
 
     @Override
     public void initialize() {
-        HttpClientApi.getInstance().initialize(context);
+        //HttpClientApi.getInstance().initialize(context);
 
 //        HttpClientApi.getInstance().getSimpleList("1", 1, 10, callback);
     }

@@ -6,18 +6,11 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
-import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Other;
-import com.chinajsbn.venus.net.bean.OtherDetail;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.MBaseFragmentActivity;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 @ActivityFeature(layout = R.layout.activity_other_detail)
 public class OtherDetailActivity extends MBaseFragmentActivity {

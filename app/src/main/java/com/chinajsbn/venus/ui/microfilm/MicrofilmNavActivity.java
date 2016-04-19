@@ -15,38 +15,25 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
-import com.chinajsbn.venus.net.bean.Base;
-import com.chinajsbn.venus.net.bean.Film;
 import com.chinajsbn.venus.net.bean.LocalSubModule;
-import com.chinajsbn.venus.net.bean.SubModule;
 import com.chinajsbn.venus.net.bean.menu.Menu;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.BaseFragment;
 import com.chinajsbn.venus.ui.base.MBaseFragmentActivity;
-import com.chinajsbn.venus.ui.home.HomeActivity;
 import com.chinajsbn.venus.ui.microfilm.fragment.MVFragment;
 import com.chinajsbn.venus.ui.microfilm.fragment.MicrofilmFragment;
 import com.chinajsbn.venus.ui.other.OtherActivity;
-import com.chinajsbn.venus.utils.NetworkUtil;
 import com.chinajsbn.venus.utils.S;
 import com.chinajsbn.venus.utils.T;
 import com.lidroid.xutils.DbUtils;
-import com.lidroid.xutils.db.sqlite.Selector;
-import com.lidroid.xutils.exception.DbException;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 import com.tool.widget.MasterTitleView;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 /**
  * 微电影

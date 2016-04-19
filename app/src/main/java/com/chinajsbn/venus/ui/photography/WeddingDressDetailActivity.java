@@ -3,7 +3,6 @@ package com.chinajsbn.venus.ui.photography;
 import android.view.View;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.WeddingDress;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
@@ -26,7 +25,7 @@ public class WeddingDressDetailActivity extends MBaseFragmentActivity {
     @Override
     public void initialize() {
         String idAndDetail[] = getIntent().getStringExtra("idAndDetail").split("@");
-        HttpClient.getInstance().getWeddingDressDetail(idAndDetail[0], idAndDetail[1], cb);
+        //HttpClient.getInstance().getWeddingDressDetail(idAndDetail[0], idAndDetail[1], cb);
     }
 
     private Callback<Base<ArrayList<WeddingDress>>> cb = new Callback<Base<ArrayList<WeddingDress>>>() {

@@ -16,10 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.HttpClients;
 import com.chinajsbn.venus.net.bean.Base;
-import com.chinajsbn.venus.net.bean.Film;
 import com.chinajsbn.venus.net.bean.MasterFanSeason;
 import com.chinajsbn.venus.net.bean.Scheme;
 import com.chinajsbn.venus.ui.base.BaseFragment;
@@ -129,9 +127,9 @@ public class BestFilmFragment extends BaseFragment implements MasterListView.OnR
                     isNextPage = false;
                     multiViewPager.setVisibility(View.VISIBLE);
                     if (seasonList == null || seasonList.size() <= 0) {
-                        HttpClient.getInstance().planSeasonList(seasonCallback);
+                        //HttpClient.getInstance().planSeasonList(seasonCallback);
                     } else {
-                        HttpClient.getInstance().planListBySeasonId(moduleId, pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId()+"", bySeasonIdCallback);
+                       // HttpClient.getInstance().planListBySeasonId(moduleId, pageIndex, pageSize, seasonList.get(seasonPosition).getSeasonId()+"", bySeasonIdCallback);
                     }
                 }
             }
@@ -158,7 +156,7 @@ public class BestFilmFragment extends BaseFragment implements MasterListView.OnR
             @Override
             public void onPageSelected(int position) {
                 seasonPosition = position;
-                HttpClient.getInstance().planListBySeasonId(moduleId, pageIndex, pageSize, seasonList.get(position).getSeasonId()+"", bySeasonIdCallback);
+                //HttpClient.getInstance().planListBySeasonId(moduleId, pageIndex, pageSize, seasonList.get(position).getSeasonId()+"", bySeasonIdCallback);
             }
 
             @Override

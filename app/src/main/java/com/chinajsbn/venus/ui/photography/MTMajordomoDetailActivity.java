@@ -14,18 +14,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Photographer;
 import com.chinajsbn.venus.utils.T;
-import com.lidroid.xutils.view.annotation.ViewInject;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import github.chenupt.multiplemodel.viewpager.ModelPagerAdapter;
-import github.chenupt.multiplemodel.viewpager.PagerModelManager;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -84,9 +80,9 @@ public class MTMajordomoDetailActivity extends AppCompatActivity {
         isStylist= getIntent().getBooleanExtra("isStylist", false);
 
         if(isStylist) {//造型师
-            HttpClient.getInstance().getStylistDetail(personId, cb);
+            //HttpClient.getInstance().getStylistDetail(personId, cb);
         }else {
-            HttpClient.getInstance().getPhotographerDetail(personId, cb);
+            //HttpClient.getInstance().getPhotographerDetail(personId, cb);
         }
 
         for (int i = 0; i < filters.length; i++) {

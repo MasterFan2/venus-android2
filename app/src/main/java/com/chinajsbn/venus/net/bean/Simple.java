@@ -98,8 +98,8 @@ public class Simple implements Serializable {
         this.addressName = addressName;
     }
 
-    //    @Finder(valueColumn = "shootingStylesId", targetColumn = "shootingStyleId")
-    private ArrayList<SimpleStyles> shootingStyles;
+    @Column(column = "shootingStyle")
+    private String shootingStyle;
 
     @Foreign(column = "stylistId", foreign = "personId")
     private SimplePhotographer stylist;
@@ -168,12 +168,12 @@ public class Simple implements Serializable {
         this.headStyles = headStyles;
     }
 
-    public ArrayList<SimpleStyles> getShootingStyles() {
-        return shootingStyles;
+    public String getShootingStyle() {
+        return shootingStyle;
     }
 
-    public void setShootingStyles(ArrayList<SimpleStyles> shootingStyles) {
-        this.shootingStyles = shootingStyles;
+    public void setShootingStyle(String shootingStyle) {
+        this.shootingStyle = shootingStyle;
     }
 
     public SimplePhotographer getStylist() {
@@ -218,29 +218,6 @@ public class Simple implements Serializable {
 
     public void setCoverUrlApp(String coverUrlApp) {
         this.coverUrlApp = coverUrlApp;
-    }
-
-    public Simple(String actorNameFemale, String actorNameMale, String addressId, String addressName, String contentId, String coverUrlApp, String createDate, String headPhotographyName, String headPhotographyUrl, String headStyles, String headStylistName, String headStylistUrl, String name, SimplePhotographer photographer, List<ShootingExteriors> shootingExteriors, ArrayList<SimpleStyles> shootingStyles, String styleId, String styleName, SimplePhotographer stylist) {
-
-        this.actorNameFemale = actorNameFemale;
-        this.actorNameMale = actorNameMale;
-        this.addressId = addressId;
-        this.addressName = addressName;
-        this.contentId = contentId;
-        this.coverUrlApp = coverUrlApp;
-        this.createDate = createDate;
-        this.headPhotographyName = headPhotographyName;
-        this.headPhotographyUrl = headPhotographyUrl;
-        this.headStyles = headStyles;
-        this.headStylistName = headStylistName;
-        this.headStylistUrl = headStylistUrl;
-        this.name = name;
-        this.photographer = photographer;
-        this.shootingExteriors = shootingExteriors;
-        this.shootingStyles = shootingStyles;
-        this.styleId = styleId;
-        this.styleName = styleName;
-        this.stylist = stylist;
     }
 
     public String getActorNameFemale() {

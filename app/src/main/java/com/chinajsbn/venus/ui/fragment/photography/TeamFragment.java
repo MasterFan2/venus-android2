@@ -12,7 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Team;
 import com.chinajsbn.venus.ui.base.BaseFragment;
@@ -60,7 +59,7 @@ public class TeamFragment extends BaseFragment implements OnRecyclerItemClickLis
         team.setTag("majordomo_tag");
         dataList.add(team);
 
-        HttpClient.getInstance().teamList(1, majordomoCallback);
+        //HttpClient.getInstance().teamList(1, majordomoCallback);
     }
 
     private Callback<Base<ArrayList<Team>>> majordomoCallback = new Callback<Base<ArrayList<Team>>>() {
@@ -76,7 +75,7 @@ public class TeamFragment extends BaseFragment implements OnRecyclerItemClickLis
                 Team team = new Team();
                 team.setTag("senior_tag");
                 dataList.add(team);
-                HttpClient.getInstance().teamList(2, seniorCallback);
+               // HttpClient.getInstance().teamList(2, seniorCallback);
             }else{
 
             }

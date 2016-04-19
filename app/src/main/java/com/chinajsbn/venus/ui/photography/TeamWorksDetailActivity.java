@@ -12,22 +12,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
 import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.DetailSubImg;
 import com.chinajsbn.venus.net.bean.Team;
 import com.chinajsbn.venus.net.bean.TeamWorks;
-import com.chinajsbn.venus.net.bean.WorksDetail;
-import com.chinajsbn.venus.net.bean.WorksDetailImage;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.MBaseFragmentActivity;
 import com.chinajsbn.venus.utils.DimenUtil;
-import com.chinajsbn.venus.utils.NetworkUtil;
 import com.chinajsbn.venus.utils.S;
-import com.chinajsbn.venus.utils.T;
 import com.lidroid.xutils.DbUtils;
-import com.lidroid.xutils.db.sqlite.Selector;
-import com.lidroid.xutils.exception.DbException;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 import com.squareup.picasso.Picasso;
@@ -85,7 +78,7 @@ public class TeamWorksDetailActivity extends MBaseFragmentActivity {
         team = (Team) getIntent().getSerializableExtra("team");
         position = getIntent().getIntExtra("position", 0);
 
-        HttpClient.getInstance().teamWorkDetail(team.getTeamId(), team.getWorkList().get(position).getContentId(), cb);
+        //HttpClient.getInstance().teamWorkDetail(team.getTeamId(), team.getWorkList().get(position).getContentId(), cb);
 
 //        isPlanner = getIntent().getBooleanExtra("isPlanner", false);
 //

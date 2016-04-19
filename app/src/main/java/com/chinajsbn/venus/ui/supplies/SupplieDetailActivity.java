@@ -15,23 +15,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chinajsbn.venus.R;
-import com.chinajsbn.venus.net.HttpClient;
-import com.chinajsbn.venus.net.bean.Base;
 import com.chinajsbn.venus.net.bean.Supplie;
-import com.chinajsbn.venus.net.bean.SupplieDetail;
 import com.chinajsbn.venus.ui.base.ActivityFeature;
 import com.chinajsbn.venus.ui.base.MBaseFragmentActivity;
 import com.chinajsbn.venus.utils.DimenUtil;
-import com.chinajsbn.venus.utils.S;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
 import com.squareup.picasso.Picasso;
 import com.tool.widget.MasterTitleView;
 import com.tool.widget.indicator.CircleIndicator;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 @ActivityFeature(layout = R.layout.activity_car_detail)
 public class SupplieDetailActivity extends MBaseFragmentActivity {
